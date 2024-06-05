@@ -35,7 +35,12 @@ A library for parsing command-line argumants.
     - .state (trsap_ArgState) field specifies status (an error or succes) of parsing
 
 ### Functions
- - [x] const char* trsap_chop(size_t* argc, const char*** argv) - Returns 1st argument or 0 and shifts argc and argv
- - [x] trsap_Arg trsap_next(size_t descc, argap_Desc* descv, size_t* argc, const char*** argv) - Returns one parsed arguments. Calls trsap_chop
+ - [x] const char* trsap_chop(int* argc, const char*** argv) - Returns 1st argument or 0 and shifts argc and argv
+ - [x] trsap_Arg trsap_next(size_t descc, argap_Desc* descv, int* argc, const char*** argv) - Returns one parsed arguments. Calls trsap_chop
 
+### C++ wrapper
+ - [x] all C enums have wrappers
+ - [x] all C strucs have wrappers
+ - [x] all C functions have wrappers
+ - [ ] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char** argv) - Returns all parsed arguments (to the end or to first failure)
 
