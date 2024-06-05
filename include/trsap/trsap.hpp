@@ -14,11 +14,25 @@ namespace trsap {
 	};
 
 	enum class ArgStatus {
+		EOI        = TRSAP_ARG_STATUS_EOI,
 		OK         = TRSAP_ARG_STATUS_OK,
 		OK_VALUE   = TRSAP_ARG_STATUS_OK_VALUE,
 		OK_VALUE2  = TRSAP_ARG_STATUS_OK_VALUE2,
 		ERR_VALUE  = TRSAP_ARG_STATUS_ERR_VALUE,
 		ERR_VALUE2 = TRSAP_ARG_STATUS_ERR_VALUE2
+	};
+
+	struct Desc{
+		char m_Short = 0;
+		const char* m_Long = 0;
+		ArgType m_Type = ArgType::FLAG;
+	};
+
+	struct Arg{
+		size_t m_Id = 0;
+		const char* m_Value = 0;
+		const char* m_Value2 = 0;
+		ArgStatus m_Status = ArgStatus::EOI;
 	};
 
 	inline const char* chop(size_t* argc, const char*** argv){
