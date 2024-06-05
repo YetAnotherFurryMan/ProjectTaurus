@@ -24,18 +24,19 @@ typedef struct trsap_Desc trsap_Desc;
 typedef struct trsap_Arg trsap_Arg;
 
 struct trsap_Desc{
-	char m_Short = 0;
-	const char* m_Long = 0;
-	trsap_ArgType m_Type = TRSAP_ARG_TYPE_FLAG;
+	char m_Short;
+	const char* m_Long;
+	trsap_ArgType m_Type;
 };
 
 struct trsap_Arg{
-	size_t m_Id = 0;
-	const char* m_Value = 0;
-	const char* m_Value2 = 0;
-	trsap_ArgStatus m_Status = TRSAP_ARG_STATUS_EOI;
+	size_t m_Id;
+	const char* m_Value;
+	const char* m_Value2;
+	trsap_ArgStatus m_Status;
 };
 
 const char* trsap_chop(size_t* argc, const char*** argv);
+trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char*** argv);
 
 #endif // _TRSAP_H_
