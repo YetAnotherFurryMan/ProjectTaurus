@@ -18,6 +18,8 @@ namespace trsap {
 		OK         = TRSAP_ARG_STATUS_OK,
 		OK_VALUE   = TRSAP_ARG_STATUS_OK_VALUE,
 		OK_VALUE2  = TRSAP_ARG_STATUS_OK_VALUE2,
+		ERR_SHORT  = TRSAP_ARG_STATUS_ERR_SHORT,
+		ERR_LONG   = TRSAP_ARG_STATUS_ERR_LONG,
 		ERR_VALUE  = TRSAP_ARG_STATUS_ERR_VALUE,
 		ERR_VALUE2 = TRSAP_ARG_STATUS_ERR_VALUE2
 	};
@@ -29,7 +31,7 @@ namespace trsap {
 	};
 
 	struct Arg{
-		size_t m_Id = 0;
+		int m_Id = 0;
 		const char* m_Value = 0;
 		const char* m_Value2 = 0;
 		ArgStatus m_Status = ArgStatus::EOI;
@@ -37,5 +39,10 @@ namespace trsap {
 
 	inline const char* chop(size_t* argc, const char*** argv){
 		return trsap_chop(argc, argv);
+	}
+
+	inline Arg next(size_t descc, Desc* descv, size_t* argc, const char*** argv){
+		trsap_Arg arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
+		return *((Arg*)&arg);
 	}
 }
