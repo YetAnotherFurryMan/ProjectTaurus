@@ -19,6 +19,8 @@ A library for parsing command-line argumants.
     - TRSAP_ARG_STATUS_OK
 	- TRSAP_ARG_STATUS_OK_VALUE
 	- TRSAP_ARG_STATUS_OK_VALUE2
+    - TRSAP_ARG_STATUS_ERR_SHORT
+    - TRSAP_ARG_STATUS_ERR_LONG
 	- TRSAP_ARG_STATUS_ERR_VALUE
 	- TRSAP_ARG_STATUS_ERR_VALUE2
 
@@ -34,6 +36,6 @@ A library for parsing command-line argumants.
 
 ### Functions
  - [x] const char* trsap_chop(size_t* argc, const char*** argv) - Returns 1st argument or 0 and shifts argc and argv
- - [ ] trsap_Arg trsap_next(size_t descc, argap_Desc* descv, size_t* argc, const char*** argv) - Returns one parsed arguments. Calls trsap_chop
+ - [x] trsap_Arg trsap_next(size_t descc, argap_Desc* descv, size_t* argc, const char*** argv) - Returns one parsed arguments. Calls trsap_chop
 
 
