@@ -8,8 +8,18 @@
 A library for parsing command-line argumants.
 
 ### Enumerations:
- - [ ] trsap_Type - Describes type of an argument
- - [ ] trsap_State - Describes state of parsing
+ - [x] trsap_Type - Describes type of an argument
+    - TRSAP_ARG_TYPE_FLAG
+	- TRSAP_ARG_TYPE_VALUE
+	- TRSAP_ARG_TYPE_VALUE_OPTIONAL
+	- TRSAP_ARG_TYPE_VALUE2
+	- TRSAP_ARG_TYPE_VALUE2_OPTIONAL
+ - [x] trsap_State - Describes state of parsing
+    - TRSAP_ARG_STATUS_OK
+	- TRSAP_ARG_STATUS_OK_VALUE
+	- TRSAP_ARG_STATUS_OK_VALUE2
+	- TRSAP_ARG_STATUS_ERR_VALUE
+	- TRSAP_ARG_STATUS_ERR_VALUE2
 
 ### Structures:
  - [ ] trsap_Desc - Description of an argument 
