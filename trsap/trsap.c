@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-const char* trsap_chop(size_t* argc, const char*** argv){
+const char* trsap_chop(int* argc, const char*** argv){
 	if(!(*argc))
 		return 0;
 
@@ -12,7 +12,7 @@ const char* trsap_chop(size_t* argc, const char*** argv){
 	return arg;
 }
 
-trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char*** argv){
+trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** argv){
 	trsap_Arg arg = {0};
 	
 	char* a = (char*) trsap_chop(argc, argv);
@@ -43,18 +43,21 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char**
 
 			a += 2;
 			for(size_t i = 0; i < descc; i++){
+				if(!descv[i].m_Long) 
+					continue;
+				
 				size_t dlen = strlen(descv[i].m_Long);
 				if(strncmp(descv[i].m_Long, a, dlen) == 0 && (a[dlen] == '=' || a[dlen] == ':' || a[dlen] == 0)){
 					type = descv[i].m_Type;
 					arg.m_Id = i;
 					a += dlen;
-					len -= dlen - 2;
+					len -= dlen + 2;
 					break;
 				}
 			}
 
 			if(arg.m_Id < 0){
-				arg.m_Value = a;
+				arg.m_Value = a - 2;
 				return arg;
 			}
 		} else{
@@ -105,7 +108,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char**
 			}
 
 			arg.m_Status = TRSAP_ARG_STATUS_OK;
-			if(a[len] == '=' || a[len] == ':')
+			if(a[0] == '=' || a[0] == ':')
 				a++;
 
 			arg.m_Value = a;
@@ -113,7 +116,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char**
 		case TRSAP_ARG_TYPE_VALUE_OPTIONAL: {
 			arg.m_Status = TRSAP_ARG_STATUS_OK;
 			if(len != 0){
-				if(a[len] == '=' || a[len] == ':')
+				if(a[0] == '=' || a[0] == ':')
 					a++;
 
 				arg.m_Value = a;
@@ -125,7 +128,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char**
 				break;
 			}
 
-			if(a[len] == '=' || a[len] == ':')
+			if(a[0] == '=' || a[0] == ':')
 				a++;
 			arg.m_Value = a;
 
@@ -148,10 +151,10 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char**
 				break;
 			}
 
-			if(a[len] == '=' || a[len] == ':')
+			if(a[0] == '=' || a[0] == ':')
 				a++;
-			arg.m_Value = a;
 
+			arg.m_Value = a;
 			while(*a && a[0] != '=' && a[0] != ':')
 				a++;
 

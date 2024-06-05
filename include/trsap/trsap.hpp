@@ -1,6 +1,6 @@
 #pragma once
 
-namespace trsap {
+namespace trs::ap {
 	extern "C" {
 		#include "trsap.h"
 	}
@@ -37,11 +37,11 @@ namespace trsap {
 		ArgStatus m_Status = ArgStatus::EOI;
 	};
 
-	inline const char* chop(size_t* argc, const char*** argv){
+	inline const char* chop(int* argc, const char*** argv){
 		return trsap_chop(argc, argv);
 	}
 
-	inline Arg next(size_t descc, Desc* descv, size_t* argc, const char*** argv){
+	inline Arg next(size_t descc, Desc* descv, int* argc, const char*** argv){
 		trsap_Arg arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
 		return *((Arg*)&arg);
 	}

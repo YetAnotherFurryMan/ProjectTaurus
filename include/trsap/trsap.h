@@ -32,13 +32,13 @@ struct trsap_Desc{
 };
 
 struct trsap_Arg{
-	size_t m_Id;
+	int m_Id;
 	const char* m_Value;
 	const char* m_Value2;
 	trsap_ArgStatus m_Status;
 };
 
-const char* trsap_chop(size_t* argc, const char*** argv);
-trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, size_t* argc, const char*** argv);
+const char* trsap_chop(int* argc, const char*** argv);
+trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** argv);
 
 #endif // _TRSAP_H_
