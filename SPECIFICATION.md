@@ -15,6 +15,7 @@ A library for parsing command-line argumants.
 	- TRSAP_ARG_TYPE_VALUE2
 	- TRSAP_ARG_TYPE_VALUE2_OPTIONAL
  - [x] trsap_State - Describes state of parsing
+    - TRSAP_ARG_STATUS_EOI
     - TRSAP_ARG_STATUS_OK
 	- TRSAP_ARG_STATUS_OK_VALUE
 	- TRSAP_ARG_STATUS_OK_VALUE2
@@ -22,10 +23,10 @@ A library for parsing command-line argumants.
 	- TRSAP_ARG_STATUS_ERR_VALUE2
 
 ### Structures:
- - [ ] trsap_Desc - Description of an argument 
+ - [x] trsap_Desc - Description of an argument 
     - .short (char) and .long (const char*) fields describes name
     - .type (trsap_ArgType) field specifies count and form of values passed with argument
- - [ ] trsap_Arg - Result of trsap_next()
+ - [x] trsap_Arg - Result of trsap_next()
     - .id (int) field is an index of matching trsap_Desc, -1 if the argument is stand-alone valure
     - .value (const char*) field is the first value of the argument if specified or 0
     - .value2 (const char*) field is the second value of the argument if specified or 0
