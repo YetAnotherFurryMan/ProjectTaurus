@@ -42,5 +42,5 @@ A library for parsing command-line argumants.
  - [x] all C enums have wrappers
  - [x] all C strucs have wrappers
  - [x] all C functions have wrappers
- - [ ] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char** argv) - Returns all parsed arguments (to the end or to first failure)
+ - [x] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char** argv) - Returns all parsed arguments (to the end or to first failure)
 
