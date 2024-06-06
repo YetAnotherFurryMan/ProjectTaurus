@@ -15,17 +15,19 @@ int main(int argc, const char** argv){
 		{ 'e', "ee", trs::ap::ArgType::VALUE2_OPTIONAL }
 	};
 
-	trs::ap::Arg arg;
-
-	do{
-		arg = trs::ap::next(5, descs + 1, &argc, &argv);
+	int status = 0;
+	auto args = trs::ap::getAll(5, descs + 1, &argc, &argv);
+	for(auto& arg: args){
 		std::cout << "Arg[" << descs[arg.m_Id + 1].m_Long << "]: \"";
 		if(arg.m_Value) std::cout << arg.m_Value; else std::cout << "(null)";
 		std::cout << "\" \"";
 		if(arg.m_Value2) std::cout << arg.m_Value2; else std::cout << "(null)";
 		std::cout << "\"" << std::endl;
-	} while(arg.m_Status == trs::ap::ArgStatus::OK);
 
-	std::cout << "END[" << (int)arg.m_Status << "]" << std::endl;
+		if(arg.m_Status != trs::ap::ArgStatus::OK)
+			status = (int)arg.m_Status;
+	}
+
+	std::cout << "END[" << status << "]" << std::endl;
 }
 
