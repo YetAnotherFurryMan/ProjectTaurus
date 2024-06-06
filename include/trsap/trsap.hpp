@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace trs::ap {
 	extern "C" {
 		#include "trsap.h"
@@ -44,5 +46,17 @@ namespace trs::ap {
 	inline Arg next(size_t descc, Desc* descv, int* argc, const char*** argv){
 		trsap_Arg arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
 		return *((Arg*)&arg);
+	}
+
+	inline std::vector<Arg> getAll(size_t descc, Desc* descv, int* argc, const char*** argv){
+		std::vector<Arg> args;
+		trsap_Arg arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
+		while(arg.m_Status == TRSAP_ARG_STATUS_OK){
+			args.push_back(*((Arg*)&arg));
+			arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
+		}
+		if(arg.m_Status != TRSAP_ARG_STATUS_EOI)
+			args.push_back(*((Arg*)&arg));
+		return args;
 	}
 }
