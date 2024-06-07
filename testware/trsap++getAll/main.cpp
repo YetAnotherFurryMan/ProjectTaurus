@@ -2,7 +2,7 @@
 
 #include <trsap/trsap.hpp>
 
-int main(int argc, const char** argv){
+int main(int argc, const char* const* argv){
 	const char* program = trs::ap::chop(&argc, &argv);
 	std::cout << "Program: " << program << std::endl;
 
