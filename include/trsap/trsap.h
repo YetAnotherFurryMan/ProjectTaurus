@@ -35,10 +35,20 @@ struct trsap_Arg{
 	int m_Id;
 	const char* m_Value;
 	const char* m_Value2;
+	size_t m_ValueLen;
+	size_t m_Value2Len;
 	trsap_ArgStatus m_Status;
 };
 
 const char* trsap_chop(int* argc, const char*** argv);
 trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** argv);
+
+inline const char* trsap_chop2(int* argc, const char* const** argv){
+	return trsap_chop(argc, (const char***) argv);
+}
+
+inline trsap_Arg trsap_next2(size_t descc, trsap_Desc* descv, int* argc, const char* const** argv){
+	return trsap_next(descc, descv, argc, (const char***) argv);
+}
 
 #endif // _TRSAP_H_

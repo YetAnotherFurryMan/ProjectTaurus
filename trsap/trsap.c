@@ -15,7 +15,7 @@ const char* trsap_chop(int* argc, const char*** argv){
 trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** argv){
 	trsap_Arg arg = {0};
 	
-	char* a = (char*) trsap_chop(argc, argv);
+	const char* a = trsap_chop(argc, argv);
 	if(!a)
 		return arg;
 	
@@ -38,6 +38,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 				// It is actually allowed (--)
 				arg.m_Status = TRSAP_ARG_STATUS_OK;
 				arg.m_Value = a;
+				arg.m_ValueLen = 2;
 				return arg;
 			}
 
@@ -80,6 +81,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 		}
 	} else {
 		arg.m_Value = a;
+		arg.m_ValueLen = len;
 		arg.m_Status = TRSAP_ARG_STATUS_OK;
 		return arg;
 	}
@@ -112,6 +114,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 				a++;
 
 			arg.m_Value = a;
+			arg.m_ValueLen = strlen(a);
 		} break;
 		case TRSAP_ARG_TYPE_VALUE_OPTIONAL: {
 			arg.m_Status = TRSAP_ARG_STATUS_OK;
@@ -120,6 +123,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 					a++;
 
 				arg.m_Value = a;
+				arg.m_ValueLen = strlen(a);
 			}
 		} break;
 		case TRSAP_ARG_TYPE_VALUE2: {
@@ -136,11 +140,13 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 				a++;
 
 			if(*a){
-				a[0] = 0;
+				arg.m_ValueLen = a - arg.m_Value;
 				a++;
 				arg.m_Value2 = a;
+				arg.m_Value2Len = strlen(a);
 				arg.m_Status = TRSAP_ARG_STATUS_OK;
 			} else{
+				arg.m_ValueLen = strlen(arg.m_Value);
 				arg.m_Status = TRSAP_ARG_STATUS_ERR_VALUE2;
 				break;
 			}
@@ -158,11 +164,13 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 			while(*a && a[0] != '=' && a[0] != ':')
 				a++;
 
+			arg.m_ValueLen = a - arg.m_Value;
+
 			arg.m_Status = TRSAP_ARG_STATUS_OK;
 			if(*a){
-				a[0] = 0;
 				a++;
 				arg.m_Value2 = a;
+				arg.m_Value2Len = strlen(a);
 			}
 		} break;
 		default: break;

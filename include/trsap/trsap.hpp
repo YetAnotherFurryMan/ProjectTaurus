@@ -36,6 +36,8 @@ namespace trs::ap {
 		int m_Id = 0;
 		const char* m_Value = 0;
 		const char* m_Value2 = 0;
+		size_t m_ValueLen = 0;
+		size_t m_Value2Len = 0;
 		ArgStatus m_Status = ArgStatus::EOI;
 	};
 
@@ -48,6 +50,16 @@ namespace trs::ap {
 		return *((Arg*)&arg);
 	}
 
+	inline const char* chop(int* argc, const char* const** argv){
+		return trsap_chop2(argc, argv);
+	}
+
+	inline Arg next(size_t descc, Desc* descv, int* argc, const char* const** argv){
+		trsap_Arg arg = trsap_next2(descc, (trsap_Desc*)descv, argc, argv);
+		return *((Arg*)&arg);
+	}
+
+
 	inline std::vector<Arg> getAll(size_t descc, Desc* descv, int* argc, const char*** argv){
 		std::vector<Arg> args;
 		trsap_Arg arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
@@ -58,5 +70,9 @@ namespace trs::ap {
 		if(arg.m_Status != TRSAP_ARG_STATUS_EOI)
 			args.push_back(*((Arg*)&arg));
 		return args;
+	}
+	
+	inline std::vector<Arg> getAll(size_t descc, Desc* descv, int* argc, const char* const** argv){
+		return getAll(descc, descv, argc, (const char***) argv);
 	}
 }
