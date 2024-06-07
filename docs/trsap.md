@@ -57,6 +57,8 @@ struct trsap_Arg{
 	int m_Id;
 	const char* m_Value;
 	const char* m_Value2;
+	size_t m_ValueLen;
+	size_t m_Value2Len;
 	trsap_ArgStatus m_Status;
 };
 ```
@@ -65,12 +67,14 @@ struct trsap_Arg{
 
 ``` C
 const char* trsap_chop(int* argc, const char*** argv);
+inline const char* trsap_chop2(int* argc, const char* const** argv);
 ```
 
  6. trsap_next is a basic parsing function. Parses one argument. Warning: that function calls trsap_chop at least once, but can do it up to 3 times.
 
 ``` C
 trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** argv);
+inline trsap_Arg trsap_next2(size_t descc, trsap_Desc* descv, int* argc, const char* const** argv);
 ```
 
 ## C++ header:
@@ -121,6 +125,8 @@ struct trs::ap::Arg{
 	int m_Id = 0;
 	const char* m_Value = 0;
 	const char* m_Value2 = 0;
+	size_t m_ValueLen = 0;
+	size_t m_Value2Len = 0;
 	ArgStatus m_Status = ArgStatus::EOI;
 };
 ```
@@ -129,17 +135,20 @@ struct trs::ap::Arg{
 
 ``` C++ 
 inline const char* trs::ap::chop(int* argc, const char*** argv);
+inline const char* trs::ap::chop(int* argc, const char* const** argv);
 ```
 
  6. next is an inline wrapping function around trsap_next.
 
 ``` C++ 
 inline trs::ap::Arg trs::ap::next(size_t descc, trs::ap::Desc* descv, int* argc, const char*** argv);
+inline trs::ap::Arg trs::ap::next(size_t descc, trs::ap::Desc* descv, int* argc, const char* const** argv);
 ```
 
  7. getAll is an inline function that calls trs_next to the EOI or any ERR* and returns std::vector of parsed arguments.
 
 ``` C++
-inline std::vector<trs::ap::Arg> trs::ap::getAll(size_t descc, trs::ap::Desc* descv, int* argc, const char*** argv)
+inline std::vector<trs::ap::Arg> trs::ap::getAll(size_t descc, trs::ap::Desc* descv, int* argc, const char*** argv);
+inline std::vector<trs::ap::Arg> trs::ap::getAll(size_t descc, trs::ap::Desc* descv, int* argc, const char* const** argv);
 ```
 
