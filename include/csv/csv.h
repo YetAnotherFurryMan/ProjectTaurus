@@ -11,8 +11,14 @@ struct csv_Row{
 	char** m_Values;
 };
 
-csv_Row csv_fgetrow(FILE* f);
+csv_Row csv_fgetrow(FILE* f, char delimeter);
 csv_Row csv_parseRow(const char* line, char delimeter);
+csv_Row csv_parseRow2(char* line, char delimeter);
 void csv_freeRow(csv_Row row);
+
+void csv_encode(csv_Row* row, char delimeter);
+void csv_decode(csv_Row* row, char delimeter);
+
+char* csv_srtrow(csv_Row row, char delimeter);
 
 #endif // _CSV_H_
