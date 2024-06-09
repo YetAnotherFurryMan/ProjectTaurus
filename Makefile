@@ -5,11 +5,11 @@ INCLUDE := include
 CXXSTD := 17
 CSTD := 17
 
-dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/trsp.dir $(BUILD)/trsre $(BUILD)/trsc
+dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsre $(BUILD)/trsc
 dirs_testware = $(BUILD)/testware $(BUILD)/testware/trsap.dir $(BUILD)/testware/trsap++.dir $(BUILD)/testware/trsap++getAll.dir
 
 .PHONY: all 
-all: $(dirs) $(BUILD)/libtrsap.a
+all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a
 testware: all $(dirs_testware) $(BUILD)/testware/trsap $(BUILD)/testware/trsap++ $(BUILD)/testware/trsap++getAll
 
 clean:
@@ -24,6 +24,14 @@ $(BUILD)/libtrsap.a: $(trsap_bin)
 	$(AR) qc $@ $^
 
 $(filter %.c.o,$(trsap_bin)): $(BUILD)/trsap.dir/%.o: trsap/%
+	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC
+
+csv_src := $(wildcard csv/**/*.c csv/*.c)
+csv_bin := $(patsubst csv/%,$(BUILD)/csv.dir/%.o,$(csv_src))
+$(BUILD)/libcsv.a: $(csv_bin)
+	$(AR) qc $@ $^
+
+$(filter %.c.o,$(csv_bin)): $(BUILD)/csv.dir/%.o: csv/%
 	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC
 
 testware_trsap_src := $(wildcard testware/trsap/**/*.c testware/trsap/*.c)
