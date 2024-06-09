@@ -3,11 +3,11 @@
  - [x] written in C/C++
  - [ ] rewritten in Taurus
 
-## Taurus Argument Parser
+## Taurus Argument Parser (trsap)
 
 A library for parsing command-line argumants.
 
-### Enumerations:
+### Enumerations
  - [x] trsap_Type - Describes type of an argument
     - TRSAP_ARG_TYPE_FLAG
 	- TRSAP_ARG_TYPE_VALUE
@@ -24,7 +24,7 @@ A library for parsing command-line argumants.
 	- TRSAP_ARG_STATUS_ERR_VALUE
 	- TRSAP_ARG_STATUS_ERR_VALUE2
 
-### Structures:
+### Structures
  - [x] trsap_Desc - Description of an argument 
     - .short (char) and .long (const char*) fields describes name
     - .type (trsap_ArgType) field specifies count and form of values passed with argument
@@ -47,4 +47,24 @@ A library for parsing command-line argumants.
  - [x] inline functions like *\2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
  - [x] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char** argv) - Returns all parsed arguments (to the end or to first failure) (inline)
  - [x] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char* const* argv) - Returns result of the function above ^. (inline)
+
+## CSV parser (csv)
+
+A simple library for CSV parsing.
+
+### Enumerations
+There is none.
+
+### Structures
+ - [x] csv_Row - Result of csv_fgetrow and csv_parseRow. Represents a single CSV row.
+    - .count (size_t) field is the count of values found and parsed in the row.
+    - .values (char**) field is an array of parsed values (tokens).
+
+### Functions
+ - [x] csv_Row csv_fgetrow(FILE* f) - Returns a single parsed line and moves the cursor. Caller should call csv_free.
+ - [ ] csv_Row csv_parseRow(const char* line, char delimeter) - Parses the row. Caller shoud call csv_free.
+ - [x] void csv_freeRow(csv_Row row) - Frees csv_Row values.
+
+### C++ wrapper
+
 
