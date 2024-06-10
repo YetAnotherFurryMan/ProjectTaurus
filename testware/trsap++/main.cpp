@@ -99,11 +99,10 @@ int main(){
 			break;
 	}
 	
-	std::cerr << passed << "/" << c1.lines.size() << std::endl;
-
 	if(passed == c1.lines.size() && arg.m_Status == c1.endStatus){
 		std::cout << "OK" << std::endl; 
 	} else{
+		std::cerr << passed << "/" << c1.lines.size() << std::endl;
 		std::cout << "FAILED" << std::endl;
 	}
 
