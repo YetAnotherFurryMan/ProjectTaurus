@@ -62,12 +62,12 @@ There is none.
 
 ### Functions
  - [x] csv_Row csv_fgetrow(FILE* f, char delimeter) - Returns a single parsed line and moves the cursor. Caller should call csv_free.
- - [x] csv_Row csv_parseRow2(char* line, char delimeter) - Parses the row. Caller shoud call csv_free.
+ - [x] csv_Row csv_parseRow2(char* line, char delimeter) - Parses the row. Caller should call csv_free.
  - [x] csv_Row csv_parseRow(const char* line, char delimeter) - Copies the line and calls csv_parseRow2.
  - [x] void csv_freeRow(csv_Row row) - Frees csv_Row values.
- - [x] void csv_encode(csv_Row* row, char delimeter) - Encodes each value in row. (uses '\') (reallocates memory)
- - [x] void csv_decode(csv_Row* row, char delimeter) - Decodes each value in row. (uses '\')
- - [ ] char* csv_srtrow(csv_Row row, char delimeter) - Stringifies the row (without encoding). Caller owns the memory.
+ - [x] void csv_encode(csv_Row* row, char delimeter) - Encodes each value in row. (uses '\' as escape character) (reallocates memory)
+ - [x] void csv_decode(csv_Row* row, char delimeter) - Decodes each value in row. (uses '\' as escape character)
+ - [x] char* csv_srtrow(csv_Row row, char delimeter) - Stringifies the row (without encoding). Caller owns the memory.
 
 ### C++ wrapper
 
