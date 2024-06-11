@@ -19,6 +19,6 @@ void csv_freeRow(csv_Row row);
 void csv_encode(csv_Row* row, char delimeter);
 void csv_decode(csv_Row* row, char delimeter);
 
-char* csv_srtrow(csv_Row row, char delimeter);
+char* csv_strrow(const csv_Row row, char delimeter);
 
 #endif // _CSV_H_

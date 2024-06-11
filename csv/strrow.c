@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* csv_strrow(csv_Row row, char delimeter){
+char* csv_strrow(const csv_Row row, char delimeter){
 	size_t len = row.m_Count + 1;
 	for(size_t i = 0; i < row.m_Count; i++){
 		len += strlen(row.m_Values[i]);
