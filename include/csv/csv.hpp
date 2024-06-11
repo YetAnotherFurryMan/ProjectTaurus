@@ -1,5 +1,8 @@
 #pragma once
 
+#include <istream>
+#include <string>
+
 namespace csv{
 	extern "C"{
 		#include "csv.h"
@@ -28,11 +31,17 @@ namespace csv{
 		return 	(Row) csv_fgetrow(f, delimeter);
 	}
 
+	inline Row fgetrow(std::istream& f, char delimeter){
+		std::string s;
+		std::getline(f, s);
+		return (Row) csv_parseRow(s.data(), delimeter);
+	}
+
 	inline Row parseRow(const char* line, char delimeter){
 		return (Row) csv_parseRow(line, delimeter);
 	}
 
-	inline Row parseRow2(char* line, char delimeter){
+	inline Row parseRow(char* line, char delimeter){
 		return (Row) csv_parseRow2(line, delimeter);
 	}
 
@@ -48,6 +57,7 @@ namespace csv{
 		return csv_strrow(*((csv_Row*) &row), delimeter);
 	}
 
-	// TODO: inline Row fgetrow(std::istream& f, char delimeter)
-	// TODO: inline std::string to_string(const Row& row, char delimeter = '|')
+	inline std::string to_string(const Row& row, char delimeter = '|'){
+		return std::string(strrow(row, delimeter));
+	}
 }
