@@ -44,7 +44,7 @@ A library for parsing command-line argumants.
  - [x] all C enums have wrappers
  - [x] all C strucs have wrappers
  - [x] all C functions have wrappers
- - [x] inline functions like *\2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
+ - [x] inline functions like *2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
  - [x] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char** argv) - Returns all parsed arguments (to the end or to first failure) (inline)
  - [x] std::vector<trs::ap::Arg> trs::ap::getAll(std::size_t descc, trs::ap::Desc* descv, int* argc, const char* const* argv) - Returns result of the function above ^. (inline)
 
@@ -67,8 +67,13 @@ There is none.
  - [x] void csv_freeRow(csv_Row row) - Frees csv_Row values.
  - [x] void csv_encode(csv_Row* row, char delimeter) - Encodes each value in row. (uses '\' as escape character) (reallocates memory)
  - [x] void csv_decode(csv_Row* row, char delimeter) - Decodes each value in row. (uses '\' as escape character)
- - [x] char* csv_srtrow(csv_Row row, char delimeter) - Stringifies the row (without encoding). Caller owns the memory.
+ - [x] char* csv_strrow(csv_Row row, char delimeter) - Stringifies the row (without encoding). Caller owns the memory.
 
 ### C++ wrapper
+ - [x] all C strucs have wrappers
+ - [x] all C functions have wrappers
+ - [x] inline functions like *2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
+ - [ ] inline Row fgetrow(std::istream& f, char delimeter) - Same as csv_fgetrow but uses std::istream instead of FILE\*
+ - [ ] inline std::string to_string(const Row& row, char delimeter) - to_string implementation for csv::Row
 
 
