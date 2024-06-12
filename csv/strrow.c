@@ -18,8 +18,10 @@ char* csv_strrow(const csv_Row row, char delimeter){
 	for(size_t i = 0; i < row.m_Count; i++){
 		cur = (char*) mempcpy(cur, row.m_Values[i], strlen(row.m_Values[i]));
 		*cur = delimeter;
+		cur++;
 	}
 
+	cur--;
 	*cur = '\n';
 	str[len] = 0;
 

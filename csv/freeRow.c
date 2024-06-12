@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-void freeRow(csv_Row row){
+void csv_freeRow(csv_Row row){
 	for(size_t i = 0; i < row.m_Count; i++){
 		free(row.m_Values[i]);
 	}
