@@ -59,7 +59,6 @@ namespace trs::ap {
 		return *((Arg*)&arg);
 	}
 
-
 	inline std::vector<Arg> getAll(size_t descc, Desc* descv, int* argc, const char*** argv){
 		std::vector<Arg> args;
 		trsap_Arg arg = trsap_next(descc, (trsap_Desc*)descv, argc, argv);
