@@ -23,6 +23,8 @@ char* csv_strrow(const csv_Row row, char delimeter){
 
 	cur--;
 	*cur = '\n';
+	cur++;
+	*cur = 0;
 	str[len] = 0;
 
 	return str;
