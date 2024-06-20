@@ -73,7 +73,63 @@ There is none.
  - [x] all C strucs have wrappers
  - [x] all C functions have wrappers
  - [x] inline functions like *2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
- - [ ] inline Row fgetrow(std::istream& f, char delimeter) - Same as csv_fgetrow but uses std::istream instead of FILE\*
- - [ ] inline std::string to_string(const Row& row, char delimeter) - to_string implementation for csv::Row
+ - [x] inline Row fgetrow(std::istream& f, char delimeter) - Same as csv_fgetrow but uses std::istream instead of FILE\*
+ - [x] inline std::string to_string(const Row& row, char delimeter) - to_string implementation for csv::Row
+
+## Taurus Regilar Expresion library (trsre)
+
+A toolkit/library for regex (in Taurus dialect) tokenizing, compiling and interpreting.
+
+### Fundamentals
+ - [ ] Syntax does not allow errors
+ - [ ] Uses '\\' as escape character
+ - [ ] Uses ';' as expresion separator which is optional
+ - [ ] Uses '$' as "End Of Expresion"
+ - [ ] Uses '.' as "Any"
+ - [ ] Allows ranges constructed like: literal '-' literal
+ - [ ] Allows grouping with '(' and ')'
+ - [ ] Allows choose groups with '[' and ']', the first matching group will be the choosesn
+ - [ ] Allows negation as unary '^' operator
+ - [ ] Allows optional as '?' sufix
+ - [ ] Allows repeating with decimal number sufix
+ - [ ] Allows "none or more" repeating with '\*' sufix
+ - [ ] Allows "one or more" repeating wiht '+' sufix
+ - [ ] Allows "n or more" repeating with decimal number followed by '+' and then ';'
+ - [ ] Allows ranges with decimal number folowed by '+' or '*' and then again decimal number
+
+### Enumerations
+
+ - [ ] trsre_TokenType - describes type of token
+    - TRSRE_TOKEN_TYPE_LITERAL
+    - TRSRE_TOKEN_TYPE_RANGE
+    - TRSRE_TOKEN_TYPE_GROUP
+    - TRSRE_TOKEN_TYPE_CHOOSE
+    - TRSRE_TOKEN_TYPE_NOT_LITERAL
+    - TRSRE_TOKEN_TYPE_NOT_RANGE
+    - TRSRE_TOKEN_TYPE_NOT_GROUP
+    - TRSRE_TOKEN_TYPE_NOT_CHOOSE
+    - TRSRE_TOKEN_TYPE_EOE
+    - TRSRE_TOKEN_TYPE_ANY
+
+ - [ ] trsre_TokenMode - describes repeating
+    - TRSRE_TOKEN_MODE_ONE
+    - TRSRE_TOKEN_MODE_OPTIONAL
+    - TRSRE_TOKEN_MODE_STAR
+    - TRSRE_TOKEN_MODE_PLUS
+    - TRSRE_TOKEN_MODE_COUNT
+    - TRSRE_TOKEN_MODE_COUNT_MIN
+    - TRSRE_TOKEN_MODE_RANGE
+ 
+### Structures
+
+### Functions
+
+### C++ wrapper
+
+## Taurus Regilar Expresion Compiler (trsrec)
+
+A compiler for Taurus regexes to C/C++, Assembly and into Final State Machine (FSM) tables.
+
+### CLI
 
 
