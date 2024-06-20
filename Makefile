@@ -8,11 +8,11 @@ CSTD := 17
 TBUILD ?= $(BUILD)/testware
 
 dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsre $(BUILD)/trsc
-dirs_testware = $(TBUILD) $(TBUILD)/trsap.dir $(TBUILD)/trsap++.dir $(TBUILD)/trsap++getAll.dir $(TBUILD)/csv.dir $(TBUILD)/csv_parseRow.dir
+dirs_testware = $(TBUILD) $(TBUILD)/trsap.dir $(TBUILD)/trsap++.dir $(TBUILD)/trsap++getAll.dir $(TBUILD)/csv.dir
 
 .PHONY: all 
 all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a
-testware: all $(dirs_testware) $(TBUILD)/trsap $(TBUILD)/trsap++ $(TBUILD)/trsap++getAll $(TBUILD)/csv $(TBUILD)/csv_parseRow
+testware: all $(dirs_testware) $(TBUILD)/trsap $(TBUILD)/trsap++ $(TBUILD)/trsap++getAll $(TBUILD)/csv
 
 clean:
 	$(RM) -r $(BUILD)
@@ -66,13 +66,5 @@ $(TBUILD)/csv: $(testware_csv_bin) $(BUILD)/libcsv.a
 	$(CC) -o $@ $^ -std=c$(CSTD)
 
 $(filter %.c.o,$(testware_csv_bin)): $(TBUILD)/csv.dir/%.o: testware/csv/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE
-
-testware_csv_parseRow_src := $(wildcard testware/csv_parseRow/**/*.c testware/csv_parseRow/*.c)
-testware_csv_parseRow_bin := $(patsubst testware/csv_parseRow/%,$(TBUILD)/csv_parseRow.dir/%.o,$(testware_csv_parseRow_src))
-$(TBUILD)/csv_parseRow: $(testware_csv_parseRow_bin) $(BUILD)/libcsv.a
-	$(CC) -o $@ $^ -std=c$(CSTD)
-
-$(filter %.c.o,$(testware_csv_parseRow_bin)): $(TBUILD)/csv_parseRow.dir/%.o: testware/csv_parseRow/%
 	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE
 
