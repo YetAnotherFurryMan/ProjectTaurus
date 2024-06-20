@@ -19,7 +19,7 @@ struct csv_Row{
 };
 ```
 
- 2. csv_fgetrow is a function that reads one single line from file f and parses it to csv_Row. You should call csv_freeRow when you do not need the data anymore.
+ 2. csv_fgetrow is a function that reads one single line from file f and parses it to csv_Row. Returns zeroed structure on failure. You should call csv_freeRow when you do not need the data anymore.
 
 ``` C
 csv_Row csv_fgetrow(FILE* f, char delimeter);
