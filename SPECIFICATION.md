@@ -99,30 +99,30 @@ A toolkit/library for regex (in Taurus dialect) tokenizing, compiling and interp
 
 ### Enumerations
 
- - [ ] trsre_TokenType - describes type of token
-    - TRSRE_TOKEN_TYPE_LITERAL
-    - TRSRE_TOKEN_TYPE_RANGE
-    - TRSRE_TOKEN_TYPE_GROUP
-    - TRSRE_TOKEN_TYPE_CHOOSE
-    - TRSRE_TOKEN_TYPE_NOT_LITERAL
-    - TRSRE_TOKEN_TYPE_NOT_RANGE
-    - TRSRE_TOKEN_TYPE_NOT_GROUP
-    - TRSRE_TOKEN_TYPE_NOT_CHOOSE
-    - TRSRE_TOKEN_TYPE_EOE
-    - TRSRE_TOKEN_TYPE_ANY
+ - [x] trsre_TokenType - describes type of token, where NOT indicates that the first bit is set
+    - TRSRE_TOKEN_TYPE_LITERAL     = 0x00 // 0b0000
+    - TRSRE_TOKEN_TYPE_RANGE       = 0x02 // 0b0010
+    - TRSRE_TOKEN_TYPE_GROUP       = 0x04 // 0b0100
+    - TRSRE_TOKEN_TYPE_CHOOSE      = 0x06 // 0b0110
+    - TRSRE_TOKEN_TYPE_ANY         = 0x08 // 0b1000
+    - TRSRE_TOKEN_TYPE_NOT_LITERAL = 0x01 // 0b0001
+    - TRSRE_TOKEN_TYPE_NOT_RANGE   = 0x03 // 0b0011
+    - TRSRE_TOKEN_TYPE_NOT_GROUP   = 0x05 // 0b0101
+    - TRSRE_TOKEN_TYPE_NOT_CHOOSE  = 0x07 // 0b0111
+    - TRSRE_TOKEN_TYPE_EOE         = 0x09 // 0b1001
 
- - [ ] trsre_TokenMode - describes repeating
-    - TRSRE_TOKEN_MODE_ONE
-    - TRSRE_TOKEN_MODE_OPTIONAL
-    - TRSRE_TOKEN_MODE_STAR
-    - TRSRE_TOKEN_MODE_PLUS
-    - TRSRE_TOKEN_MODE_COUNT
-    - TRSRE_TOKEN_MODE_COUNT_MIN
-    - TRSRE_TOKEN_MODE_RANGE
- 
 ### Structures
 
+ - [x] trsre_Token - Result of trsre_getToken, represents a single expression.
+    - .type (trsre_TokenType) - the type of token.
+	- .value (const char*) - the value of token.
+	- .length (size_t) - the length of value.
+	- .min (size_t) - the minimal expected amount of maches (default - 1, ? - 0, + - 1, * - 0).
+	- .max (size_t) - the maximal expected amount of matches, zero if infinity (default - 1, ? - 1, + - 0, * - 0).
+
 ### Functions
+
+ - [ ] trsre_Token trsre_getToken(const char* str) - Returns next fount experession without rcursive parsing or {0}.
 
 ### C++ wrapper
 
