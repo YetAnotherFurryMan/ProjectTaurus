@@ -7,11 +7,11 @@ CSTD := 17
 
 TBUILD ?= $(BUILD)/testware
 
-dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsre $(BUILD)/trsc
+dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsre.dir $(BUILD)/trsc.dir
 dirs_testware = $(TBUILD) $(TBUILD)/trsap.dir $(TBUILD)/trsap++.dir $(TBUILD)/trsap++getAll.dir $(TBUILD)/csv.dir
 
 .PHONY: all 
-all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a
+all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a $(BUILD)/libtrsre.a
 testware: all $(dirs_testware) $(TBUILD)/trsap $(TBUILD)/trsap++ $(TBUILD)/trsap++getAll $(TBUILD)/csv
 
 clean:
@@ -34,6 +34,14 @@ $(BUILD)/libcsv.a: $(csv_bin)
 	$(AR) qc $@ $^
 
 $(filter %.c.o,$(csv_bin)): $(BUILD)/csv.dir/%.o: csv/%
+	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC
+
+trsre_src := $(wildcard trsre/**/*.c trsre/*.c)
+trsre_bin := $(patsubst trsre/%,$(BUILD)/trsre.dir/%.o,$(trsre_src))
+$(BUILD)/libtrsre.a: $(trsre_bin)
+	$(AR) qc $@ $^
+
+$(filter %.c.o,$(trsre_bin)): $(BUILD)/trsre.dir/%.o: trsre/%
 	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC
 
 testware_trsap_src := $(wildcard testware/trsap/**/*.c testware/trsap/*.c)
