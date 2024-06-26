@@ -2,6 +2,7 @@
 #define _TRSRE_H_
 
 #include <stddef.h>
+#include <stdbool.h>
 
 typedef enum{
 	TRSRE_TOKEN_TYPE_LITERAL     = 0x00, // 0b0000
@@ -24,8 +25,9 @@ struct trsre_Token{
 	size_t m_Length;
 	size_t m_Min;
 	size_t m_Max;
+    bool m_NoMax;
 };
 
-trsre_Token trsre_getToken(const char* str);
+trsre_Token trsre_getToken(const char** str);
 
 #endif //_TRSRE_H_
