@@ -69,7 +69,6 @@ int main(){
 		{ 'e', "ee", trs::ap::ArgType::VALUE2_OPTIONAL }
 	};
 
-	int status = 0;
 	int argc = c1.args.size();
 	const char* const* argv = c1.args.data();
 	auto args = trs::ap::getAll(5, descs + 1, &argc, &argv);

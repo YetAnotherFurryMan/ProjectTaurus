@@ -32,6 +32,8 @@ const Case cases[3] = {
 #define CASE_COUNT (sizeof(cases) / sizeof(Case))
 
 int main(int argc, const char** argv){
+	(void) argc;
+
 	char* tmp_path = malloc(strlen(argv[0]) + 5);
 	*tmp_path = 0;
 

@@ -87,17 +87,17 @@ int main(/*int argc, const char** argv*/ void){
 		arg = trsap_next(5, descs + 1, &argc, &argv);
 		const char* val = (arg.m_ValueLen == 0)?"(null)":arg.m_Value;
 		size_t vallen = (arg.m_ValueLen == 0)?6:arg.m_ValueLen;
-		sprintf(buff, "Arg[%s]: \"%.*s\" \"%s\"", descs[arg.m_Id + 1].m_Long, vallen, val, arg.m_Value2);
+		sprintf(buff, "Arg[%s]: \"%.*s\" \"%s\"", descs[arg.m_Id + 1].m_Long, (int)vallen, val, arg.m_Value2);
 		if(strcmp(buff, *line) == 0)
 			passed++;
 		else printf("FAILED: %s\nNOTE: %s\n\n", buff, *line);
 		line++;
 	} while(arg.m_Status == TRSAP_ARG_STATUS_OK);
 
-	if(passed == line - c1.lines && arg.m_Status == c1.endStatus){
+	if(passed == (size_t)(line - c1.lines) && arg.m_Status == c1.endStatus){
 		printf("OK\n");
 	} else{
-		fprintf(stderr, "%ls/%ld\n", passed, (long)(line - c1.lines));
+		fprintf(stderr, "%ld/%ld\n", passed, (long)(line - c1.lines));
 		printf("FAILED\n");
 	}
 }
