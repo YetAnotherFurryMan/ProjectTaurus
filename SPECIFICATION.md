@@ -72,7 +72,7 @@ There is none.
 ### C++ wrapper
  - [x] all C strucs have wrappers
  - [x] all C functions have wrappers
- - [x] inline functions like *2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
+ - [x] inline functions like \*2 have theirs alternatives, but without '2' if C++ has no problem with overwritting them
  - [x] inline Row fgetrow(std::istream& f, char delimeter) - Same as csv_fgetrow but uses std::istream instead of FILE\*
  - [x] inline std::string to_string(const Row& row, char delimeter) - to_string implementation for csv::Row
 
@@ -81,15 +81,15 @@ There is none.
 A toolkit/library for regex (in Taurus dialect) tokenizing, compiling and interpreting.
 
 ### Fundamentals
- - [ ] Syntax does not allow errors
- - [ ] Uses '\\' as escape character
- - [ ] Uses ';' as expresion separator which is optional
- - [ ] Uses '$' as "End Of Expresion"
- - [ ] Uses '.' as "Any"
- - [ ] Allows ranges constructed like: literal '-' literal
- - [ ] Allows grouping with '(' and ')'
- - [ ] Allows choose groups with '[' and ']', the first matching group will be the choosesn
- - [ ] Allows negation as unary '^' operator
+ - [x] Syntax does not allow errors
+ - [x] Uses '\\' as escape character
+ - [x] Uses ';' as expresion separator which is optional
+ - [x] Uses '$' as "End Of Expresion"
+ - [x] Uses '.' as "Any"
+ - [x] Allows ranges constructed like: literal '-' literal
+ - [x] Allows grouping with '(' and ')'
+ - [x] Allows choose groups with '[' and ']', the first matching group will be the choosesn
+ - [x] Allows negation as unary '^' operator
  - [ ] Allows optional as '?' sufix
  - [ ] Allows repeating with decimal number sufix
  - [ ] Allows "none or more" repeating with '\*' sufix
@@ -122,7 +122,11 @@ A toolkit/library for regex (in Taurus dialect) tokenizing, compiling and interp
 
 ### Functions
 
- - [ ] trsre_Token trsre_getToken(const char* str) - Returns next fount experession without rcursive parsing or {0}.
+ - [ ] trsre_Token trsre_getToken(const char** str) - Returns next fount experession without rcursive parsing or {0}, moves str to the end of the token.
+ - [ ] void trsre_compile(const char* str, char[255]** table, size_t* size) - Compiles regex in str into table for trsre_fsm.
+ - [ ] size_t trsre_fsm(const char[255]* table, size_t size, size_t state, char c) - Returns next state of final state mashine described in table.
+ - [ ] const char* trsre_strtype(trsre_TokenType type) - stringifies the token type.
+ - [ ] char[4] trsre_strtype3(trsre_TokenType type) - strinifies the token type into 3-letter abrivation, zero-terminated.
 
 ### C++ wrapper
 
