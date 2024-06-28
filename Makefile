@@ -49,34 +49,34 @@ $(filter %.c.o,$(trsre_bin)): $(BUILD)/trsre.dir/%.o: trsre/%
 testware_trsap_src := $(wildcard testware/trsap/**/*.c testware/trsap/*.c)
 testware_trsap_bin := $(patsubst testware/trsap/%,$(TBUILD)/trsap.dir/%.o,$(testware_trsap_src))
 $(TBUILD)/trsap: $(testware_trsap_bin) $(BUILD)/libtrsap.a
-	$(CC) -o $@ $^ -std=c$(CSTD)
+	$(CC) -o $@ $^ -std=c$(CSTD) -ggdb
 
 $(filter %.c.o,$(testware_trsap_bin)): $(TBUILD)/trsap.dir/%.o: testware/trsap/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF)
+	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 testware_trsapxx_src := $(wildcard testware/trsap++/**/*.cpp testware/trsap++/*.cpp)
 testware_trsapxx_bin := $(patsubst testware/trsap++/%,$(TBUILD)/trsap++.dir/%.o,$(testware_trsapxx_src))
 $(TBUILD)/trsap++: $(testware_trsapxx_bin) $(BUILD)/libtrsap.a
-	$(CXX) -o $@ $^ -std=c++$(CSTD)
+	$(CXX) -o $@ $^ -std=c++$(CSTD) -ggdb
 
 $(filter %.cpp.o,$(testware_trsapxx_bin)): $(TBUILD)/trsap++.dir/%.o: testware/trsap++/%
-	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE $(WF)
+	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 testware_trsapxxgetAll_src := $(wildcard testware/trsap++getAll/**/*.cpp testware/trsap++getAll/*.cpp)
 testware_trsapxxgetAll_bin := $(patsubst testware/trsap++getAll/%,$(TBUILD)/trsap++getAll.dir/%.o,$(testware_trsapxxgetAll_src))
 $(TBUILD)/trsap++getAll: $(testware_trsapxxgetAll_bin) $(BUILD)/libtrsap.a
-	$(CXX) -o $@ $^ -std=c++$(CSTD)
+	$(CXX) -o $@ $^ -std=c++$(CSTD) -ggdb
 
 $(filter %.cpp.o,$(testware_trsapxxgetAll_bin)): $(TBUILD)/trsap++getAll.dir/%.o: testware/trsap++getAll/%
-	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE $(WF)
+	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 testware_csv_src := $(wildcard testware/csv/**/*.c testware/csv/*.c)
 testware_csv_bin := $(patsubst testware/csv/%,$(TBUILD)/csv.dir/%.o,$(testware_csv_src))
 $(TBUILD)/csv: $(testware_csv_bin) $(BUILD)/libcsv.a
-	$(CC) -o $@ $^ -std=c$(CSTD)
+	$(CC) -o $@ $^ -std=c$(CSTD) -ggdb
 
 $(filter %.c.o,$(testware_csv_bin)): $(TBUILD)/csv.dir/%.o: testware/csv/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF)
+	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 $(TBUILD)/csv++:
 	echo Not implemented yet: $@
@@ -84,9 +84,9 @@ $(TBUILD)/csv++:
 testware_trsre_token_src := $(wildcard testware/trsre_token/**.c)
 testware_trsre_token_bin := $(patsubst testware/trsre_token/%,$(TBUILD)/trsre_token.dir/%.o,$(testware_trsre_token_src))
 $(TBUILD)/trsre_token: $(testware_trsre_token_bin) $(BUILD)/libtrsre.a
-	$(CC) -o $@ $^ -std=c$(CSTD)
+	$(CC) -o $@ $^ -std=c$(CSTD) -ggdb
 
 $(filter %.c.o,$(testware_trsre_token_bin)): $(TBUILD)/trsre_token.dir/%.o: testware/trsre_token/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF)
+	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 
