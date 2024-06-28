@@ -140,7 +140,7 @@ trsre_Token trsre_getToken(const char** str){
 		} else{
 			tok.m_Type = TRSRE_TOKEN_TYPE_LITERAL;
 			(*str)--;
-			return tok;
+			//return tok;
 		}
 	}
 
@@ -151,8 +151,13 @@ trsre_Token trsre_getToken(const char** str){
 		tok.m_Type = tok.m_Type ^ 1;
 	}
 
-	if(!**str || **str == ';')
+	if(!**str)
 		return tok;
+
+	if(**str == ';'){
+		(*str)++;
+		return tok;
+	}
 
 	// parse +*? and ranges
 
