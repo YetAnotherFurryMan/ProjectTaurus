@@ -122,7 +122,7 @@ A toolkit/library for regex (in Taurus dialect) tokenizing, compiling and interp
 
 ### Functions
 
- - [ ] trsre_Token trsre_getToken(const char** str) - Returns next fount experession without rcursive parsing or {0}, moves str to the end of the token.
+ - [x] trsre_Token trsre_getToken(const char** str) - Returns next fount experession without rcursive parsing or {0}, moves str to the end of the token.
  - [ ] void trsre_compile(const char* str, char[255]** table, size_t* size) - Compiles regex in str into table for trsre_fsm.
  - [ ] size_t trsre_fsm(const char[255]* table, size_t size, size_t state, char c) - Returns next state of final state mashine described in table.
  - [ ] const char* trsre_strtype(trsre_TokenType type) - stringifies the token type.
