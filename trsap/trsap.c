@@ -176,8 +176,50 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 		default: break;
 	}
 
-	// TODO: Get values from other arguments if needed
+	if(arg.m_Status != TRSAP_ARG_STATUS_OK){
+		// Resolve errors
+		
+		a = trsap_chop(argc, argv);
+		if(!a)
+			return arg;
+	
+		len = strlen(a);
 
+		if(arg.m_Status == TRSAP_ARG_STATUS_ERR_VALUE){
+			arg.m_Value = a;
+			arg.m_ValueLen = len;
+			arg.m_Status = TRSAP_ARG_STATUS_OK;
+
+			if(type == TRSAP_ARG_TYPE_VALUE2){
+				while(*a && *a != '=' && *a != ':'){
+					a++;
+					len--;
+				}
+
+				if(*a){
+					a++;
+
+					arg.m_Value2 = a;
+					arg.m_Value2Len = len - 1;
+					arg.m_ValueLen -= len;
+				} else{
+					a = trsap_chop(argc, argv);
+					if(!a){
+						arg.m_Status = TRSAP_ARG_STATUS_ERR_VALUE2;
+						return arg;
+					}
+
+					arg.m_Value2 = a;
+					arg.m_Value2Len = strlen(a);
+				}
+			}
+		} else if(arg.m_Status == TRSAP_ARG_STATUS_ERR_VALUE2){
+			arg.m_Value2 = a;
+			arg.m_Value2Len = len;
+			arg.m_Status = TRSAP_ARG_STATUS_OK;
+		}
+	}
+	
 	return arg;
 }
 
