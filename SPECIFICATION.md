@@ -17,8 +17,6 @@ A library for parsing command-line argumants.
  - [x] trsap_State - Describes state of parsing
     - TRSAP_ARG_STATUS_EOI
     - TRSAP_ARG_STATUS_OK
-	- TRSAP_ARG_STATUS_OK_VALUE
-	- TRSAP_ARG_STATUS_OK_VALUE2
     - TRSAP_ARG_STATUS_ERR_SHORT
     - TRSAP_ARG_STATUS_ERR_LONG
 	- TRSAP_ARG_STATUS_ERR_VALUE
