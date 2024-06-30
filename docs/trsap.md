@@ -9,8 +9,6 @@ How does it work:
  - The value of argument can be passed after ':' or '=' characters, also in the short form we are not obligated to use any separator because the short form is always one character.
  - The second value (m_Value2) may be specified after the first value seperated by ':' or '='.
 
-### WARNING: Values cannot be passed in separated arguments yet.
-
 ## C header:
 
  1. enum trsap_ArgType provides information about accepting values by argument in argument description.
