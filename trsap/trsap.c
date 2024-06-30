@@ -190,7 +190,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 			arg.m_ValueLen = len;
 			arg.m_Status = TRSAP_ARG_STATUS_OK;
 
-			if(type == TRSAP_ARG_TYPE_VALUE2){
+			if(type == TRSAP_ARG_TYPE_VALUE2 || type == TRSAP_ARG_TYPE_VALUE2_OPTIONAL){
 				while(*a && *a != '=' && *a != ':'){
 					a++;
 					len--;
@@ -202,7 +202,7 @@ trsap_Arg trsap_next(size_t descc, trsap_Desc* descv, int* argc, const char*** a
 					arg.m_Value2 = a;
 					arg.m_Value2Len = len - 1;
 					arg.m_ValueLen -= len;
-				} else{
+				} else if(type != TRSAP_ARG_TYPE_VALUE2_OPTIONAL){
 					a = trsap_chop(argc, argv);
 					if(!a){
 						arg.m_Status = TRSAP_ARG_STATUS_ERR_VALUE2;
