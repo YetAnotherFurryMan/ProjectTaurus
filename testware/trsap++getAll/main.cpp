@@ -10,103 +10,1716 @@ struct Case{
 	trs::ap::ArgStatus endStatus = trs::ap::ArgStatus::OK;
 };
 
-const Case c1 = {
-	{"a", "b", "c", "-a", "-bv", "-b=v", "-b:v", "-c", "-cv", "-c=v", "-c:v", "-dv1:v2", "-dv1=v2", "-d:v1:v2", "-d:v1=v2", "-d=v1:v2", "-d=v1=v2", "-ev1:v2", "-ev1=v2", "-e:v1:v2", "-e:v1=v2", "-e=v1:v2", "-e=v1=v2", "-ev", "-e:v", "-e=v", "--", "--aa", "--bb=v", "--bb:v", "--cc", "--cc=v", "--cc:v", "--dd:v1:v2", "--dd:v1=v2", "--dd=v1:v2", "--dd=v1=v2", "--ee:v1:v2", "--ee:v1=v2", "--ee=v1:v2", "--ee=v1=v2", "--ee:v", "--ee=v"},
+std::vector<Case> cases = {
 	{
-		"Arg[-1]: \"a\" \"(null)\"",
-		"Arg[-1]: \"b\" \"(null)\"",
-		"Arg[-1]: \"c\" \"(null)\"",
-		"Arg[aa]: \"(null)\" \"(null)\"",
-		"Arg[bb]: \"v\" \"(null)\"",
-		"Arg[bb]: \"v\" \"(null)\"",
-		"Arg[bb]: \"v\" \"(null)\"",
-		"Arg[cc]: \"(null)\" \"(null)\"",
-		"Arg[cc]: \"v\" \"(null)\"",
-		"Arg[cc]: \"v\" \"(null)\"",
-		"Arg[cc]: \"v\" \"(null)\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v\" \"(null)\"",
-		"Arg[ee]: \"v\" \"(null)\"",
-		"Arg[ee]: \"v\" \"(null)\"",
-		"Arg[-1]: \"--\" \"(null)\"",
-		"Arg[aa]: \"(null)\" \"(null)\"",
-		"Arg[bb]: \"v\" \"(null)\"",
-		"Arg[bb]: \"v\" \"(null)\"",
-		"Arg[cc]: \"(null)\" \"(null)\"",
-		"Arg[cc]: \"v\" \"(null)\"",
-		"Arg[cc]: \"v\" \"(null)\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[dd]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v1\" \"v2\"",
-		"Arg[ee]: \"v\" \"(null)\"",
-		"Arg[ee]: \"v\" \"(null)\""
-	}
+		{"-"},
+		{
+			"Arg[-1]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_SHORT
+	},
+	{
+		{"-f"},
+		{
+			"Arg[-1]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_SHORT
+	},
+	{
+		{"--ff"},
+		{
+			"Arg[-1]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_LONG
+	},
+
+	{
+		{"a"},
+		{
+			"Arg[-1]: \"a\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-a"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b"},
+		{
+			"Arg[ab]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE
+	},
+	{
+		{"-b:v1"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b=v1"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-bv1"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c:v1"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c=v1"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-cv1"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d"},
+		{
+			"Arg[ad]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE
+	},
+	{
+		{"-d:v1"},
+		{
+			"Arg[ad]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"-d=v1"},
+		{
+			"Arg[ad]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"-d:v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1=v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1=v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1"},
+		{
+			"Arg[ad]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"-dv1"},
+		{
+			"Arg[ad]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"-dv1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1=v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e"},
+		{
+			"Arg[ee]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE
+	},
+	{
+		{"-e:v1"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1=v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1=v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1=v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--a"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab"},
+		{
+			"Arg[ab]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE
+	},
+	{
+		{"--ab:v1"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab=v1"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac:v1"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac=v1"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad"},
+		{
+			"Arg[ad]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE
+	},
+	{
+		{"--ad:v1"},
+		{
+			"Arg[ad]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"--ad=v1"},
+		{
+			"Arg[ad]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"--ad:v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1=v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1=v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee"},
+		{
+			"Arg[ee]: \"(null)\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE
+	},
+	{
+		{"--ee:v1"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1=v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1=v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"a", "b"},
+		{
+			"Arg[-1]: \"a\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-a", "b"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b", "b"},
+		{
+			"Arg[ab]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b:v1", "b"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b=v1", "b"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-bv1", "b"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c", "b"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c:v1", "b"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c=v1", "b"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-cv1", "b"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d", "b"},
+		{
+			"Arg[ad]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"-d:v1", "b"},
+		{
+			"Arg[ad]: \"v1\" \"b\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1", "b"},
+		{
+			"Arg[ad]: \"v1\" \"b\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1:v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1=v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1:v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1=v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1", "b"},
+		{
+			"Arg[ad]: \"v1\" \"b\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1", "b"},
+		{
+			"Arg[ad]: \"v1\" \"b\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1:v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1=v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e", "b"},
+		{
+			"Arg[ee]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1", "b"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1", "b"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1", "b"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1:v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1=v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1:v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1=v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1:v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1=v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--a", "b"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab", "b"},
+		{
+			"Arg[ab]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab:v1", "b"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab=v1", "b"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac", "b"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac:v1", "b"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac=v1", "b"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad", "b"},
+		{
+			"Arg[ad]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::ERR_VALUE2
+	},
+	{
+		{"--ad:v1", "b"},
+		{
+			"Arg[ad]: \"v1\" \"b\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1", "b"},
+		{
+			"Arg[ad]: \"v1\" \"b\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1:v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1=v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1:v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1=v2", "b"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee", "b"},
+		{
+			"Arg[ee]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1", "b"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1", "b"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1:v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1=v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1:v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1=v2", "b"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+
+	{
+		{"a", "v1:v2"},
+		{
+			"Arg[-1]: \"a\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-a", "v1:v2"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b", "v1:v2"},
+		{
+			"Arg[ab]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b:v1", "v1:v2"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b=v1", "v1:v2"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-bv1", "v1:v2"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c", "v1:v2"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c:v1", "v1:v2"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c=v1", "v1:v2"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-cv1", "v1:v2"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v1:v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v1:v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1:v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1=v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1:v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1=v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v1:v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v1:v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1:v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1=v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1:v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1=v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1:v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1=v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1:v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1=v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--a", "v1:v2"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab", "v1:v2"},
+		{
+			"Arg[ab]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab:v1", "v1:v2"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab=v1", "v1:v2"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac", "v1:v2"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac:v1", "v1:v2"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac=v1", "v1:v2"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v1:v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v1:v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1:v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1=v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1:v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1=v2", "v1:v2"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1:v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1=v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1:v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1=v2", "v1:v2"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"v1:v2\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"a", "b", "c"},
+		{
+			"Arg[-1]: \"a\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-a", "b", "c"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b", "b", "c"},
+		{
+			"Arg[ab]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b:v1", "b", "c"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-b=v1", "b", "c"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-bv1", "b", "c"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c", "b", "c"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c:v1", "b", "c"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-c=v1", "b", "c"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-cv1", "b", "c"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d", "b", "c"},
+		{
+			"Arg[ad]: \"b\" \"c\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1:v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d:v1=v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1:v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-d=v1=v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1:v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-dv1=v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e", "b", "c"},
+		{
+			"Arg[ee]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1:v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e:v1=v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1:v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-e=v1=v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1:v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"-ev1=v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--a", "b", "c"},
+		{
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab", "b", "c"},
+		{
+			"Arg[ab]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab:v1", "b", "c"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ab=v1", "b", "c"},
+		{
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac", "b", "c"},
+		{
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac:v1", "b", "c"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ac=v1", "b", "c"},
+		{
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad", "b", "c"},
+		{
+			"Arg[ad]: \"b\" \"c\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1:v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad:v1=v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1:v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ad=v1=v2", "b", "c"},
+		{
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee", "b", "c"},
+		{
+			"Arg[ee]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1:v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee:v1=v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1:v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
+	{
+		{"--ee=v1=v2", "b", "c"},
+		{
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\""
+		},
+		trs::ap::ArgStatus::EOI
+	},
 };
 
 int main(){
 	trs::ap::Desc descs[] = {
 		{ 0, "-1", trs::ap::ArgType::FLAG },
-		{ 'a', "aa", trs::ap::ArgType::FLAG },
-		{ 'b', "bb", trs::ap::ArgType::VALUE },
-		{ 'c', "cc", trs::ap::ArgType::VALUE_OPTIONAL },
-		{ 'd', "dd", trs::ap::ArgType::VALUE2 },
+		{ 'a', "a", trs::ap::ArgType::FLAG },
+		{ 'b', "ab", trs::ap::ArgType::VALUE },
+		{ 'c', "ac", trs::ap::ArgType::VALUE_OPTIONAL },
+		{ 'd', "ad", trs::ap::ArgType::VALUE2 },
 		{ 'e', "ee", trs::ap::ArgType::VALUE2_OPTIONAL }
 	};
 
-	int argc = c1.args.size();
-	const char* const* argv = c1.args.data();
-	auto args = trs::ap::getAll(5, descs + 1, &argc, &argv);
 	size_t passed = 0;
+	for(size_t casei = 0; casei < cases.size(); casei++){
+		size_t lpassed = 0;
+		
+		int argc = cases[casei].args.size();
+		const char* const* argv = cases[casei].args.data();
+		auto args = trs::ap::getAll(5, descs + 1, &argc, &argv);
 
-	for(size_t i = 0; i < args.size(); i++){
-		auto& arg = args[i];
-		auto& line = c1.lines[i];
+		trs::ap::ArgStatus es = trs::ap::ArgStatus::EOI;
+		for(size_t i = 0; i < args.size(); i++){
+			auto& arg = args[i];
+			auto& line = cases[casei].lines[i];
 
-		std::stringstream ss;
+			std::stringstream ss;
 
-		ss << "Arg[" << descs[arg.m_Id + 1].m_Long << "]: \"";
-		if(arg.m_Value) 
-			ss << std::string(arg.m_Value).substr(0, arg.m_ValueLen); 
-		else 
-			ss << "(null)";
-		ss << "\" \"";
-		if(arg.m_Value2) 
-			ss << std::string(arg.m_Value2).substr(0, arg.m_Value2Len); 
-		else 
-			ss << "(null)";
-		ss << "\"";
+			ss << "Arg[" << descs[arg.m_Id + 1].m_Long << "]: \"";
+			if(arg.m_Value && arg.m_ValueLen) 
+				ss << std::string(arg.m_Value).substr(0, arg.m_ValueLen); 
+			else 
+				ss << "(null)";
+			ss << "\" \"";
+			if(arg.m_Value2 && arg.m_Value2Len) 
+				ss << std::string(arg.m_Value2).substr(0, arg.m_Value2Len); 
+			else 
+				ss << "(null)";
+			ss << "\"";
+		
+			if(ss.str() == line)
+				lpassed++;
+			else
+				std::cerr << "FAILED(case " << casei << "): Lines dismatch" << std::endl << "  G: " << ss.str() << std::endl << "  E: " << line << std::endl;
+		
+			if(arg.m_Status != trs::ap::ArgStatus::OK){
+				es = arg.m_Status;
+				break;
+			}
+		}
 
-		if(ss.str() == line)
+		if(lpassed == cases[casei].lines.size() && es == cases[casei].endStatus)
 			passed++;
 		else
-			std::cerr << ss.str() << std::endl;
-		
-		if(arg.m_Status != trs::ap::ArgStatus::OK)
-			break;
+			std::cerr << "FAILED(case " << casei << "): End status dismatch" << std::endl << "  G: " << lpassed << ":" << (int)es << std::endl << "  E: " << cases[casei].lines.size() << ":" << (int)cases[casei].endStatus << std::endl;
 	}
-
-	if(passed == c1.lines.size() && args.back().m_Status == c1.endStatus){
+	
+	if(passed == cases.size())
 		std::cout << "OK" << std::endl; 
-	} else{
-		std::cerr << passed << "/" << c1.lines.size() << std::endl;
+	else
 		std::cout << "FAILED" << std::endl;
-	}
 
 	return 0;
 }
