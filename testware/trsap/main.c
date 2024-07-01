@@ -11,7 +11,7 @@ typedef struct Case{
 	const trsap_ArgStatus endStatus;
 } Case;
 
-const Case cases[159] = {
+const Case cases[211] = {
 	{
 		1, (const char*[]){"-"},
 		1, (const char*[]){
@@ -1345,6 +1345,512 @@ const Case cases[159] = {
 		3, (const char*[]){
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"a", "b", "c"},
+		4, (const char*[]){
+			"Arg[-1]: \"a\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-a", "b", "c"},
+		4, (const char*[]){
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-b", "b", "c"},
+		3, (const char*[]){
+			"Arg[ab]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-b:v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-b=v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-bv1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-c", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-c:v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-c=v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-cv1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d", "b", "c"},
+		2, (const char*[]){
+			"Arg[ad]: \"b\" \"c\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d:v1", "b", "c"},
+		3, (const char*[]){
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d=v1", "b", "c"},
+		3, (const char*[]){
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d:v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d:v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d=v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-d=v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-dv1", "b", "c"},
+		3, (const char*[]){
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-dv1", "b", "c"},
+		3, (const char*[]){
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-dv1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-dv1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e", "b", "c"},
+		3, (const char*[]){
+			"Arg[ee]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e:v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e=v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-ev1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e:v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e:v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e=v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-e=v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-ev1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"-ev1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--a", "b", "c"},
+		4, (const char*[]){
+			"Arg[a]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ab", "b", "c"},
+		3, (const char*[]){
+			"Arg[ab]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ab:v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ab=v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ab]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ac", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"(null)\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ac:v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ac=v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ac]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad", "b", "c"},
+		2, (const char*[]){
+			"Arg[ad]: \"b\" \"c\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad:v1", "b", "c"},
+		3, (const char*[]){
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad=v1", "b", "c"},
+		3, (const char*[]){
+			"Arg[ad]: \"v1\" \"b\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad:v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad:v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad=v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ad=v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ad]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee", "b", "c"},
+		3, (const char*[]){
+			"Arg[ee]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee:v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee=v1", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"(null)\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee:v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee:v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee=v1:v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
+			"Arg[a]: \"(null)\" \"(null)\""
+		},
+		TRSAP_ARG_STATUS_EOI
+	},
+	{
+		3, (const char*[]){"--ee=v1=v2", "b", "c"},
+		4, (const char*[]){
+			"Arg[ee]: \"v1\" \"v2\"",
+			"Arg[-1]: \"b\" \"(null)\"",
+			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
 		TRSAP_ARG_STATUS_EOI
