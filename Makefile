@@ -7,11 +7,11 @@ CSTD := 17
 
 TBUILD ?= $(BUILD)/testware
 
-dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsre.dir $(BUILD)/trsc.dir
+dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsp.dir/subprogs $(BUILD)/trsre.dir $(BUILD)/trsc.dir
 dirs_testware = $(TBUILD) $(TBUILD)/trsap.dir $(TBUILD)/trsap++.dir $(TBUILD)/trsap++getAll.dir $(TBUILD)/csv.dir $(TBUILD)/csv++.dir $(TBUILD)/trsre_token.dir
 
 .PHONY: all 
-all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a $(BUILD)/libtrsre.a
+all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a $(BUILD)/libtrsre.a $(BUILD)/trsp
 testware: all $(dirs_testware) $(TBUILD)/trsap $(TBUILD)/trsap++ $(TBUILD)/trsap++getAll $(TBUILD)/csv $(TBUILD)/csv++ $(TBUILD)/trsre_token
 
 WF := -Wall -Wextra -Wpedantic
@@ -45,6 +45,16 @@ $(BUILD)/libtrsre.a: $(trsre_bin)
 
 $(filter %.c.o,$(trsre_bin)): $(BUILD)/trsre.dir/%.o: trsre/%
 	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC $(WF)
+
+trsp_src := $(wildcard trsp/**/*.cpp trsp/*.cpp)
+trsp_bin := $(patsubst trsp/%,$(BUILD)/trsp.dir/%.o,$(trsp_src))
+$(BUILD)/trsp: $(trsp_bin) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a
+	$(CXX) -o $@ $^ -std=c++$(CXXSTD)
+
+$(filter %.cpp.o,$(trsp_bin)): $(BUILD)/trsp.dir/%.o: trsp/%
+	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) $(WF)
+
+# Testware
 
 testware_trsap_src := $(wildcard testware/trsap/**/*.c testware/trsap/*.c)
 testware_trsap_bin := $(patsubst testware/trsap/%,$(TBUILD)/trsap.dir/%.o,$(testware_trsap_src))
@@ -81,7 +91,7 @@ $(filter %.c.o,$(testware_csv_bin)): $(TBUILD)/csv.dir/%.o: testware/csv/%
 $(TBUILD)/csv++:
 	echo Not implemented yet: $@
 
-testware_trsre_token_src := $(wildcard testware/trsre_token/**.c)
+testware_trsre_token_src := $(wildcard testware/trsre_token/**/*.c testware/trsre_token/*.c)
 testware_trsre_token_bin := $(patsubst testware/trsre_token/%,$(TBUILD)/trsre_token.dir/%.o,$(testware_trsre_token_src))
 $(TBUILD)/trsre_token: $(testware_trsre_token_bin) $(BUILD)/libtrsre.a
 	$(CC) -o $@ $^ -std=c$(CSTD) -ggdb
