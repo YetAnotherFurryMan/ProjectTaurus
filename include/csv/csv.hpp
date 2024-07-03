@@ -3,6 +3,8 @@
 #include <istream>
 #include <string>
 
+#include <cstring>
+
 namespace csv{
 	extern "C"{
 		#include "csv.h"
@@ -22,6 +24,18 @@ namespace csv{
 			m_Values{row.m_Values}
 		{}
 
+		Row(const Row& row):
+			m_Count{row.m_Count}
+		{
+			m_Values = (char**)malloc(row.m_Count * sizeof(char*));
+			for(std::size_t i = 0; i < m_Count; i++){
+				size_t len = strlen(row.m_Values[i]);
+				m_Values[i] = (char*)malloc(len + 1);
+				memcpy(m_Values[i], row.m_Values[i], len);
+				m_Values[i][len] = 0;
+			}
+		}
+
 		~Row(){
 			csv_freeRow(*((csv_Row*) this));
 		}
@@ -34,6 +48,8 @@ namespace csv{
 	inline Row fgetrow(std::istream& f, char delimeter){
 		std::string s;
 		std::getline(f, s);
+		if(s.empty())
+			return Row(0, 0);
 		return (Row) csv_parseRow(s.data(), delimeter);
 	}
 
