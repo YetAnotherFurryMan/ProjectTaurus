@@ -31,6 +31,12 @@ int init(int argc, const char** argv){
 		return -1;
 	}
 
+	if(!std::filesystem::exists("include"))
+		if(!std::filesystem::create_directory("include")){
+			std::cerr << "Error: Failed to create directory: include" << std::endl;
+			return -1;
+		}
+
 	if(!createFile("trsp.config/modules.csv"))
 		return -1;
 
