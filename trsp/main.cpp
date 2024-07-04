@@ -9,6 +9,7 @@ void help(const char*);
 
 int init(int, const char**);
 int regi(int, const char**);
+int build(int, const char**);
 
 int main(int argc, const char** argv){
 	const char* program = trs::ap::chop(&argc, &argv);
@@ -32,6 +33,7 @@ int main(int argc, const char** argv){
 	std::unordered_map<std::string_view, std::function<int(int, const char**)>> subprogs;
 	subprogs["init"] = init;
 	subprogs["register"] = regi;
+	subprogs["build"] = build;
 
 	if(subprogs.find(subprog) != subprogs.end())
 		return subprogs[subprog](argc, argv);

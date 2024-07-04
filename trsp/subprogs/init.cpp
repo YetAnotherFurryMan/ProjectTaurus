@@ -2,15 +2,21 @@
 #include <fstream>
 #include <filesystem>
 
-static bool createFile(const char* p){
+static bool createFile(const char* p, const char* cnt = 0){
 	std::ofstream f(p);
 	if(!f.good()){
 		std::cerr << "Error: Failed to create file: " << p << std::endl;
 		return false;
 	}
+	if(cnt) f << cnt;
 	f.close();
 	return true;
 }
+
+// name|strict|exe|encode(cmd)|LibF|EexF|DebugF|lib
+const char* languages_csv = 
+"c|c|gcc|$exe -c $in -o $out $includes -std=c17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n"
+"c++|cpp|g++|$exe -c $in -o $out $includes -std=c++17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n";
 
 int init(int argc, const char** argv){
 	(void)argv;
@@ -41,6 +47,9 @@ int init(int argc, const char** argv){
 		return -1;
 
 	if(!createFile("trsp.config/projects.csv"))
+		return -1;
+
+	if(!createFile("trsp.config/languages.csv", languages_csv))
 		return -1;
 	
 	std::cout << "OK" << std::endl;
