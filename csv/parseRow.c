@@ -21,6 +21,30 @@ csv_Row csv_parseRow(const char* line, char delimeter){
 	return row;
 }
 
+static char* csv_strtok(char* s, const char* delim){
+	static char* src;
+	if(s) src = s;
+	
+	if(!src) 
+		return NULL;
+	
+	char* r = src;
+
+	while(*src){
+		for(size_t i = 0; delim[i]; i++){
+			if(*src == delim[i]){
+				*src = 0;
+				src++;
+				return r;
+			}
+		}
+		src++;
+	}
+
+	src = NULL;
+	return r;
+}
+
 csv_Row csv_parseRow2(char* line, char delimeter){
 	csv_Row row = {0};
 
@@ -43,7 +67,7 @@ csv_Row csv_parseRow2(char* line, char delimeter){
 		return row;
 
 	char delimeters[] = {delimeter, '\n', 0};
-	char* tok = strtok(line, delimeters);
+	char* tok = csv_strtok(line, delimeters);
 
 	size_t i = 0;
 	while(tok){
@@ -57,7 +81,7 @@ csv_Row csv_parseRow2(char* line, char delimeter){
 
 		row.m_Values[i] = val;
 
-		tok = strtok(NULL, delimeters);
+		tok = csv_strtok(NULL, delimeters);
 		i++;
 	}
 

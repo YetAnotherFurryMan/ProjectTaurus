@@ -11,8 +11,10 @@ namespace csv{
 	}
 
 	struct Row{
-		size_t m_Count;
-		char** m_Values;
+		size_t m_Count = 0;
+		char** m_Values = nullptr;
+
+		Row() = default;
 
 		Row(size_t count, char** values):
 			m_Count{count},
