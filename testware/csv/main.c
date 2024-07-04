@@ -12,7 +12,7 @@ typedef struct{
 	const csv_Row* rows;
 } Case;
 
-const Case cases[3] = {
+const Case cases[5] = {
 	{'|', "a|b|c\n", 1,
 		(const csv_Row[]){
 			{3, (char*[]){"a", "b", "c"}}
@@ -26,7 +26,15 @@ const Case cases[3] = {
 			{4, (char*[]){"ala", "ma", "bialego", "kota"}},
 			{5, (char*[]){"a", "bialy", "kot", "ma", "ale"}}
 		}
-	}
+	}, {'|', "a||c\n", 1,
+		(const csv_Row[]){
+			{3, (char*[]){"a", "", "c"}}
+		}
+	}, {'|', "a|b|\n", 1,
+		(const csv_Row[]){
+			{3, (char*[]){"a", "b", ""}}
+		}
+	},
 };
 
 #define CASE_COUNT (sizeof(cases) / sizeof(Case))
