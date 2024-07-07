@@ -15,7 +15,7 @@ int regi(int argc, const char** argv){
 	using namespace trsp;
 	
 	std::string_view name;
-	std::set<std::string_view> languages;
+	std::set<std::string> languages;
 	ModuleType type = ModuleType::DEFAULT;
 
 	trs::ap::Desc descs[] = {
@@ -92,7 +92,7 @@ int regi(int argc, const char** argv){
 
 	Module mod(name, languages, type);
 
-	std::vector<ModuleRow> rows;
+	std::vector<Module> rows;
 
 	std::ifstream imods("trsp.config/modules.csv");
 	if(!imods.good()){
@@ -105,7 +105,7 @@ int regi(int argc, const char** argv){
 		auto row = csv::fgetrow(imods, '|');
 		if(row.m_Count){
 			rows.emplace_back(row);
-			if(rows.back().m_Module.m_Name == mod.m_Name){
+			if(rows.back().m_Name == mod.m_Name){
 				std::cerr << "Error: Module with name \"" << mod.m_Name << "\" already exists." << std::endl;
 				imods.close();
 				std::exit(-1);

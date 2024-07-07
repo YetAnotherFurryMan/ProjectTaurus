@@ -13,10 +13,10 @@ static bool createFile(const char* p, const char* cnt = 0){
 	return true;
 }
 
-// name|strict|exe|encode(cmd)|LibF|EexF|DebugF|lib
+// name|strict|ext|exe|encode(cmd)|LibF|EexF|DebugF|lib
 const char* languages_csv = 
-"c|c|gcc|$exe -c $in -o $out $includes -std=c17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n"
-"c++|cpp|g++|$exe -c $in -o $out $includes -std=c++17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n";
+"c|c|c|gcc|$exe -c $in -o $out $includes -std=c17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n"
+"c++|cpp|cpp|g++|$exe -c $in -o $out $includes -std=c++17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n";
 
 int init(int argc, const char** argv){
 	(void)argv;
