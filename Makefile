@@ -7,8 +7,10 @@ CSTD := 17
 
 TBUILD ?= $(BUILD)/testware
 
-dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsp.dir/subprogs $(BUILD)/trsre.dir $(BUILD)/trsc.dir
+dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/csv.dir $(BUILD)/trsp.dir $(BUILD)/trsp.dir/subprogs $(BUILD)/trsp.dir/subprogs/module $(BUILD)/trsp.dir/subprogs/project $(BUILD)/trsp.dir/subprogs/language $(BUILD)/trsre.dir $(BUILD)/trsc.dir
 dirs_testware = $(TBUILD) $(TBUILD)/trsap.dir $(TBUILD)/trsap++.dir $(TBUILD)/trsap++getAll.dir $(TBUILD)/csv.dir $(TBUILD)/csv++.dir $(TBUILD)/trsre_token.dir
+
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 
 .PHONY: all 
 all: $(dirs) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a $(BUILD)/libtrsre.a $(BUILD)/trsp
@@ -46,7 +48,8 @@ $(BUILD)/libtrsre.a: $(trsre_bin)
 $(filter %.c.o,$(trsre_bin)): $(BUILD)/trsre.dir/%.o: trsre/%
 	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC $(WF)
 
-trsp_src := $(wildcard trsp/**/*.cpp trsp/*.cpp)
+trsp_src := $(call rwildcard,trsp,*.cpp)
+#$(wildcard trsp/**/*.cpp trsp/*.cpp)
 trsp_bin := $(patsubst trsp/%,$(BUILD)/trsp.dir/%.o,$(trsp_src))
 $(BUILD)/trsp: $(trsp_bin) $(BUILD)/libtrsap.a $(BUILD)/libcsv.a
 	$(CXX) -o $@ $^ -std=c++$(CXXSTD)
