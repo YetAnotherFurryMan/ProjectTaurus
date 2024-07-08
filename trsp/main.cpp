@@ -5,11 +5,13 @@
 
 #include <trsap/trsap.hpp>
 
-void help(const char*);
+#include <trsp/entries.hpp>
 
-int init(int, const char**);
-int regi(int, const char**);
-int build(int, const char**);
+#define X(NME) int NME##_callback(int, const char**);
+X_ENTRIES
+#undef X
+
+void help(const char*);
 
 int main(int argc, const char** argv){
 	const char* program = trs::ap::chop(&argc, &argv);
@@ -31,9 +33,9 @@ int main(int argc, const char** argv){
 	}
 
 	std::unordered_map<std::string_view, std::function<int(int, const char**)>> subprogs;
-	subprogs["init"] = init;
-	subprogs["register"] = regi;
-	subprogs["build"] = build;
+#define X(NME) subprogs[#NME] = NME##_callback;
+	X_ENTRIES
+#undef X
 
 	if(subprogs.find(subprog) != subprogs.end())
 		return subprogs[subprog](argc, argv);

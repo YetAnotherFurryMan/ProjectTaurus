@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <string_view>
+#include <ostream>
 
 #include <csv/csv.hpp>
 
@@ -35,23 +36,15 @@ namespace trsp{
 		}
 
 	};
+}
 
-	/* struct ModuleRow{ */
-	/* 	Module m_Module; */
-	/* 	csv::Row m_Row; */
-	/* 	csv::Row m_Languages; */
-
-	/* 	ModuleRow(csv::Row& row): */
-	/* 		m_Row{row}, */
-	/* 		m_Languages{(row.m_Count >= 3)?csv::csv_parseRow(m_Row.m_Values[2], ';'):csv::Row(0, nullptr)} */
-	/* 	{ */
-	/* 		if(m_Row.m_Count < 3) */ 
-	/* 			return; */
-
-	/* 		std::set<std::string> langs; */
-	/* 		for(size_t i = 0; i < m_Languages.m_Count; i++) */
-	/* 			langs.emplace(m_Languages.m_Values[i]); */
-	/* 		m_Module = Module(m_Row.m_Values[0], langs, (ModuleType)std::atoi(m_Row.m_Values[1])); */
-	/* 	} */
-	/* }; */
+inline std::ostream& operator<<(std::ostream& s, const trsp::ModuleType t){
+	switch(t){
+		case trsp::ModuleType::EXE:
+			return s << "Executable";
+		case trsp::ModuleType::LIB:
+			return s << "Library";
+		default:
+			return s << "DEFAULT";
+	}
 }

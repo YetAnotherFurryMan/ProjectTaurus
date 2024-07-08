@@ -1,17 +1,15 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string_view>
 #include <set>
 
 #include <trsap/trsap.hpp>
 #include <csv/csv.hpp>
 
-// Module row:
-// name|type|languages
-
 #include <trsp/Module.hpp>
 
-int regi(int argc, const char** argv){
+int module_add_callback(int argc, const char** argv){
 	using namespace trsp;
 	
 	std::string_view name;

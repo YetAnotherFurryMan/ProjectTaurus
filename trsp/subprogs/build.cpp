@@ -73,8 +73,12 @@ static int buildMake(){
 	makefile << "BUILD ?= build" << std::endl;
 	makefile << std::endl;
 
+	// Utils
+	makefile << "rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))" << std::endl;
+	makefile << std::endl;
+
 	makefile << "dirs := ";
-	for(auto& mod: mods)
+	for(auto& mod: mods) // TODO: Search for subdirs
 		makefile << "$(BUILD)/" << mod.m_Name << ".dir ";
 	makefile << std::endl << std::endl;
 
@@ -107,16 +111,16 @@ static int buildMake(){
 	makefile << std::endl;
 
 	for(auto& mod: mods){
-		makefile << mod.m_Name << "_src := ";
+		makefile << mod.m_Name << "_src := $(call rwildcard," << mod.m_Name << ",";
 		for(auto& mlang: mod.m_Languages){
 			for(auto& lang: langs){
 				if(lang.m_Name == mlang || lang.m_Strict == mlang){
-					makefile << "$(wildcard " << mod.m_Name << "/**/*." << lang.m_Extension << " " << mod.m_Name << "/*." << lang.m_Extension << ") ";
+					makefile <<" *." << lang.m_Extension;
 					break;
 				}
 			}
 		}
-		makefile << std::endl;
+		makefile << ")" << std::endl;
 		makefile << mod.m_Name << "_bin := $(patsubst " << mod.m_Name << "/%,$(BUILD)/" << mod.m_Name << ".dir/%.o,$(" << mod.m_Name << "_src))" << std::endl;
 
 		makefile << "$(BUILD)/";
@@ -167,7 +171,7 @@ static int buildNinja(){
 	return 0;
 }
 
-int build(int argc, const char** argv){
+int build_callback(int argc, const char** argv){
 	Builder builder = Builder::DEFAULT;
 
 	trs::ap::Desc descs[] = {

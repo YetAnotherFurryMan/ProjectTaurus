@@ -18,7 +18,7 @@ const char* languages_csv =
 "c|c|c|gcc|$exe -c $in -o $out $includes -std=c17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n"
 "c++|cpp|cpp|g++|$exe -c $in -o $out $includes -std=c++17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n";
 
-int init(int argc, const char** argv){
+int init_callback(int argc, const char** argv){
 	(void)argv;
 
 	if(argc > 0){
