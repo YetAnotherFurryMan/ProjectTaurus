@@ -154,8 +154,11 @@ static int buildMake(){
 		makefile << ": $(" << mod.m_Name << "_bin)" << std::endl;
 		switch(mod.m_Type){
 			case ModuleType::EXE:
-				makefile << "\t$(CXX) -o $@ $^ -std=c++17";
-				break;
+			{
+				makefile << "\t$(CXX) -o $@ $^ -std=c++17 ";
+				for(auto& lang: langs)
+					makefile << lang.m_Libraries << " ";
+			} break;
 			case ModuleType::LIB:
 				makefile << "\t$(AR) qc $@ $^";
 				break;
