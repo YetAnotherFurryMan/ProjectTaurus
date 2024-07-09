@@ -25,6 +25,16 @@ static std::vector<std::string> lsDir(const std::string& p){
 	return dirs;
 }
 
+static std::string compileLinker(const std::string& linker, std::string_view build){
+	std::string r = linker;
+	auto pos = r.find("$build");
+	while(pos != std::string::npos){
+		r.replace(pos, 6, build);
+		pos = r.find("$build", pos + build.length());
+	}
+	return r;
+}
+
 static int buildMake(){
 	using namespace trsp;
 
@@ -162,6 +172,7 @@ static int buildMake(){
 				makefile << "\t$(CXX) -o $@ $^ -std=c++17 ";
 				for(auto& lang: langs)
 					makefile << lang.m_Libraries << " ";
+				makefile << compileLinker(mod.m_Linker, "$(BUILD)");
 			} break;
 			case ModuleType::LIB:
 				makefile << "\t$(AR) qc $@ $^";
@@ -172,7 +183,6 @@ static int buildMake(){
 		}
 		makefile << std::endl << std::endl;
 
-		// TODO: Go away with executable, use variable defined like $(strict)_exe ?= $(exe)
 		for(auto& mlang: mod.m_Languages){
 			for(auto& lang: langs){
 				if(lang.m_Name == mlang || lang.m_Strict == mlang){

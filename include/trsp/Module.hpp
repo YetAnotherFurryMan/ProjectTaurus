@@ -17,15 +17,16 @@ namespace trsp{
 		std::string m_Name;
 		std::set<std::string> m_Languages;
 		ModuleType m_Type;
+		std::string m_Linker;
 		bool m_IsValid = false;
 
 		Module() = default;
-		Module(std::string_view name, std::set<std::string>& languages, ModuleType type):
-			m_Name{name}, m_Languages{languages}, m_Type{type}, m_IsValid{true}
+		Module(std::string_view name, std::set<std::string>& languages, ModuleType type, std::string linker):
+			m_Name{name}, m_Languages{languages}, m_Type{type}, m_Linker{linker}, m_IsValid{true}
 		{}
 
 		Module(csv::Row& row){
-			if(row.m_Count < 3) 
+			if(row.m_Count < 4) 
 				return;
 
 			csv::Row langs_row = csv::parseRow(row.m_Values[2], ';');
@@ -33,7 +34,7 @@ namespace trsp{
 			std::set<std::string> langs;
 			for(size_t i = 0; i < langs_row.m_Count; i++)
 				langs.emplace(langs_row.m_Values[i]);
-			*this = Module(row.m_Values[0], langs, (ModuleType)std::atoi(row.m_Values[1]));
+			*this = Module(row.m_Values[0], langs, (ModuleType)std::atoi(row.m_Values[1]), row.m_Values[3]);
 		}
 
 		inline int write(std::string_view file_path){
@@ -70,6 +71,7 @@ namespace trsp{
 			omods << *lang_it;
 			for(lang_it++; lang_it != m_Languages.end(); lang_it++)
 				omods << ";" << *lang_it;
+			omods << "|" << m_Linker;
 			omods << std::endl;
 
 			omods.close();
