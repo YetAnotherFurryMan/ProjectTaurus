@@ -12,6 +12,19 @@ enum class Builder{
 	DEFAULT, MAKE, NINJA
 };
 
+static std::vector<std::string> lsDir(const std::string& p){
+	std::vector<std::string> dirs;
+	for(const auto& entry: std::filesystem::directory_iterator(p)){
+		if(entry.is_directory()){
+			std::string cur = p + "/" + entry.path().filename().string();
+			dirs.push_back(cur);
+			for(auto& e: lsDir(cur))
+				dirs.push_back(e);
+		}
+	}
+	return dirs;
+}
+
 static int buildMake(){
 	using namespace trsp;
 
@@ -78,8 +91,11 @@ static int buildMake(){
 	makefile << std::endl;
 
 	makefile << "dirs := ";
-	for(auto& mod: mods) // TODO: Search for subdirs
+	for(auto& mod: mods){
 		makefile << "$(BUILD)/" << mod.m_Name << ".dir ";
+		for(auto& dir: lsDir(mod.m_Name))
+			makefile << "$(BUILD)/" << mod.m_Name << ".dir" << dir.substr(mod.m_Name.length()) + " ";
+	}
 	makefile << std::endl << std::endl;
 
 	makefile << ".PHONY: all" << std::endl;
