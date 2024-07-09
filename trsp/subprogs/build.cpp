@@ -86,6 +86,10 @@ static int buildMake(){
 	makefile << "BUILD ?= build" << std::endl;
 	makefile << std::endl;
 
+	// Compilers
+	for(auto& lang: langs)
+		makefile << lang.m_Strict << "_C ?= " << lang.m_Executable << std::endl;
+
 	// Utils
 	makefile << "rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))" << std::endl;
 	makefile << std::endl;
@@ -173,7 +177,7 @@ static int buildMake(){
 			for(auto& lang: langs){
 				if(lang.m_Name == mlang || lang.m_Strict == mlang){
 					makefile << "$(filter %." << lang.m_Extension << ".o,$(" << mod.m_Name << "_bin)): $(BUILD)/" << mod.m_Name << ".dir/%.o:" << mod.m_Name << "/%" << std::endl;
-					makefile << "\t" << lang.compile(lang.m_Executable, "$^", "$@", "-Iinclude", (mod.m_Type == ModuleType::EXE?lang.m_ExeFlags:lang.m_LibFlags)) << std::endl;
+					makefile << "\t" << lang.compile("$(" + lang.m_Strict + "_C)", "$^", "$@", "-Iinclude", (mod.m_Type == ModuleType::EXE?lang.m_ExeFlags:lang.m_LibFlags)) << std::endl;
 					break;
 				} 
 			}
