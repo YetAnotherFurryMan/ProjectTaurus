@@ -37,12 +37,12 @@ int main(int argc, const char** argv){
 	X_ENTRIES
 #undef X
 
-	if(subprogs.find(subprog) != subprogs.end())
-		return subprogs[subprog](argc, argv);
-	else{
+	if(subprogs.find(subprog) == subprogs.end()){
 		std::cerr << "Error: Unknown subprogram: \"" << subprog << "\"" << std::endl;
 		std::exit(-1);
 	}
 
-	return 0;
+	auto r = subprogs[subprog](argc, argv);
+	if(r == 0) std::cout << "OK" << std::endl;
+	return r;
 }

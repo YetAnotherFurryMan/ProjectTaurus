@@ -52,7 +52,5 @@ int init_callback(int argc, const char** argv){
 	if(!createFile("trsp.config/languages.csv", languages_csv))
 		return -1;
 	
-	std::cout << "OK" << std::endl;
-
 	return 0;
 }

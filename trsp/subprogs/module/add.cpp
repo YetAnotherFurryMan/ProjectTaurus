@@ -89,50 +89,12 @@ int module_add_callback(int argc, const char** argv){
 	}
 
 	Module mod(name, languages, type);
-
-	std::vector<Module> rows;
-
-	std::ifstream imods("trsp.config/modules.csv");
-	if(!imods.good()){
-		std::cerr << "Error: Failed to open file: trsp.config/modules.csv" << std::endl 
-			<< "       Are you shure you initialized the project? Try calling init subprogram first" << std::endl;
-		return -1;
-	}
-
-	while(true){
-		auto row = csv::fgetrow(imods, '|');
-		if(row.m_Count){
-			rows.emplace_back(row);
-			if(rows.back().m_Name == mod.m_Name){
-				std::cerr << "Error: Module with name \"" << mod.m_Name << "\" already exists." << std::endl;
-				imods.close();
-				std::exit(-1);
-			}
-		} else break;
-	}
-
-	imods.close();
-
-	std::ofstream omods("trsp.config/modules.csv", std::ios::app | std::ios::out);
-	if(!omods.good()){
-		std::cerr << "Error: Failed to open file: trsp.config/modules.csv" << std::endl
-			<< "       Permissions?" << std::endl;
-		return -1;
-	}
-
-	omods << mod.m_Name << "|" << (int)mod.m_Type << "|";
-	auto lang_it = mod.m_Languages.begin();
-	omods << *lang_it;
-	for(lang_it++; lang_it != mod.m_Languages.end(); lang_it++)
-		omods << ";" << *lang_it;
-	omods << std::endl;
-
-	omods.close();
-
+	
 	std::cout << "Name: " << mod.m_Name << std::endl;
-	std::cout << "Type: " << (int)mod.m_Type << std::endl;
+	std::cout << "Type: " << mod.m_Type << std::endl;
 	std::cout << "Languages:" << std::endl;
 	for(auto& lang: mod.m_Languages) std::cout << "  " << lang << std::endl;
 
-	return 0;
+	return mod.write("trsp.config/modules.csv");
 }
+

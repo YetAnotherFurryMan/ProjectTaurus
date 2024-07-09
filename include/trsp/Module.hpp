@@ -3,7 +3,8 @@
 #include <set>
 #include <string>
 #include <string_view>
-#include <ostream>
+#include <iostream>
+#include <fstream>
 
 #include <csv/csv.hpp>
 
@@ -19,7 +20,7 @@ namespace trsp{
 		bool m_IsValid = false;
 
 		Module() = default;
-		Module(const std::string_view& name, std::set<std::string>& languages, ModuleType type):
+		Module(std::string_view name, std::set<std::string>& languages, ModuleType type):
 			m_Name{name}, m_Languages{languages}, m_Type{type}, m_IsValid{true}
 		{}
 
@@ -35,6 +36,46 @@ namespace trsp{
 			*this = Module(row.m_Values[0], langs, (ModuleType)std::atoi(row.m_Values[1]));
 		}
 
+		inline int write(std::string_view file_path){
+			std::ifstream imods(file_path.data());
+			if(!imods.good()){
+			std::cerr << "Error: Failed to open file: " << file_path << std::endl 
+					<< "       Are you shure you initialized the project? Try calling init subprogram first" << std::endl;
+				return -1;
+			}
+
+			while(true){
+				auto row = csv::fgetrow(imods, '|');
+				if(row.m_Count){
+					Module mod(row);
+					if(mod.m_Name == m_Name){
+						std::cerr << "Error: Module with name \"" << m_Name << "\" already exists." << std::endl;
+						imods.close();
+						std::exit(-1);
+					}
+				} else break;
+			}
+
+			imods.close();
+
+			std::ofstream omods(file_path.data(), std::ios::app | std::ios::out);
+			if(!omods.good()){
+				std::cerr << "Error: Failed to open file: " << file_path << std::endl
+					<< "       Permissions?" << std::endl;
+				return -1;
+			}
+
+			omods << m_Name << "|" << (int)m_Type << "|";
+			auto lang_it = m_Languages.begin();
+			omods << *lang_it;
+			for(lang_it++; lang_it != m_Languages.end(); lang_it++)
+				omods << ";" << *lang_it;
+			omods << std::endl;
+
+			omods.close();
+
+			return 0;
+		}
 	};
 }
 
