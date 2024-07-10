@@ -55,6 +55,11 @@ namespace trsp{
 			return false;
 		}
 
+		if(!isValidName(m_Name)){
+			std::cerr << "Error: Name " << std::quoted(m_Name) << " is not valid." << std::endl;
+			return false;
+		}
+
 		if(m_Languages.empty()){
 			std::cerr << "Error: No language. Try using -l or --language option." << std::endl;
 			return false;
