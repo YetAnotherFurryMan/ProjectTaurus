@@ -34,10 +34,10 @@ namespace trsp{
 			*this = Name(row.m_Values[0], (NameType)atoi(row.m_Values[1]));
 		}
 
-		inline int write(std::string_view config_path){
-			std::ofstream onames(std::string(config_path) + "/names.csv", std::ios::app | std::ios::out);
+		inline int write(std::string_view file_path){
+			std::ofstream onames(file_path.data(), std::ios::app | std::ios::out);
 			if(!onames.good()){
-				std::cerr << "Error: Failed to open file: " << config_path << "/names.csv" << std::endl
+				std::cerr << "Error: Failed to open file: " << file_path << std::endl
 					<< "       Permissions?" << std::endl;
 				return -1;
 			}

@@ -65,7 +65,7 @@ int module_add_callback(int argc, const char** argv){
 	std::cout << "Languages:" << std::endl;
 	for(auto& lang: mod.m_Languages) std::cout << "  " << lang << std::endl;
 
-	return mod.write("trsp.config/modules.csv") + nam.write("trsp.config");
+	return mod.write("trsp.config/modules.csv") + nam.write("trsp.config/names.csv");
 
 }
 
