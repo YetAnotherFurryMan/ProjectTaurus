@@ -13,10 +13,18 @@ static bool createFile(const char* p, const char* cnt = 0){
 	return true;
 }
 
-// name|strict|ext|exe|encode(cmd)|LibF|EexF|DebugF|lib
+// name|strict|ext|exe|cmd|LibF|EexF|DebugF|lib
 const char* languages_csv = 
 "c|c|c|gcc|$exe -c $in -o $out $includes -std=c17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n"
 "c++|cpp|cpp|g++|$exe -c $in -o $out $includes -std=c++17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n";
+
+// name|type
+const char* names_csv = 
+"build|0\n"
+"Makefile|0\n"
+"c|3\n"
+"cpp|3\n"
+"c++|3\n";
 
 int init_callback(int argc, const char** argv){
 	(void)argv;
@@ -50,6 +58,9 @@ int init_callback(int argc, const char** argv){
 		return -1;
 
 	if(!createFile("trsp.config/languages.csv", languages_csv))
+		return -1;
+
+	if(!createFile("trsp.config/names.csv", names_csv))
 		return -1;
 	
 	return 0;

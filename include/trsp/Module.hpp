@@ -8,6 +8,7 @@
 
 #include <csv/csv.hpp>
 
+// TODO: Deps
 namespace trsp{
 	enum class ModuleType{
 		DEFAULT, EXE, LIB
@@ -38,27 +39,6 @@ namespace trsp{
 		}
 
 		inline int write(std::string_view file_path){
-			std::ifstream imods(file_path.data());
-			if(!imods.good()){
-			std::cerr << "Error: Failed to open file: " << file_path << std::endl 
-					<< "       Are you shure you initialized the project? Try calling init subprogram first" << std::endl;
-				return -1;
-			}
-
-			while(true){
-				auto row = csv::fgetrow(imods, '|');
-				if(row.m_Count){
-					Module mod(row);
-					if(mod.m_Name == m_Name){
-						std::cerr << "Error: Module with name \"" << m_Name << "\" already exists." << std::endl;
-						imods.close();
-						std::exit(-1);
-					}
-				} else break;
-			}
-
-			imods.close();
-
 			std::ofstream omods(file_path.data(), std::ios::app | std::ios::out);
 			if(!omods.good()){
 				std::cerr << "Error: Failed to open file: " << file_path << std::endl
