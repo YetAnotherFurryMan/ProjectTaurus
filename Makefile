@@ -70,18 +70,18 @@ $(filter %.c.o,$(testware_trsap_bin)): $(TBUILD)/trsap.dir/%.o: testware/trsap/%
 testware_trsapxx_src := $(wildcard testware/trsap++/**/*.cpp testware/trsap++/*.cpp)
 testware_trsapxx_bin := $(patsubst testware/trsap++/%,$(TBUILD)/trsap++.dir/%.o,$(testware_trsapxx_src))
 $(TBUILD)/trsap++: $(testware_trsapxx_bin) $(BUILD)/libtrsap.a
-	$(CXX) -o $@ $^ -std=c++$(CSTD) -ggdb
+	$(CXX) -o $@ $^ -std=c++$(CXXSTD) -ggdb
 
 $(filter %.cpp.o,$(testware_trsapxx_bin)): $(TBUILD)/trsap++.dir/%.o: testware/trsap++/%
-	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
+	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 testware_trsapxxgetAll_src := $(wildcard testware/trsap++getAll/**/*.cpp testware/trsap++getAll/*.cpp)
 testware_trsapxxgetAll_bin := $(patsubst testware/trsap++getAll/%,$(TBUILD)/trsap++getAll.dir/%.o,$(testware_trsapxxgetAll_src))
 $(TBUILD)/trsap++getAll: $(testware_trsapxxgetAll_bin) $(BUILD)/libtrsap.a
-	$(CXX) -o $@ $^ -std=c++$(CSTD) -ggdb
+	$(CXX) -o $@ $^ -std=c++$(CXXSTD) -ggdb
 
 $(filter %.cpp.o,$(testware_trsapxxgetAll_bin)): $(TBUILD)/trsap++getAll.dir/%.o: testware/trsap++getAll/%
-	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
+	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 testware_csv_src := $(wildcard testware/csv/**/*.c testware/csv/*.c)
 testware_csv_bin := $(patsubst testware/csv/%,$(TBUILD)/csv.dir/%.o,$(testware_csv_src))
@@ -91,8 +91,13 @@ $(TBUILD)/csv: $(testware_csv_bin) $(BUILD)/libcsv.a
 $(filter %.c.o,$(testware_csv_bin)): $(TBUILD)/csv.dir/%.o: testware/csv/%
 	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
-$(TBUILD)/csv++:
-	echo Not implemented yet: $@
+testware_csvxx_src := $(wildcard testware/csv++/**/*.c testware/csv++/*.cpp)
+testware_csvxx_bin := $(patsubst testware/csv++/%,$(TBUILD)/csv++.dir/%.o,$(testware_csvxx_src))
+$(TBUILD)/csv++: $(testware_csvxx_bin) $(BUILD)/libcsv.a
+	$(CXX) -o $@ $^ -std=c++$(CXXSTD) -ggdb
+
+$(filter %.cpp.o,$(testware_csvxx_bin)): $(TBUILD)/csv++.dir/%.o: testware/csv++/%
+	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
 
 testware_trsre_token_src := $(wildcard testware/trsre_token/**/*.c testware/trsre_token/*.c)
 testware_trsre_token_bin := $(patsubst testware/trsre_token/%,$(TBUILD)/trsre_token.dir/%.o,$(testware_trsre_token_src))
