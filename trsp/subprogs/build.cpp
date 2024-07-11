@@ -13,6 +13,10 @@ enum class Builder{
 	DEFAULT, MAKE, NINJA
 };
 
+enum class Mode{
+	DEFAULT, RELEASE, DEBUG
+};
+
 struct ProjectEx{
 	trsp::Project m_Project;
 	std::vector<trsp::Module> m_Modules;
@@ -76,7 +80,7 @@ static std::string compileLinker(const std::string& linker, std::string_view bui
 	return r;
 }
 
-static int buildMake(){
+static int buildMake(Mode mode){
 	using namespace trsp;
 
 	std::vector<Module> mods;
@@ -197,7 +201,8 @@ static int buildMake(){
 				break;
 			case ModuleType::LIB:
 				makefile << "lib" << mod.m_Name << ".a";
-				// TODO: When in release create .so targets too
+				if(mode == Mode::RELEASE)
+					makefile << " $(BUILD)/" << mod.m_Name << ".so";
 				break;
 			default:
 				std::cerr << "Error: Unreachable." << std::endl;
@@ -206,7 +211,7 @@ static int buildMake(){
 		makefile << " ";
 	}
 	for(auto& proj: projs){
-		for(auto& mod: mods){
+		for(auto& mod: proj.m_Modules){
 			makefile << "$(BUILD)/" << proj.m_Project.m_Name << "/";
 			switch(mod.m_Type){
 				case ModuleType::EXE:
@@ -214,7 +219,8 @@ static int buildMake(){
 					break;
 				case ModuleType::LIB:
 					makefile << "lib" << mod.m_Name << ".a";
-					// TODO: When in release create .so targets too
+					if(mode == Mode::RELEASE)
+						makefile << " $(BUILD)/" << proj.m_Project.m_Name << "/" << mod.m_Name << ".so";
 					break;
 				default:
 					std::cerr << "Error: Unreachable." << std::endl;
@@ -276,6 +282,10 @@ static int buildMake(){
 				for(auto& lang: langs)
 					makefile << lang.m_Libraries << " ";
 				makefile << compileLinker(mod.m_Linker, "$(BUILD)");
+				if(mode == Mode::DEBUG)
+					makefile << " -ggdb";
+				else if(mode == Mode::RELEASE)
+					makefile << " $(if $(DEBUG),-ggdb,)";
 			} break;
 			case ModuleType::LIB:
 				makefile << "\t$(AR) qc $@ $^";
@@ -286,11 +296,29 @@ static int buildMake(){
 		}
 		makefile << std::endl << std::endl;
 
+		if(mode == Mode::RELEASE && mod.m_Type == ModuleType::LIB){
+			makefile << "$(BUILD)/";
+			if(!proj.empty())
+				makefile << proj << "/";
+			makefile << mod.m_Name << ".so: $(" << prefix << "_bin)" << std::endl;
+			makefile << "\t$(CXX) -o $@ $^ -std=c++17 --shared";
+			if(mode == Mode::DEBUG)
+				makefile << " -ggdb";
+
+			// makefile << compileLinker ...
+			makefile << std::endl << std::endl;
+		}
+
 		for(auto& mlang: mod.m_Languages){
 			for(auto& lang: langs){
 				if(lang.m_Name == mlang || lang.m_Strict == mlang){
+					std::string flags = (mod.m_Type == ModuleType::EXE?lang.m_ExeFlags:lang.m_LibFlags);
+					if(mode == Mode::DEBUG)
+						flags += " " + lang.m_DebugFlags;
+					else if(mode == Mode::RELEASE)
+						flags += " $(if $(DEBUG)," + lang.m_DebugFlags + ",)";
 					makefile << "$(filter %." << lang.m_Extension << ".o,$(" << prefix << "_bin)): $(BUILD)/" << mpath << ".dir/%.o:" << mpath << "/%" << std::endl;
-					makefile << "\t" << lang.compile("$(" + lang.m_Strict + "_C)", "$^", "$@", "-Iinclude", (mod.m_Type == ModuleType::EXE?lang.m_ExeFlags:lang.m_LibFlags)) << std::endl;
+					makefile << "\t" << lang.compile("$(" + lang.m_Strict + "_C)", "$^", "$@", "-Iinclude", flags) << std::endl;
 					break;
 				} 
 			}
@@ -313,20 +341,24 @@ static int buildMake(){
 	return 0;
 }
 
-static int buildNinja(){
+static int buildNinja(Mode mode){
+	(void) mode;
 	std::cerr << "Not implemented yet." << std::endl;
 	return 0;
 }
 
 int build_callback(int argc, const char** argv){
 	Builder builder = Builder::DEFAULT;
+	Mode mode = Mode::DEFAULT;
 
 	trs::ap::Desc descs[] = {
 		{ 0, "make", trs::ap::ArgType::FLAG },
-		{ 0, "ninja", trs::ap::ArgType::FLAG }
+		{ 0, "ninja", trs::ap::ArgType::FLAG },
+		{ 0, "release", trs::ap::ArgType::FLAG },
+		{ 0, "debug", trs::ap::ArgType::FLAG },
 	};
 
-	auto args = trs::ap::getAll(2, descs, &argc, &argv);
+	auto args = trs::ap::getAll(4, descs, &argc, &argv);
 	for(auto& arg: args){
 		if(arg.m_Status != trs::ap::ArgStatus::OK){
 			// TODO: Error msg
@@ -357,6 +389,24 @@ int build_callback(int argc, const char** argv){
 
 				builder = Builder::NINJA;
 			} break;
+			case 2:
+			{ // Release
+				if(mode != Mode::DEFAULT){
+					std::cerr << "Error: Mode already setted." << std::endl;
+					return -1;
+				}
+
+				mode = Mode::RELEASE;
+			} break;
+			case 3:
+			{ // Debug
+				if(mode != Mode::DEFAULT){
+					std::cerr << "Error: Mode already setted." << std::endl;
+					return -1;
+				}
+
+				mode = Mode::DEBUG;
+			} break;
 			default:
 			{
 				std::cerr << "Error: Unreachable." << std::endl;
@@ -368,9 +418,9 @@ int build_callback(int argc, const char** argv){
 	switch(builder){
 		case Builder::DEFAULT:
 		case Builder::MAKE:
-			return buildMake();
+			return buildMake(mode);
 		case Builder::NINJA:
-			return buildNinja();
+			return buildNinja(mode);
 		default:
 			std::cerr << "Error: Unreachable." << std::endl;
 			return -1;
