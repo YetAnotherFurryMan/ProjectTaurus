@@ -41,6 +41,9 @@ namespace csv{
 		~Row(){
 			csv_freeRow(*((csv_Row*) this));
 		}
+
+		// TODO: Write correct copy-assignment and move-assigment operators (operator=)
+		// https://en.cppreference.com/w/cpp/language/operators
 	};
 
 	inline Row fgetrow(FILE* f, char delimeter){
