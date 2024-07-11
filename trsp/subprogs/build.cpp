@@ -6,10 +6,51 @@
 #include <trsap/trsap.hpp>
 
 #include <trsp/Module.hpp>
+#include <trsp/Project.hpp>
 #include <trsp/Language.hpp>
 
 enum class Builder{
 	DEFAULT, MAKE, NINJA
+};
+
+struct ProjectEx{
+	trsp::Project m_Project;
+	std::vector<trsp::Module> m_Modules;
+	bool m_IsValid = false;
+
+	ProjectEx() = default;
+	ProjectEx(csv::Row& row):
+		m_Project{row}
+	{
+		if(!m_Project.m_IsValid)
+			return;
+
+		std::ifstream imods(m_Project.m_Name + "/trsp.config/modules.csv");
+		if(!imods.good()){
+			std::cerr << "Error: Failed to open file: " << m_Project.m_Name << "/trsp.config/modules.csv" << std::endl
+				<< "    Are you shure that you initialized the project correctly?" << std::endl;
+			return;
+		}
+
+		while(true){
+			auto row = csv::fgetrow(imods, '|');
+			if(row.m_Count){
+				if(std::filesystem::exists(m_Project.m_Name + "/" + row.m_Values[0])){
+					m_Modules.emplace_back(row);
+					if(!m_Modules.back().m_IsValid){
+						std::cerr << "Warning: Invalid module." << std::endl;
+						m_Modules.pop_back();
+					}
+				} else{
+					std::cerr << "Warning: Module " << std::quoted(row.m_Values[0]) << "in project" << std::quoted(m_Project.m_Name) << " does not exist." << std::endl;
+				}
+			} else break;
+		}
+
+		imods.close();
+
+		m_IsValid = true;
+	}
 };
 
 static std::vector<std::string> lsDir(const std::string& p){
@@ -57,12 +98,38 @@ static int buildMake(){
 					mods.pop_back();
 				}
 			} else{
-				std::cerr << "Warning: Module \"" << row.m_Values[0] << "\" does not exist." << std::endl;
+				std::cerr << "Warning: Module " << std::quoted(row.m_Values[0]) << " does not exist." << std::endl;
 			}
 		} else break;
 	}
 
 	imods.close();
+
+	std::vector<ProjectEx> projs;
+
+	std::ifstream iprojs("trsp.config/projects.csv");
+	if(!iprojs.good()){
+		std::cerr << "Error: Failed to open file: trsp.config/projects.csv" << std::endl 
+			<< "       Are you shure you initialized the project? Try calling init subprogram first" << std::endl;
+		return -1;
+	}
+
+	while(true){
+		auto row = csv::fgetrow(iprojs, '|');
+		if(row.m_Count){
+			if(std::filesystem::exists(row.m_Values[0])){
+				projs.emplace_back(row);
+				if(!projs.back().m_IsValid){
+					std::cerr << "Warning: Invalid project." << std::endl;
+					projs.pop_back();
+				}
+			} else{
+				std::cerr << "Warning: Project " << std::quoted(row.m_Values[0]) << " does not exist." << std::endl;
+			}
+		} else break;
+	}
+
+	iprojs.close();
 
 	std::vector<Language> langs;
 
@@ -110,6 +177,14 @@ static int buildMake(){
 		for(auto& dir: lsDir(mod.m_Name))
 			makefile << "$(BUILD)/" << mod.m_Name << ".dir" << dir.substr(mod.m_Name.length()) + " ";
 	}
+	for(auto& proj: projs){
+		makefile << "$(BUILD)/" << proj.m_Project.m_Name << " ";
+		for(auto& mod: proj.m_Modules){
+			makefile << "$(BUILD)/" << proj.m_Project.m_Name << "/" << mod.m_Name << ".dir ";
+			for(auto& dir: lsDir(proj.m_Project.m_Name + "/" + mod.m_Name))
+				makefile << "$(BUILD)/" << proj.m_Project.m_Name << "/" << mod.m_Name << ".dir" << dir.substr(mod.m_Name.length()) + " ";
+		}
+	}
 	makefile << std::endl << std::endl;
 
 	makefile << ".PHONY: all" << std::endl;
@@ -130,6 +205,24 @@ static int buildMake(){
 		}
 		makefile << " ";
 	}
+	for(auto& proj: projs){
+		for(auto& mod: mods){
+			makefile << "$(BUILD)/" << proj.m_Project.m_Name << "/";
+			switch(mod.m_Type){
+				case ModuleType::EXE:
+					makefile << mod.m_Name;
+					break;
+				case ModuleType::LIB:
+					makefile << "lib" << mod.m_Name << ".a";
+					// TODO: When in release create .so targets too
+					break;
+				default:
+					std::cerr << "Error: Unreachable." << std::endl;
+					return -1;
+			}
+			makefile << " ";
+		}
+	}
 	makefile << std::endl << std::endl;
 
 	makefile << "clean:" << std::endl;
@@ -140,8 +233,16 @@ static int buildMake(){
 	makefile << "\tmkdir -p $@" << std::endl;
 	makefile << std::endl;
 
-	for(auto& mod: mods){
-		makefile << mod.m_Name << "_src := $(call rwildcard," << mod.m_Name << ",";
+	auto buildModule = [&](Module& mod, const std::string& proj){
+		std::string prefix = mod.m_Name;
+		std::string mpath = mod.m_Name;
+
+		if(!proj.empty()){
+			prefix = proj + "_" + prefix;
+			mpath = proj + "/" + mpath;
+		}
+
+		makefile << prefix << "_src := $(call rwildcard," << mpath << ",";
 		for(auto& mlang: mod.m_Languages){
 			for(auto& lang: langs){
 				if(lang.m_Name == mlang || lang.m_Strict == mlang){
@@ -151,9 +252,11 @@ static int buildMake(){
 			}
 		}
 		makefile << ")" << std::endl;
-		makefile << mod.m_Name << "_bin := $(patsubst " << mod.m_Name << "/%,$(BUILD)/" << mod.m_Name << ".dir/%.o,$(" << mod.m_Name << "_src))" << std::endl;
+		makefile << prefix << "_bin := $(patsubst " << mpath << "/%,$(BUILD)/" << mpath << ".dir/%.o,$(" << prefix << "_src))" << std::endl;
 
 		makefile << "$(BUILD)/";
+		if(!proj.empty())
+			makefile << proj << "/";
 		switch(mod.m_Type){
 			case ModuleType::EXE:
 				makefile << mod.m_Name;
@@ -163,9 +266,9 @@ static int buildMake(){
 				break;
 			default:
 				std::cerr << "Error: Unreachable." << std::endl;
-				return -1;
+				return false;
 		}
-		makefile << ": $(" << mod.m_Name << "_bin)" << std::endl;
+		makefile << ": $(" << prefix << "_bin)" << std::endl;
 		switch(mod.m_Type){
 			case ModuleType::EXE:
 			{
@@ -179,21 +282,32 @@ static int buildMake(){
 				break;
 			default:
 				std::cerr << "Error: Unreachable." << std::endl;
-				return -1;
+				return false;
 		}
 		makefile << std::endl << std::endl;
 
 		for(auto& mlang: mod.m_Languages){
 			for(auto& lang: langs){
 				if(lang.m_Name == mlang || lang.m_Strict == mlang){
-					makefile << "$(filter %." << lang.m_Extension << ".o,$(" << mod.m_Name << "_bin)): $(BUILD)/" << mod.m_Name << ".dir/%.o:" << mod.m_Name << "/%" << std::endl;
+					makefile << "$(filter %." << lang.m_Extension << ".o,$(" << prefix << "_bin)): $(BUILD)/" << mpath << ".dir/%.o:" << mpath << "/%" << std::endl;
 					makefile << "\t" << lang.compile("$(" + lang.m_Strict + "_C)", "$^", "$@", "-Iinclude", (mod.m_Type == ModuleType::EXE?lang.m_ExeFlags:lang.m_LibFlags)) << std::endl;
 					break;
 				} 
 			}
 			makefile << std::endl << std::endl;
 		}
-	}
+
+		return true;
+	};
+
+	for(auto& mod: mods)
+		if(!buildModule(mod, "")) 
+			return -1;
+
+	for(auto& proj: projs)
+		for(auto& mod: proj.m_Modules)
+			if(!buildModule(mod, proj.m_Project.m_Name))
+				return -1;
 
 	makefile.close();
 	return 0;

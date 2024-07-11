@@ -14,12 +14,12 @@ static bool createFile(const char* p, const char* cnt = 0){
 }
 
 // name|strict|ext|exe|cmd|LibF|EexF|DebugF|lib
-const char* languages_csv = 
+static const char* languages_csv = 
 "c|c|c|gcc|$exe -c $in -o $out $includes -std=c17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n"
 "c++|cpp|cpp|g++|$exe -c $in -o $out $includes -std=c++17 -Wall -Wextra -Wpedantic $flags|-fPIC|-fPIE|-ggdb|\n";
 
 // name|type
-const char* names_csv = 
+static const char* names_csv = 
 "build|0\n"
 "Makefile|0\n"
 "c|3\n"

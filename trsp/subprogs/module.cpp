@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <functional>
 #include <unordered_map>
@@ -12,6 +13,14 @@ X_MODULE_ENTRIES
 
 int module_callback(int argc, const char** argv){
 	const char* subprog = trs::ap::chop(&argc, &argv);
+	if(!subprog){
+		std::cerr << "Error: Excepted subprogram." << std::endl;
+#define X(NME) std::cerr << "    "#NME << std::endl;
+		X_MODULE_ENTRIES
+#undef X
+		return -1;
+	}
+
 	std::unordered_map<std::string_view, std::function<int(int, const char**)>> subprogs;
 #define X(NME) subprogs[#NME] = module_##NME##_callback;
 	X_MODULE_ENTRIES
@@ -20,7 +29,7 @@ int module_callback(int argc, const char** argv){
 	if(subprogs.find(subprog) != subprogs.end())
 		return subprogs[subprog](argc, argv);
 	else{
-		std::cerr << "Error: Unknown subprogram: \"" << subprog << "\"" << std::endl;
+		std::cerr << "Error: Unknown subprogram: " << std::quoted(subprog) << std::endl;
 		std::exit(-1);
 	}
 

@@ -14,12 +14,14 @@ namespace trsp{
 		NAME,
 		LANGUAGE,
 		MODULE,
+		PROJECT,
 		EXE,
 		LIB
 	};
 
 	struct ModuleRaw{
 		std::string_view m_Name;
+		std::string_view m_Project;
 		std::set<std::string> m_Languages;
 		std::set<std::string_view> m_Modules;
 		ModuleType m_Type = ModuleType::DEFAULT;
@@ -34,6 +36,12 @@ namespace trsp{
 
 		inline Name getName(){
 			return Name(m_Name, NameType::MODULE);
+		}
+
+		inline std::string getConfigPath(const std::string& file){
+			if(m_Project.empty())
+				return "trsp.config/" + file;
+			return std::string(m_Project) + "/trsp.config/" + file;
 		}
 	};
 }

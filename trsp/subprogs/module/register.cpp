@@ -2,6 +2,8 @@
 
 #include <iomanip>
 
+#include <trsp/Language.hpp>
+
 namespace trsp{
 	bool ModuleRaw::putArg(const trs::ap::Arg& arg, ModuleRawArg type){
 		switch(type){
@@ -22,6 +24,15 @@ namespace trsp{
 			{
 				m_Modules.emplace(arg.m_Value, arg.m_ValueLen);
 			} break;  
+			case ModuleRawArg::PROJECT:
+			{
+				if(!m_Project.empty()){
+					std::cerr << "Error: Project already specified (" << std::quoted(m_Project) << ")." << std::endl;
+					return false;
+				}
+
+				m_Project = std::string_view(arg.m_Value, arg.m_ValueLen);
+			} break;
 			case ModuleRawArg::EXE:
 			{
 				if(m_Type != ModuleType::DEFAULT){
@@ -72,9 +83,41 @@ namespace trsp{
 
 		std::vector<Name> names;
 
-		std::ifstream inames("trsp.config/names.csv");
+		bool good_project = m_Project.empty();
+		if(!good_project){
+			// We must load language names from global project
+			std::ifstream inames("trsp.config/names.csv");
+			if(!inames.good()){
+				std::cerr << "Error: Failed to open file: trsp.config/names.csv" << std::endl
+					<< "       Are you shure you initialized the project? Try calling init subprogram first" << std::endl;
+				return false;
+			}
+
+			while(true){
+				auto row = csv::fgetrow(inames, '|');
+				if(!row.m_Count)
+					break;
+
+				Name name(row);
+				if(!name.m_IsValid)
+					std::cerr << "Warning: Invalid name." << std::endl;
+				else if(name.m_Type == NameType::LANGUAGE)
+					names.push_back(name);
+				else if(name.m_Type == NameType::PROJECT && name.m_Name == m_Project)
+					good_project = true;
+			}
+
+			inames.close();
+		}
+
+		if(!good_project){
+			std::cerr << "Error: Project " << std::quoted(m_Project) << " not found." << std::endl;
+			return false;
+		}
+
+		std::ifstream inames(getConfigPath("names.csv"));
 		if(!inames.good()){
-			std::cerr << "Error: Failed to open file: trsp.config/names.csv" << std::endl 
+			std::cerr << "Error: Failed to open file: " << getConfigPath("names.csv") << std::endl 
 				<< "       Are you shure you initialized the project? Try calling init subprogram first" << std::endl;
 			return false;
 		}
@@ -156,8 +199,8 @@ namespace trsp{
 		if(good_languages != m_Languages.size()){
 			std::cerr << "Error: Some languages was not registered." << std::endl;
 			return false;
-		} 
-
+		}
+		
 		m_Linker = ss.str();
 
 		return true;
