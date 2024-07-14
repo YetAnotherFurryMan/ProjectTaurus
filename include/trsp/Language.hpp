@@ -1,12 +1,27 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <string_view>
 
 #include <csv/csv.hpp>
 
 namespace trsp{
-	// name|strict|ext|exe|cmd|LibF|EexF|DebugF|lib
+	inline void encodeVar(std::string& var){
+		auto pos = var.find('\\');
+		while(pos != std::string::npos){
+			var.replace(pos, 1, "\\\\");
+			pos = var.find('\\', pos + 2);
+		}
+
+		pos = var.find('|');
+		while(pos != std::string::npos){
+			var.replace(pos, 1, "\\e");
+			pos = var.find('|', pos + 2);
+		}
+	}
+
 	struct Language{
 		std::string m_Name;
 		std::string m_Strict;
@@ -68,6 +83,32 @@ namespace trsp{
 #undef REP
 
 			return cmd;
+		}
+
+		inline int write(std::string_view file_path){
+			std::ofstream olangs(file_path.data(), std::ios::app | std::ios::out);
+			if(!olangs.good()){
+				std::cerr << "Error: Failed to open file: " << file_path << std::endl
+					<< "       Permissions?" << std::endl;
+				return -1;
+			}
+
+			encodeVar(m_Name);
+			encodeVar(m_Extension);
+			encodeVar(m_Executable);
+			encodeVar(m_Cmd);
+			encodeVar(m_LibFlags);
+			encodeVar(m_ExeFlags);
+			encodeVar(m_DebugFlags);
+			encodeVar(m_Libraries);
+
+
+			// m_Name|m_Strict|m_Extension|m_Executable|m_Cmd|m_LibFlags|m_ExeFlags|m_DebugFlags|m_Libraries
+			olangs << m_Name << '|' << m_Strict << '|' << m_Extension << '|' << m_Executable << '|' << m_Cmd << '|' 
+				<< m_LibFlags << '|' << m_ExeFlags << '|' << m_DebugFlags << '|' << m_Libraries << std::endl;
+			olangs.close();
+
+			return 0;
 		}
 	};
 }
