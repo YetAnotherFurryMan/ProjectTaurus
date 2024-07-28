@@ -1,2 +1,0 @@
-./trsp language add d -egdb -c "\$exe -c \$in -o \$out \$includes -Wall -Wextra -Wpedantic \$flags" -fexe:-fPIE -flib:-fPIC -fdebug:-ggdb -s d
-
