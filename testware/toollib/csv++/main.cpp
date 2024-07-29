@@ -5,7 +5,9 @@
 #include <vector>
 #include <string_view>
 
-#include <csv/csv.hpp>
+#include <toollib/csv/csv.hpp>
+
+namespace tl = toollib;
 
 struct Case{
 	const char delimeter;
@@ -68,7 +70,7 @@ int main(int argc, const char** argv){
 
 		size_t rowi = 0;
 		do {
-			csv::Row r = csv::fgetrow(file, delim);
+			tl::csv::Row r = tl::csv::fgetrow(file, delim);
 			if(!r.m_Values)
 				break;
 
@@ -81,9 +83,9 @@ int main(int argc, const char** argv){
 						std::cerr << "FAILED(case " << casei << "): Column dismatch " << std::quoted(r.m_Values[i]) << " != " << std::quoted(rows[rowi][i]) << std::endl;
 				}
 
-				std::string str = csv::to_string(r, delim);
+				std::string str = tl::csv::to_string(r, delim);
 				if(str.length() + ss.str().length() > line.length())
-					std::cerr << "FAILED(case " << casei << "): csv::to_string length dismatch: " << std::quoted(ss.str()) << ", " << std::quoted(str);
+					std::cerr << "FAILED(case " << casei << "): tl::csv::to_string length dismatch: " << std::quoted(ss.str()) << ", " << std::quoted(str);
 				else
 					ss << str;
 

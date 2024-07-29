@@ -5,7 +5,7 @@
 
 #include <cstring>
 
-namespace csv{
+namespace toollib::csv{
 	extern "C"{
 		#include "csv.h"
 	}

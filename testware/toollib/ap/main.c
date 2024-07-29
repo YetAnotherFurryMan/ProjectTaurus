@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <trsap/trsap.h>
+#include <toollib/ap/ap.h>
 
 typedef struct Case{
 	const int argc;
 	const char** argv;
 	const size_t count;
 	const char** lines;
-	const trsap_ArgStatus endStatus;
+	const ap_ArgStatus endStatus;
 } Case;
 
 const Case cases[211] = {
@@ -17,21 +17,21 @@ const Case cases[211] = {
 		1, (const char*[]){
 			"Arg[-1]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_SHORT
+		AP_ARG_STATUS_ERR_SHORT
 	},
 	{
 		1, (const char*[]){"-f"},
 		1, (const char*[]){
 			"Arg[-1]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_SHORT
+		AP_ARG_STATUS_ERR_SHORT
 	},
 	{
 		1, (const char*[]){"--ff"},
 		1, (const char*[]){
 			"Arg[-1]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_LONG
+		AP_ARG_STATUS_ERR_LONG
 	},
 
 	{
@@ -40,7 +40,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"a\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-a"},
@@ -48,14 +48,14 @@ const Case cases[211] = {
 			"Arg[a]: \"(null)\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-b"},
 		1, (const char*[]){
 			"Arg[ab]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE
+		AP_ARG_STATUS_ERR_VALUE
 	},
 	{
 		1, (const char*[]){"-b:v1"},
@@ -63,7 +63,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-b=v1"},
@@ -71,7 +71,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-bv1"},
@@ -79,7 +79,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-c"},
@@ -87,7 +87,7 @@ const Case cases[211] = {
 			"Arg[ac]: \"(null)\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-c:v1"},
@@ -95,7 +95,7 @@ const Case cases[211] = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-c=v1"},
@@ -103,7 +103,7 @@ const Case cases[211] = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-cv1"},
@@ -111,28 +111,28 @@ const Case cases[211] = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-d"},
 		1, (const char*[]){
 			"Arg[ad]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE
+		AP_ARG_STATUS_ERR_VALUE
 	},
 	{
 		1, (const char*[]){"-d:v1"},
 		1, (const char*[]){
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		1, (const char*[]){"-d=v1"},
 		1, (const char*[]){
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		1, (const char*[]){"-d:v1:v2"},
@@ -140,7 +140,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-d:v1=v2"},
@@ -148,7 +148,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-d=v1:v2"},
@@ -156,7 +156,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-d=v1=v2"},
@@ -164,21 +164,21 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-dv1"},
 		1, (const char*[]){
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		1, (const char*[]){"-dv1"},
 		1, (const char*[]){
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		1, (const char*[]){"-dv1:v2"},
@@ -186,7 +186,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-dv1=v2"},
@@ -194,14 +194,14 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-e"},
 		1, (const char*[]){
 			"Arg[ee]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE
+		AP_ARG_STATUS_ERR_VALUE
 	},
 	{
 		1, (const char*[]){"-e:v1"},
@@ -209,7 +209,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-e=v1"},
@@ -217,7 +217,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-ev1"},
@@ -225,7 +225,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-e:v1:v2"},
@@ -233,7 +233,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-e:v1=v2"},
@@ -241,7 +241,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-e=v1:v2"},
@@ -249,7 +249,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-e=v1=v2"},
@@ -257,7 +257,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-ev1:v2"},
@@ -265,7 +265,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"-ev1=v2"},
@@ -273,7 +273,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--a"},
@@ -281,14 +281,14 @@ const Case cases[211] = {
 			"Arg[a]: \"(null)\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ab"},
 		1, (const char*[]){
 			"Arg[ab]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE
+		AP_ARG_STATUS_ERR_VALUE
 	},
 	{
 		1, (const char*[]){"--ab:v1"},
@@ -296,7 +296,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ab=v1"},
@@ -304,7 +304,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ac"},
@@ -312,7 +312,7 @@ const Case cases[211] = {
 			"Arg[ac]: \"(null)\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ac:v1"},
@@ -320,7 +320,7 @@ const Case cases[211] = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ac=v1"},
@@ -328,28 +328,28 @@ const Case cases[211] = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ad"},
 		1, (const char*[]){
 			"Arg[ad]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE
+		AP_ARG_STATUS_ERR_VALUE
 	},
 	{
 		1, (const char*[]){"--ad:v1"},
 		1, (const char*[]){
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		1, (const char*[]){"--ad=v1"},
 		1, (const char*[]){
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		1, (const char*[]){"--ad:v1:v2"},
@@ -357,7 +357,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ad:v1=v2"},
@@ -365,7 +365,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ad=v1:v2"},
@@ -373,7 +373,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ad=v1=v2"},
@@ -381,14 +381,14 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ee"},
 		1, (const char*[]){
 			"Arg[ee]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE
+		AP_ARG_STATUS_ERR_VALUE
 	},
 	{
 		1, (const char*[]){"--ee:v1"},
@@ -396,7 +396,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ee=v1"},
@@ -404,7 +404,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ee:v1:v2"},
@@ -412,7 +412,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ee:v1=v2"},
@@ -420,7 +420,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ee=v1:v2"},
@@ -428,7 +428,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		1, (const char*[]){"--ee=v1=v2"},
@@ -436,7 +436,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"a", "b"},
@@ -445,7 +445,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-a", "b"},
@@ -454,7 +454,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-b", "b"},
@@ -462,7 +462,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-b:v1", "b"},
@@ -471,7 +471,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-b=v1", "b"},
@@ -480,7 +480,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-bv1", "b"},
@@ -489,7 +489,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-c", "b"},
@@ -498,7 +498,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-c:v1", "b"},
@@ -507,7 +507,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-c=v1", "b"},
@@ -516,7 +516,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-cv1", "b"},
@@ -525,14 +525,14 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d", "b"},
 		1, (const char*[]){
 			"Arg[ad]: \"b\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		2, (const char*[]){"-d:v1", "b"},
@@ -540,7 +540,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d=v1", "b"},
@@ -548,7 +548,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d:v1:v2", "b"},
@@ -557,7 +557,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d:v1=v2", "b"},
@@ -566,7 +566,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d=v1:v2", "b"},
@@ -575,7 +575,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d=v1=v2", "b"},
@@ -584,7 +584,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1", "b"},
@@ -592,7 +592,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1", "b"},
@@ -600,7 +600,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1:v2", "b"},
@@ -609,7 +609,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1=v2", "b"},
@@ -618,7 +618,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e", "b"},
@@ -626,7 +626,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e:v1", "b"},
@@ -635,7 +635,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e=v1", "b"},
@@ -644,7 +644,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-ev1", "b"},
@@ -653,7 +653,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e:v1:v2", "b"},
@@ -662,7 +662,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e:v1=v2", "b"},
@@ -671,7 +671,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e=v1:v2", "b"},
@@ -680,7 +680,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e=v1=v2", "b"},
@@ -689,7 +689,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-ev1:v2", "b"},
@@ -698,7 +698,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-ev1=v2", "b"},
@@ -707,7 +707,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--a", "b"},
@@ -716,7 +716,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ab", "b"},
@@ -724,7 +724,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ab:v1", "b"},
@@ -733,7 +733,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ab=v1", "b"},
@@ -742,7 +742,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ac", "b"},
@@ -751,7 +751,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ac:v1", "b"},
@@ -760,7 +760,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ac=v1", "b"},
@@ -769,14 +769,14 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad", "b"},
 		1, (const char*[]){
 			"Arg[ad]: \"b\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_ERR_VALUE2
+		AP_ARG_STATUS_ERR_VALUE2
 	},
 	{
 		2, (const char*[]){"--ad:v1", "b"},
@@ -784,7 +784,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad=v1", "b"},
@@ -792,7 +792,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad:v1:v2", "b"},
@@ -801,7 +801,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad:v1=v2", "b"},
@@ -810,7 +810,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad=v1:v2", "b"},
@@ -819,7 +819,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad=v1=v2", "b"},
@@ -828,7 +828,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee", "b"},
@@ -836,7 +836,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee:v1", "b"},
@@ -845,7 +845,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee=v1", "b"},
@@ -854,7 +854,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee:v1:v2", "b"},
@@ -863,7 +863,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee:v1=v2", "b"},
@@ -872,7 +872,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee=v1:v2", "b"},
@@ -881,7 +881,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee=v1=v2", "b"},
@@ -890,7 +890,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 
 	{
@@ -900,7 +900,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-a", "v1:v2"},
@@ -909,7 +909,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-b", "v1:v2"},
@@ -917,7 +917,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-b:v1", "v1:v2"},
@@ -926,7 +926,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-b=v1", "v1:v2"},
@@ -935,7 +935,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-bv1", "v1:v2"},
@@ -944,7 +944,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-c", "v1:v2"},
@@ -953,7 +953,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-c:v1", "v1:v2"},
@@ -962,7 +962,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-c=v1", "v1:v2"},
@@ -971,7 +971,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-cv1", "v1:v2"},
@@ -980,7 +980,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d", "v1:v2"},
@@ -988,7 +988,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d:v1", "v1:v2"},
@@ -996,7 +996,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v1:v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d=v1", "v1:v2"},
@@ -1004,7 +1004,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v1:v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d:v1:v2", "v1:v2"},
@@ -1013,7 +1013,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d:v1=v2", "v1:v2"},
@@ -1022,7 +1022,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d=v1:v2", "v1:v2"},
@@ -1031,7 +1031,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-d=v1=v2", "v1:v2"},
@@ -1040,7 +1040,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1", "v1:v2"},
@@ -1048,7 +1048,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v1:v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1", "v1:v2"},
@@ -1056,7 +1056,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v1:v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1:v2", "v1:v2"},
@@ -1065,7 +1065,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-dv1=v2", "v1:v2"},
@@ -1074,7 +1074,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e", "v1:v2"},
@@ -1082,7 +1082,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e:v1", "v1:v2"},
@@ -1091,7 +1091,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e=v1", "v1:v2"},
@@ -1100,7 +1100,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-ev1", "v1:v2"},
@@ -1109,7 +1109,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e:v1:v2", "v1:v2"},
@@ -1118,7 +1118,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e:v1=v2", "v1:v2"},
@@ -1127,7 +1127,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e=v1:v2", "v1:v2"},
@@ -1136,7 +1136,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-e=v1=v2", "v1:v2"},
@@ -1145,7 +1145,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-ev1:v2", "v1:v2"},
@@ -1154,7 +1154,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"-ev1=v2", "v1:v2"},
@@ -1163,7 +1163,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--a", "v1:v2"},
@@ -1172,7 +1172,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ab", "v1:v2"},
@@ -1180,7 +1180,7 @@ const Case cases[211] = {
 			"Arg[ab]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ab:v1", "v1:v2"},
@@ -1189,7 +1189,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ab=v1", "v1:v2"},
@@ -1198,7 +1198,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ac", "v1:v2"},
@@ -1207,7 +1207,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ac:v1", "v1:v2"},
@@ -1216,7 +1216,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ac=v1", "v1:v2"},
@@ -1225,7 +1225,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad", "v1:v2"},
@@ -1233,7 +1233,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad:v1", "v1:v2"},
@@ -1241,7 +1241,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v1:v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad=v1", "v1:v2"},
@@ -1249,7 +1249,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"v1\" \"v1:v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad:v1:v2", "v1:v2"},
@@ -1258,7 +1258,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad:v1=v2", "v1:v2"},
@@ -1267,7 +1267,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad=v1:v2", "v1:v2"},
@@ -1276,7 +1276,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ad=v1=v2", "v1:v2"},
@@ -1285,7 +1285,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee", "v1:v2"},
@@ -1293,7 +1293,7 @@ const Case cases[211] = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee:v1", "v1:v2"},
@@ -1302,7 +1302,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee=v1", "v1:v2"},
@@ -1311,7 +1311,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee:v1:v2", "v1:v2"},
@@ -1320,7 +1320,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee:v1=v2", "v1:v2"},
@@ -1329,7 +1329,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee=v1:v2", "v1:v2"},
@@ -1338,7 +1338,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		2, (const char*[]){"--ee=v1=v2", "v1:v2"},
@@ -1347,7 +1347,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"v1:v2\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"a", "b", "c"},
@@ -1357,7 +1357,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-a", "b", "c"},
@@ -1367,7 +1367,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-b", "b", "c"},
@@ -1376,7 +1376,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-b:v1", "b", "c"},
@@ -1386,7 +1386,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-b=v1", "b", "c"},
@@ -1396,7 +1396,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-bv1", "b", "c"},
@@ -1406,7 +1406,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-c", "b", "c"},
@@ -1416,7 +1416,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-c:v1", "b", "c"},
@@ -1426,7 +1426,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-c=v1", "b", "c"},
@@ -1436,7 +1436,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-cv1", "b", "c"},
@@ -1446,7 +1446,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d", "b", "c"},
@@ -1454,7 +1454,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"b\" \"c\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d:v1", "b", "c"},
@@ -1463,7 +1463,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d=v1", "b", "c"},
@@ -1472,7 +1472,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d:v1:v2", "b", "c"},
@@ -1482,7 +1482,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d:v1=v2", "b", "c"},
@@ -1492,7 +1492,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d=v1:v2", "b", "c"},
@@ -1502,7 +1502,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-d=v1=v2", "b", "c"},
@@ -1512,7 +1512,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-dv1", "b", "c"},
@@ -1521,7 +1521,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-dv1", "b", "c"},
@@ -1530,7 +1530,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-dv1:v2", "b", "c"},
@@ -1540,7 +1540,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-dv1=v2", "b", "c"},
@@ -1550,7 +1550,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e", "b", "c"},
@@ -1559,7 +1559,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e:v1", "b", "c"},
@@ -1569,7 +1569,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e=v1", "b", "c"},
@@ -1579,7 +1579,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-ev1", "b", "c"},
@@ -1589,7 +1589,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e:v1:v2", "b", "c"},
@@ -1599,7 +1599,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e:v1=v2", "b", "c"},
@@ -1609,7 +1609,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e=v1:v2", "b", "c"},
@@ -1619,7 +1619,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-e=v1=v2", "b", "c"},
@@ -1629,7 +1629,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-ev1:v2", "b", "c"},
@@ -1639,7 +1639,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"-ev1=v2", "b", "c"},
@@ -1649,7 +1649,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--a", "b", "c"},
@@ -1659,7 +1659,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ab", "b", "c"},
@@ -1668,7 +1668,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ab:v1", "b", "c"},
@@ -1678,7 +1678,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ab=v1", "b", "c"},
@@ -1688,7 +1688,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ac", "b", "c"},
@@ -1698,7 +1698,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ac:v1", "b", "c"},
@@ -1708,7 +1708,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ac=v1", "b", "c"},
@@ -1718,7 +1718,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad", "b", "c"},
@@ -1726,7 +1726,7 @@ const Case cases[211] = {
 			"Arg[ad]: \"b\" \"c\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad:v1", "b", "c"},
@@ -1735,7 +1735,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad=v1", "b", "c"},
@@ -1744,7 +1744,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad:v1:v2", "b", "c"},
@@ -1754,7 +1754,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad:v1=v2", "b", "c"},
@@ -1764,7 +1764,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad=v1:v2", "b", "c"},
@@ -1774,7 +1774,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ad=v1=v2", "b", "c"},
@@ -1784,7 +1784,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee", "b", "c"},
@@ -1793,7 +1793,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee:v1", "b", "c"},
@@ -1803,7 +1803,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee=v1", "b", "c"},
@@ -1813,7 +1813,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee:v1:v2", "b", "c"},
@@ -1823,7 +1823,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee:v1=v2", "b", "c"},
@@ -1833,7 +1833,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee=v1:v2", "b", "c"},
@@ -1843,7 +1843,7 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 	{
 		3, (const char*[]){"--ee=v1=v2", "b", "c"},
@@ -1853,23 +1853,23 @@ const Case cases[211] = {
 			"Arg[-1]: \"c\" \"(null)\"",
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		TRSAP_ARG_STATUS_EOI
+		AP_ARG_STATUS_EOI
 	},
 };
 
 #define CASE_COUNT (sizeof(cases) / sizeof(Case))
 
 int main(void){
-	trsap_Desc descs[] = {
+	ap_Desc descs[] = {
 		{ 0, "-1", 0 },
-		{ 'a', "a", TRSAP_ARG_TYPE_FLAG },
-		{ 'b', "ab", TRSAP_ARG_TYPE_VALUE },
-		{ 'c', "ac", TRSAP_ARG_TYPE_VALUE_OPTIONAL },
-		{ 'd', "ad", TRSAP_ARG_TYPE_VALUE2 },
-		{ 'e', "ee", TRSAP_ARG_TYPE_VALUE2_OPTIONAL }
+		{ 'a', "a", AP_ARG_TYPE_FLAG },
+		{ 'b', "ab", AP_ARG_TYPE_VALUE },
+		{ 'c', "ac", AP_ARG_TYPE_VALUE_OPTIONAL },
+		{ 'd', "ad", AP_ARG_TYPE_VALUE2 },
+		{ 'e', "ee", AP_ARG_TYPE_VALUE2_OPTIONAL }
 	};
 
-	trsap_Arg arg;
+	ap_Arg arg;
 	size_t passed = 0;
 	char buff[255] = {0};
 	for(size_t casei = 0; casei < CASE_COUNT; casei++){
@@ -1879,7 +1879,7 @@ int main(void){
 		const char** lines = cases[casei].lines;
 
 		do{
-			arg = trsap_next(5, descs + 1, &argc, &argv);
+			arg = ap_next(5, descs + 1, &argc, &argv);
 
 			const char* val = (arg.m_ValueLen == 0)?"(null)":arg.m_Value;
 			size_t vallen = (arg.m_ValueLen == 0)?6:arg.m_ValueLen;
@@ -1893,7 +1893,7 @@ int main(void){
 			}
 
 			lines++;
-		} while(arg.m_Status == TRSAP_ARG_STATUS_OK);
+		} while(arg.m_Status == AP_ARG_STATUS_OK);
 
 		if(count == 0 && arg.m_Status == cases[casei].endStatus)
 			passed++;

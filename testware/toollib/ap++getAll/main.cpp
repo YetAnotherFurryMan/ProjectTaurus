@@ -2,12 +2,14 @@
 #include <sstream>
 #include <vector>
 
-#include <trsap/trsap.hpp>
+#include <toollib/ap/ap.hpp>
+
+namespace tl = toollib;
 
 struct Case{
 	std::vector<const char*> args;
 	std::vector<std::string> lines;
-	trs::ap::ArgStatus endStatus = trs::ap::ArgStatus::OK;
+	tl::ap::ArgStatus endStatus = tl::ap::ArgStatus::OK;
 };
 
 std::vector<Case> cases = {
@@ -16,21 +18,21 @@ std::vector<Case> cases = {
 		{
 			"Arg[-1]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_SHORT
+		tl::ap::ArgStatus::ERR_SHORT
 	},
 	{
 		{"-f"},
 		{
 			"Arg[-1]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_SHORT
+		tl::ap::ArgStatus::ERR_SHORT
 	},
 	{
 		{"--ff"},
 		{
 			"Arg[-1]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_LONG
+		tl::ap::ArgStatus::ERR_LONG
 	},
 
 	{
@@ -38,364 +40,364 @@ std::vector<Case> cases = {
 		{
 			"Arg[-1]: \"a\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-a"},
 		{
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b"},
 		{
 			"Arg[ab]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE
+		tl::ap::ArgStatus::ERR_VALUE
 	},
 	{
 		{"-b:v1"},
 		{
 			"Arg[ab]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b=v1"},
 		{
 			"Arg[ab]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-bv1"},
 		{
 			"Arg[ab]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c"},
 		{
 			"Arg[ac]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c:v1"},
 		{
 			"Arg[ac]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c=v1"},
 		{
 			"Arg[ac]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-cv1"},
 		{
 			"Arg[ac]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d"},
 		{
 			"Arg[ad]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE
+		tl::ap::ArgStatus::ERR_VALUE
 	},
 	{
 		{"-d:v1"},
 		{
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"-d=v1"},
 		{
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"-d:v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1=v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1=v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1"},
 		{
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"-dv1"},
 		{
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"-dv1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1=v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e"},
 		{
 			"Arg[ee]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE
+		tl::ap::ArgStatus::ERR_VALUE
 	},
 	{
 		{"-e:v1"},
 		{
 			"Arg[ee]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1"},
 		{
 			"Arg[ee]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1"},
 		{
 			"Arg[ee]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1=v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1=v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1=v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--a"},
 		{
 			"Arg[a]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab"},
 		{
 			"Arg[ab]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE
+		tl::ap::ArgStatus::ERR_VALUE
 	},
 	{
 		{"--ab:v1"},
 		{
 			"Arg[ab]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab=v1"},
 		{
 			"Arg[ab]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac"},
 		{
 			"Arg[ac]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac:v1"},
 		{
 			"Arg[ac]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac=v1"},
 		{
 			"Arg[ac]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad"},
 		{
 			"Arg[ad]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE
+		tl::ap::ArgStatus::ERR_VALUE
 	},
 	{
 		{"--ad:v1"},
 		{
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"--ad=v1"},
 		{
 			"Arg[ad]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"--ad:v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1=v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1=v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee"},
 		{
 			"Arg[ee]: \"(null)\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE
+		tl::ap::ArgStatus::ERR_VALUE
 	},
 	{
 		{"--ee:v1"},
 		{
 			"Arg[ee]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1"},
 		{
 			"Arg[ee]: \"v1\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1=v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1=v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"a", "b"},
@@ -403,7 +405,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"a\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-a", "b"},
@@ -411,14 +413,14 @@ std::vector<Case> cases = {
 			"Arg[a]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b", "b"},
 		{
 			"Arg[ab]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b:v1", "b"},
@@ -426,7 +428,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b=v1", "b"},
@@ -434,7 +436,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-bv1", "b"},
@@ -442,7 +444,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c", "b"},
@@ -450,7 +452,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c:v1", "b"},
@@ -458,7 +460,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c=v1", "b"},
@@ -466,7 +468,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-cv1", "b"},
@@ -474,28 +476,28 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d", "b"},
 		{
 			"Arg[ad]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"-d:v1", "b"},
 		{
 			"Arg[ad]: \"v1\" \"b\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1", "b"},
 		{
 			"Arg[ad]: \"v1\" \"b\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1:v2", "b"},
@@ -503,7 +505,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1=v2", "b"},
@@ -511,7 +513,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1:v2", "b"},
@@ -519,7 +521,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1=v2", "b"},
@@ -527,21 +529,21 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1", "b"},
 		{
 			"Arg[ad]: \"v1\" \"b\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1", "b"},
 		{
 			"Arg[ad]: \"v1\" \"b\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1:v2", "b"},
@@ -549,7 +551,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1=v2", "b"},
@@ -557,14 +559,14 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e", "b"},
 		{
 			"Arg[ee]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1", "b"},
@@ -572,7 +574,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1", "b"},
@@ -580,7 +582,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1", "b"},
@@ -588,7 +590,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1:v2", "b"},
@@ -596,7 +598,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1=v2", "b"},
@@ -604,7 +606,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1:v2", "b"},
@@ -612,7 +614,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1=v2", "b"},
@@ -620,7 +622,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1:v2", "b"},
@@ -628,7 +630,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1=v2", "b"},
@@ -636,7 +638,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--a", "b"},
@@ -644,14 +646,14 @@ std::vector<Case> cases = {
 			"Arg[a]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab", "b"},
 		{
 			"Arg[ab]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab:v1", "b"},
@@ -659,7 +661,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab=v1", "b"},
@@ -667,7 +669,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac", "b"},
@@ -675,7 +677,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac:v1", "b"},
@@ -683,7 +685,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac=v1", "b"},
@@ -691,28 +693,28 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad", "b"},
 		{
 			"Arg[ad]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::ERR_VALUE2
+		tl::ap::ArgStatus::ERR_VALUE2
 	},
 	{
 		{"--ad:v1", "b"},
 		{
 			"Arg[ad]: \"v1\" \"b\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1", "b"},
 		{
 			"Arg[ad]: \"v1\" \"b\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1:v2", "b"},
@@ -720,7 +722,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1=v2", "b"},
@@ -728,7 +730,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1:v2", "b"},
@@ -736,7 +738,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1=v2", "b"},
@@ -744,14 +746,14 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee", "b"},
 		{
 			"Arg[ee]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1", "b"},
@@ -759,7 +761,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1", "b"},
@@ -767,7 +769,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1:v2", "b"},
@@ -775,7 +777,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1=v2", "b"},
@@ -783,7 +785,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1:v2", "b"},
@@ -791,7 +793,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1=v2", "b"},
@@ -799,7 +801,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"b\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 
 	{
@@ -808,7 +810,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"a\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-a", "v1:v2"},
@@ -816,14 +818,14 @@ std::vector<Case> cases = {
 			"Arg[a]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b", "v1:v2"},
 		{
 			"Arg[ab]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b:v1", "v1:v2"},
@@ -831,7 +833,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b=v1", "v1:v2"},
@@ -839,7 +841,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-bv1", "v1:v2"},
@@ -847,7 +849,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c", "v1:v2"},
@@ -855,7 +857,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c:v1", "v1:v2"},
@@ -863,7 +865,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c=v1", "v1:v2"},
@@ -871,7 +873,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-cv1", "v1:v2"},
@@ -879,28 +881,28 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v1:v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v1:v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1:v2", "v1:v2"},
@@ -908,7 +910,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1=v2", "v1:v2"},
@@ -916,7 +918,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1:v2", "v1:v2"},
@@ -924,7 +926,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1=v2", "v1:v2"},
@@ -932,21 +934,21 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v1:v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v1:v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1:v2", "v1:v2"},
@@ -954,7 +956,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1=v2", "v1:v2"},
@@ -962,14 +964,14 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e", "v1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1", "v1:v2"},
@@ -977,7 +979,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1", "v1:v2"},
@@ -985,7 +987,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1", "v1:v2"},
@@ -993,7 +995,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1:v2", "v1:v2"},
@@ -1001,7 +1003,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1=v2", "v1:v2"},
@@ -1009,7 +1011,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1:v2", "v1:v2"},
@@ -1017,7 +1019,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1=v2", "v1:v2"},
@@ -1025,7 +1027,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1:v2", "v1:v2"},
@@ -1033,7 +1035,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1=v2", "v1:v2"},
@@ -1041,7 +1043,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--a", "v1:v2"},
@@ -1049,14 +1051,14 @@ std::vector<Case> cases = {
 			"Arg[a]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab", "v1:v2"},
 		{
 			"Arg[ab]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab:v1", "v1:v2"},
@@ -1064,7 +1066,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab=v1", "v1:v2"},
@@ -1072,7 +1074,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac", "v1:v2"},
@@ -1080,7 +1082,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"(null)\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac:v1", "v1:v2"},
@@ -1088,7 +1090,7 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac=v1", "v1:v2"},
@@ -1096,28 +1098,28 @@ std::vector<Case> cases = {
 			"Arg[ac]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v1:v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1", "v1:v2"},
 		{
 			"Arg[ad]: \"v1\" \"v1:v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1:v2", "v1:v2"},
@@ -1125,7 +1127,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1=v2", "v1:v2"},
@@ -1133,7 +1135,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1:v2", "v1:v2"},
@@ -1141,7 +1143,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1=v2", "v1:v2"},
@@ -1149,14 +1151,14 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee", "v1:v2"},
 		{
 			"Arg[ee]: \"v1\" \"v2\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1", "v1:v2"},
@@ -1164,7 +1166,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1", "v1:v2"},
@@ -1172,7 +1174,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"(null)\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1:v2", "v1:v2"},
@@ -1180,7 +1182,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1=v2", "v1:v2"},
@@ -1188,7 +1190,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1:v2", "v1:v2"},
@@ -1196,7 +1198,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1=v2", "v1:v2"},
@@ -1204,7 +1206,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"v1\" \"v2\"",
 			"Arg[-1]: \"v1:v2\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"a", "b", "c"},
@@ -1213,7 +1215,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-a", "b", "c"},
@@ -1222,7 +1224,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b", "b", "c"},
@@ -1230,7 +1232,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b:v1", "b", "c"},
@@ -1239,7 +1241,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-b=v1", "b", "c"},
@@ -1248,7 +1250,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-bv1", "b", "c"},
@@ -1257,7 +1259,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c", "b", "c"},
@@ -1266,7 +1268,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c:v1", "b", "c"},
@@ -1275,7 +1277,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-c=v1", "b", "c"},
@@ -1284,7 +1286,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-cv1", "b", "c"},
@@ -1293,14 +1295,14 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d", "b", "c"},
 		{
 			"Arg[ad]: \"b\" \"c\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1", "b", "c"},
@@ -1308,7 +1310,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1", "b", "c"},
@@ -1316,7 +1318,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1:v2", "b", "c"},
@@ -1325,7 +1327,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d:v1=v2", "b", "c"},
@@ -1334,7 +1336,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1:v2", "b", "c"},
@@ -1343,7 +1345,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-d=v1=v2", "b", "c"},
@@ -1352,7 +1354,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1", "b", "c"},
@@ -1360,7 +1362,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1", "b", "c"},
@@ -1368,7 +1370,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1:v2", "b", "c"},
@@ -1377,7 +1379,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-dv1=v2", "b", "c"},
@@ -1386,7 +1388,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e", "b", "c"},
@@ -1394,7 +1396,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1", "b", "c"},
@@ -1403,7 +1405,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1", "b", "c"},
@@ -1412,7 +1414,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1", "b", "c"},
@@ -1421,7 +1423,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1:v2", "b", "c"},
@@ -1430,7 +1432,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e:v1=v2", "b", "c"},
@@ -1439,7 +1441,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1:v2", "b", "c"},
@@ -1448,7 +1450,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-e=v1=v2", "b", "c"},
@@ -1457,7 +1459,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1:v2", "b", "c"},
@@ -1466,7 +1468,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"-ev1=v2", "b", "c"},
@@ -1475,7 +1477,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--a", "b", "c"},
@@ -1484,7 +1486,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab", "b", "c"},
@@ -1492,7 +1494,7 @@ std::vector<Case> cases = {
 			"Arg[ab]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab:v1", "b", "c"},
@@ -1501,7 +1503,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ab=v1", "b", "c"},
@@ -1510,7 +1512,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac", "b", "c"},
@@ -1519,7 +1521,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac:v1", "b", "c"},
@@ -1528,7 +1530,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ac=v1", "b", "c"},
@@ -1537,14 +1539,14 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad", "b", "c"},
 		{
 			"Arg[ad]: \"b\" \"c\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1", "b", "c"},
@@ -1552,7 +1554,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1", "b", "c"},
@@ -1560,7 +1562,7 @@ std::vector<Case> cases = {
 			"Arg[ad]: \"v1\" \"b\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1:v2", "b", "c"},
@@ -1569,7 +1571,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad:v1=v2", "b", "c"},
@@ -1578,7 +1580,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1:v2", "b", "c"},
@@ -1587,7 +1589,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ad=v1=v2", "b", "c"},
@@ -1596,7 +1598,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee", "b", "c"},
@@ -1604,7 +1606,7 @@ std::vector<Case> cases = {
 			"Arg[ee]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1", "b", "c"},
@@ -1613,7 +1615,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1", "b", "c"},
@@ -1622,7 +1624,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1:v2", "b", "c"},
@@ -1631,7 +1633,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee:v1=v2", "b", "c"},
@@ -1640,7 +1642,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1:v2", "b", "c"},
@@ -1649,7 +1651,7 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 	{
 		{"--ee=v1=v2", "b", "c"},
@@ -1658,18 +1660,18 @@ std::vector<Case> cases = {
 			"Arg[-1]: \"b\" \"(null)\"",
 			"Arg[-1]: \"c\" \"(null)\""
 		},
-		trs::ap::ArgStatus::EOI
+		tl::ap::ArgStatus::EOI
 	},
 };
 
 int main(){
-	trs::ap::Desc descs[] = {
-		{ 0, "-1", trs::ap::ArgType::FLAG },
-		{ 'a', "a", trs::ap::ArgType::FLAG },
-		{ 'b', "ab", trs::ap::ArgType::VALUE },
-		{ 'c', "ac", trs::ap::ArgType::VALUE_OPTIONAL },
-		{ 'd', "ad", trs::ap::ArgType::VALUE2 },
-		{ 'e', "ee", trs::ap::ArgType::VALUE2_OPTIONAL }
+	tl::ap::Desc descs[] = {
+		{ 0, "-1", tl::ap::ArgType::FLAG },
+		{ 'a', "a", tl::ap::ArgType::FLAG },
+		{ 'b', "ab", tl::ap::ArgType::VALUE },
+		{ 'c', "ac", tl::ap::ArgType::VALUE_OPTIONAL },
+		{ 'd', "ad", tl::ap::ArgType::VALUE2 },
+		{ 'e', "ee", tl::ap::ArgType::VALUE2_OPTIONAL }
 	};
 
 	size_t passed = 0;
@@ -1678,9 +1680,9 @@ int main(){
 		
 		int argc = cases[casei].args.size();
 		const char* const* argv = cases[casei].args.data();
-		auto args = trs::ap::getAll(5, descs + 1, &argc, &argv);
+		auto args = tl::ap::getAll(5, descs + 1, &argc, &argv);
 
-		trs::ap::ArgStatus es = trs::ap::ArgStatus::EOI;
+		tl::ap::ArgStatus es = tl::ap::ArgStatus::EOI;
 		for(size_t i = 0; i < args.size(); i++){
 			auto& arg = args[i];
 			auto& line = cases[casei].lines[i];
@@ -1704,7 +1706,7 @@ int main(){
 			else
 				std::cerr << "FAILED(case " << casei << "): Lines dismatch" << std::endl << "  G: " << ss.str() << std::endl << "  E: " << line << std::endl;
 		
-			if(arg.m_Status != trs::ap::ArgStatus::OK){
+			if(arg.m_Status != tl::ap::ArgStatus::OK){
 				es = arg.m_Status;
 				break;
 			}
