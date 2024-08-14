@@ -181,7 +181,7 @@ void genMake(){
 			if(mod.type == ModuleType::EXE)
 				out << mod.name;
 			else if(mod.type == ModuleType::LIB)
-				out << "lib" << mod.name << ".a"; // TODO: RELEASE case
+				out << "lib" << mod.name << ".a $(if $(RELEASE),$(BUILD)/" << proj.name << "/" << mod.name << ".so,)";
 		}
 		out << std::endl << std::endl;
 	}
@@ -209,7 +209,7 @@ void genMake(){
 			if(mod.type == ModuleType::EXE){
 				out << "exebin += $(bin)" << std::endl;
 				out << "$(BUILD)/" << proj.name << "/" << mod.name << ": $(bin)" << std::endl;
-				out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic -L$(BUILD) " << mod.flags << std::endl;
+				out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,)" << mod.flags << std::endl;
 				out << std::endl;
 			} else if(mod.type == ModuleType::LIB){
 				out << "libbin += $(bin)" << std::endl;
@@ -221,7 +221,7 @@ void genMake(){
 				
 				// XYZ.so
 				out << "$(BUILD)/" << proj.name << "/" << mod.name << ".so: $(bin)" << std::endl;
-				out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared" << std::endl;
+				out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)" << std::endl;
 				out << std::endl;
 
 				// TODO: If you want to have .dll, you are welcome to write your code here :-)
@@ -235,20 +235,20 @@ void genMake(){
 
 	// C
 	out << "$(filter %.c.o, $(libbin)): %: $$(call getsrc,%)" << std::endl;
-	out << "\t$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIC" << std::endl;
+	out << "\t$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)" << std::endl;
 	out << std::endl;
 
 	out << "$(filter %.c.o, $(exebin)): %: $$(call getsrc,%)" << std::endl;
-	out << "\t$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIE" << std::endl;
+	out << "\t$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)" << std::endl;
 	out << std::endl;
 
 	// C++
 	out << "$(filter %.cpp.o, $(libbin)): %: $$(call getsrc,%)" << std::endl;
-	out << "\t$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC" << std::endl;
+	out << "\t$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)" << std::endl;
 	out << std::endl;
 
 	out << "$(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)" << std::endl;
-	out << "\t$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE" << std::endl;
+	out << "\t$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)" << std::endl;
 	out << std::endl;
 
 	// Testware
@@ -265,9 +265,9 @@ void genMake(){
 		std::string p = "testware/" + (tw.project.empty()?"":std::string(tw.project) + "/") + std::string(tw.name);
 		out << "$(BUILD)/" << p << ": " << p << (tw.language == ModuleLanguage::C?".c":".cpp") << std::endl;
 		if(tw.language == ModuleLanguage::C)
-			out << "\t$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) " << tw.flags << std::endl;
+			out << "\t$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb " << tw.flags << std::endl;
 		else if(tw.language == ModuleLanguage::CXX)
-			out << "\t$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) " << tw.flags << std::endl;
+			out << "\t$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb " << tw.flags << std::endl;
 		out << std::endl;
 	}
 

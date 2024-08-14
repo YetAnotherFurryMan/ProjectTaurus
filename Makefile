@@ -11,7 +11,7 @@ testware_dirs := $(BUILD)/testware/toollib
 all: $(dirs) toollib
 
 .PHONY: toollib
-toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(BUILD)/toollib/libcsv.a
+toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(if $(RELEASE),$(BUILD)/toollib/ap.so,) $(BUILD)/toollib/libcsv.a $(if $(RELEASE),$(BUILD)/toollib/csv.so,)
 
 clean:
 	$(RM) -r $(BUILD)
@@ -28,7 +28,7 @@ $(BUILD)/toollib/libap.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/toollib/ap.so: $(bin)
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared
+	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst toollib/csv/%,$(BUILD)/toollib/csv.dir/%.o,$(call rwildcard,toollib/csv,*.c *.cpp))
 libbin += $(bin)
@@ -36,37 +36,37 @@ $(BUILD)/toollib/libcsv.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/toollib/csv.so: $(bin)
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared
+	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
 .SECONDEXPANSION:
 
 $(filter %.c.o, $(libbin)): %: $$(call getsrc,%)
-	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIC
+	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(filter %.c.o, $(exebin)): %: $$(call getsrc,%)
-	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIE
+	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(filter %.cpp.o, $(libbin)): %: $$(call getsrc,%)
-	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC
+	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
-	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE
+	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 .PHONY: testware
 testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++
 
 $(BUILD)/testware/toollib/ap: testware/toollib/ap.c
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libap.a
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
 
 $(BUILD)/testware/toollib/ap++: testware/toollib/ap++.cpp
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libap.a
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
 
 $(BUILD)/testware/toollib/ap++getAll: testware/toollib/ap++getAll.cpp
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libap.a
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
 
 $(BUILD)/testware/toollib/csv: testware/toollib/csv.c
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libcsv.a
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcsv.a
 
 $(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libcsv.a
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcsv.a
 
