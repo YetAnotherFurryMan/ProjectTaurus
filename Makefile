@@ -1,95 +1,72 @@
 BUILD ?= build
 
-INCLUDE := include
-
-CXXSTD := 17
-CSTD := 17
-
-toollib_BUILD ?= $(BUILD)/toollib
-
-testware_BUILD ?= $(BUILD)/testware
-testware_toollib_BUILD ?= $(testware_BUILD)/toollib
-
-dirs = $(BUILD)
-dirs_toollib = $(toollib_BUILD) $(toollib_BUILD)/ap.dir $(toollib_BUILD)/csv.dir
-
-dirs_testware = $(testware_BUILD)
-dirs_testware_toollib = $(testware_toollib_BUILD) $(testware_toollib_BUILD)/ap.dir $(testware_toollib_BUILD)/ap++.dir $(testware_toollib_BUILD)/ap++getAll.dir $(testware_toollib_BUILD)/csv.dir $(testware_toollib_BUILD)/csv++.dir
-
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+getsrc=$(patsubst $(BUILD)/%,%,$(patsubst $(word 1,$(subst .dir,.dir ,$1))/%.o,$(word 1,$(subst .dir, ,$1))/%,$1))
 
-toollib: $(dirs_toollib) $(toollib_BUILD)/libap.a $(toollib_BUILD)/libcsv.a
+dirs := $(BUILD)/toollib $(BUILD)/toollib/ap.dir $(BUILD)/toollib/csv.dir
 
-.PHONY: all 
+testware_dirs := $(BUILD)/testware/toollib
+
+.PHONY: all
 all: $(dirs) toollib
 
-testware_toollib: $(dirs_testware_toollib) $(testware_toollib_BUILD)/ap $(testware_toollib_BUILD)/ap++ $(testware_toollib_BUILD)/ap++getAll $(testware_toollib_BUILD)/csv $(testware_toollib_BUILD)/csv++
-testware: all $(dirs_testware) testware_toollib
-
-WF := -Wall -Wextra -Wpedantic
+.PHONY: toollib
+toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(BUILD)/toollib/libcsv.a
 
 clean:
 	$(RM) -r $(BUILD)
 
-$(dirs) $(dirs_toollib) $(dirs_testware) $(dirs_testware_toollib):
+$(dirs) $(testware_dirs):
 	mkdir -p $@
 
-toollib_ap_SRC := $(wildcard toollib/ap/**/*.c toollib/ap/*.c)
-toollib_ap_BIN := $(patsubst toollib/ap/%,$(toollib_BUILD)/ap.dir/%.o,$(toollib_ap_SRC))
-$(toollib_BUILD)/libap.a: $(toollib_ap_BIN)
+exebin := 
+libbin := 
+
+bin = $(patsubst toollib/ap/%,$(BUILD)/toollib/ap.dir/%.o,$(call rwildcard,toollib/ap,*.c *.cpp))
+libbin += $(bin)
+$(BUILD)/toollib/libap.a: $(bin)
 	$(AR) qc $@ $^
 
-$(filter %.c.o,$(toollib_ap_BIN)): $(toollib_BUILD)/ap.dir/%.o: toollib/ap/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC $(WF)
+$(BUILD)/toollib/ap.so: $(bin)
+	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared
 
-toollib_csv_SRC := $(wildcard toollib/csv/**/*.c toollib/csv/*.c)
-toollib_csv_BIN := $(patsubst toollib/csv/%,$(toollib_BUILD)/csv.dir/%.o,$(toollib_csv_SRC))
-$(toollib_BUILD)/libcsv.a: $(toollib_csv_BIN)
+bin = $(patsubst toollib/csv/%,$(BUILD)/toollib/csv.dir/%.o,$(call rwildcard,toollib/csv,*.c *.cpp))
+libbin += $(bin)
+$(BUILD)/toollib/libcsv.a: $(bin)
 	$(AR) qc $@ $^
 
-$(filter %.c.o,$(toollib_csv_BIN)): $(toollib_BUILD)/csv.dir/%.o: toollib/csv/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC $(WF)
+$(BUILD)/toollib/csv.so: $(bin)
+	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared
 
-# Testware
+.SECONDEXPANSION:
 
-testware_toollib_ap_SRC := $(wildcard testware/toollib/ap/**/*.c testware/toollib/ap/*.c)
-testware_toollib_ap_BIN := $(patsubst testware/toollib/ap/%,$(testware_toollib_BUILD)/ap.dir/%.o,$(testware_toollib_ap_SRC))
-$(testware_toollib_BUILD)/ap: $(testware_toollib_ap_BIN) $(toollib_BUILD)/libap.a
-	$(CC) -o $@ $^ -std=c$(CSTD) -ggdb
+$(filter %.c.o, $(libbin)): %: $$(call getsrc,%)
+	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIC
 
-$(filter %.c.o,$(testware_toollib_ap_BIN)): $(testware_BUILD)/toollib/ap.dir/%.o: testware/toollib/ap/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
+$(filter %.c.o, $(exebin)): %: $$(call getsrc,%)
+	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIE
 
-testware_trsapxx_SRC := $(wildcard testware/toollib/ap++/**/*.cpp testware/toollib/ap++/*.cpp)
-testware_trsapxx_BIN := $(patsubst testware/toollib/ap++/%,$(testware_toollib_BUILD)/ap++.dir/%.o,$(testware_trsapxx_SRC))
-$(testware_toollib_BUILD)/ap++: $(testware_trsapxx_BIN) $(toollib_BUILD)/libap.a
-	$(CXX) -o $@ $^ -std=c++$(CXXSTD) -ggdb
+$(filter %.cpp.o, $(libbin)): %: $$(call getsrc,%)
+	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC
 
-$(filter %.cpp.o,$(testware_trsapxx_BIN)): $(testware_toollib_BUILD)/ap++.dir/%.o: testware/toollib/ap++/%
-	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
+$(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
+	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE
 
-testware_trsapxxgetAll_SRC := $(wildcard testware/toollib/ap++getAll/**/*.cpp testware/toollib/ap++getAll/*.cpp)
-testware_trsapxxgetAll_BIN := $(patsubst testware/toollib/ap++getAll/%,$(testware_toollib_BUILD)/ap++getAll.dir/%.o,$(testware_trsapxxgetAll_SRC))
-$(testware_toollib_BUILD)/ap++getAll: $(testware_trsapxxgetAll_BIN) $(toollib_BUILD)/libap.a
-	$(CXX) -o $@ $^ -std=c++$(CXXSTD) -ggdb
+.PHONY: testware
+testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++
 
-$(filter %.cpp.o,$(testware_trsapxxgetAll_BIN)): $(testware_toollib_BUILD)/ap++getAll.dir/%.o: testware/toollib/ap++getAll/%
-	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
+$(BUILD)/testware/toollib/ap: testware/toollib/ap.c
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libap.a
 
-testware_toollib_csv_SRC := $(wildcard testware/toollib/csv/**/*.c testware/toollib/csv/*.c)
-testware_toollib_csv_BIN := $(patsubst testware/toollib/csv/%,$(testware_toollib_BUILD)/csv.dir/%.o,$(testware_toollib_csv_SRC))
-$(testware_toollib_BUILD)/csv: $(testware_toollib_csv_BIN) $(toollib_BUILD)/libcsv.a
-	$(CC) -o $@ $^ -std=c$(CSTD) -ggdb
+$(BUILD)/testware/toollib/ap++: testware/toollib/ap++.cpp
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libap.a
 
-$(filter %.c.o,$(testware_toollib_csv_BIN)): $(testware_toollib_BUILD)/csv.dir/%.o: testware/toollib/csv/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
+$(BUILD)/testware/toollib/ap++getAll: testware/toollib/ap++getAll.cpp
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libap.a
 
-testware_toollib_csvxx_SRC := $(wildcard testware/toollib/csv++/**/*.c testware/toollib/csv++/*.cpp)
-testware_toollib_csvxx_BIN := $(patsubst testware/toollib/csv++/%,$(testware_toollib_BUILD)/csv++.dir/%.o,$(testware_toollib_csvxx_SRC))
-$(testware_toollib_BUILD)/csv++: $(testware_toollib_csvxx_BIN) $(toollib_BUILD)/libcsv.a
-	$(CXX) -o $@ $^ -std=c++$(CXXSTD) -ggdb
+$(BUILD)/testware/toollib/csv: testware/toollib/csv.c
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libcsv.a
 
-$(filter %.cpp.o,$(testware_toollib_csvxx_BIN)): $(testware_toollib_BUILD)/csv++.dir/%.o: testware/toollib/csv++/%
-	$(CXX) -c -o $@ $^ -std=c++$(CXXSTD) -I $(INCLUDE) -fPIE $(WF) -ggdb
-
+$(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -l:toollib/libcsv.a
 

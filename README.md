@@ -6,27 +6,38 @@ The Taurus Project is a collection of tools and libraries made for the Taurus Pr
   <li><b>No syntax sugar</b> - will make the code more readable</li>
   <li><b>No compiler's magic</b> - will allow the programmer to have more control on what is really going on and what the compiler is doing</li>
   <li><b>Uniform syntax</b> - one operator always means the same</li>
-  <li><b>Trust</b> - TRS and TRSS are not made for beginners! They can give you good results or headache</li>
+  <li><b>Trust</b> - TRS and TRSS are not made for beginners! They can give you good results or a headache</li>
 </ul>
 
 ## Everything is subject to change
 I am open to suggestions and objective criticism. This project is created for me and it has to meet my requirements in the first place, but I also create it because I want to learn more, so my approach, assumptions and solutions may change. Any feedback is welcome.
 
-# Libraries
-For now only 3 libraries are available. This will change in the future.
+## Building form source
+Building Taurus form source is preatty easy. All you need is C/C++ compiler like gcc/g++ or clang and GNU Make or Ninja.
 
-## Taurus Argument Parser
-TRSAP is something like getopt (or getopt_long) but for Taurus.
+``` bash
+ make RELEASE=1
+```
 
-## Taurus Command Line Interface
-TRSCLI is not complete yet. For now it is logging library only.
+``` bash
+ ninja
+```
 
-## Taurus Regular Expression
-TRSRE is a simple (and dumb) library for matching regexps in Taurus, but the main thing is trsre_get_token function written for parsing regexps into tokens. More complete is C++ version trsre::parse_rule. 
-### Important! This library is made for Taurus standard only! Expressions like a((abc){3,6})|(b) are not supported.
+Both Makefile and build.ninja are auto-generated, if you want you can use buildsystem.cpp to re-generate them.
 
-# Executable programs
-No main functionality was added, so only one program is available.
+``` bash
+ g++ buildsyatem.cpp -o buildsyatem -std=c++17
+ ./buildsystem
+```
 
-## Taurus Regular Expression Compiler
-TRSREC is... regex compiler... in Taurus standard... nothing more... depends on trsre...
+``` bash
+ clang buildsyatem.cpp -o buildsyatem -std=c++17
+ ./buildsystem
+```
+
+Also there is testware folder with all the tests for the project. You can use the buildsystem executable to automatically perform the tests.
+
+``` bash
+ ./buildsystem test
+```
+
