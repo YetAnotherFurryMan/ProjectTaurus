@@ -23,8 +23,8 @@ A library for parsing command-line argumants.
 	- AP_ARG_TYPE_VALUE_OPTIONAL
 	- AP_ARG_TYPE_VALUE2
 	- AP_ARG_TYPE_VALUE2_OPTIONAL
- - [x] ap_State - Describes state of parsing
-    - AP_ARG_STATUS_EO
+ - [x] ap_Status - Describes state of parsing
+    - AP_ARG_STATUS_EOI
     - AP_ARG_STATUS_OK
     - AP_ARG_STATUS_ERR_SHORT
     - AP_ARG_STATUS_ERR_LONG
@@ -40,7 +40,7 @@ A library for parsing command-line argumants.
     - .id (int) field is an index of matching ap_Desc, -1 if the argument is stand-alone valure
     - .value (const char*) field is the first value of the argument if specified or 0, with size stored in .valueLen (size_t)
     - .value2 (const char*) field is the second value of the argument if specified or 0, with size stored in .value2Len (size_t)
-    - .state (ap_ArgState) field specifies status (an error or succes) of parsing
+    - .status (ap_ArgStatus) field specifies status (an error or succes) of parsing
 
 #### Functions
 

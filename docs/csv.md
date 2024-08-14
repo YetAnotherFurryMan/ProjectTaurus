@@ -1,4 +1,4 @@
-# CSV
+# Taurus Toollib CSV
 
 This is the documentation of csv library which is Taurus's extension made for .csv file parsing.
 
@@ -63,7 +63,7 @@ Warning: csv.hpp includes csv.h inside of csv namespace.
  1. Row is a C++ wrapper around csv_Row. csv_freeRow is automaticly called in destructor.
 
 ``` C++
-struct csv::Row{
+struct toollib::csv::Row{
 	size_t m_Count;
 	char** m_Values;
 
@@ -76,38 +76,38 @@ struct csv::Row{
  2. fgetrow is an inline wrapping function around csv_fgetrow. Also the second one is reimplementation, so it do not call to csv_fgetrow at all.
 
 ``` C++ 
-inline csv::Row csv::fgetrow(FILE* f, char delimeter);
-inline csv::Row csv::fgetrow(std::istream& f, char delimeter);
+inline toollib::csv::Row toollib::csv::fgetrow(FILE* f, char delimeter);
+inline toollib::csv::Row toollib::csv::fgetrow(std::istream& f, char delimeter);
 ```  
  
  3. parseRow is an inline wrapping function around csv_csv_parseRow.
   
 ``` C++  
-inline csv::Row csv::parseRow(const char* line, char delimeter);
-inline csv::Row csv::parseRow(char* line, char delimeter);
+inline toollib::csv::Row toollib::csv::parseRow(const char* line, char delimeter);
+inline toollib::csv::Row toollib::csv::parseRow(char* line, char delimeter);
 ```
 
  4. encode is an inline wrapping function around csv_encode.
 
 ``` C++
-inline void csv::encode(csv::Row& row, char delimeter);
+inline void toollib::csv::encode(toollib::csv::Row& row, char delimeter);
 ```
 
  5. decode is an inline wrapping function around csv_decode.
 
 ``` C++
-inline void csv::decode(csv::Row& row, char delimeter);
+inline void toollib::csv::decode(toollib::csv::Row& row, char delimeter);
 ```
 
  6. strrow is an inline wrapping function around csv_strrow.
 
 ``` C++
-inline char* csv::strrow(const csv::Row& row, char delimeter);
+inline char* toollib::csv::strrow(const toollib::csv::Row& row, char delimeter);
 ```
 
  7. to_string is an inline function that stringifies the row. Calls strrow.
 
 ``` C++
-inline std::string csv::to_string(const csv::Row& row, char delimeter = '|');
+inline std::string toollib::csv::to_string(const toollib::csv::Row& row, char delimeter = '|');
 ```
 
