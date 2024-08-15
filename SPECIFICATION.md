@@ -254,7 +254,7 @@ A simple vector implementation (like dynamic array not math Xd). User gets a poi
  - [x] bool cvec_needsRealloc(void* vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
  - [x] void* cvec_ensure(void* vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
  - [x] void* cvec_add(void* vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
- - [ ] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
+ - [x] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
 
 #### Macros
  - [ ] cvsc_ensureN(void** VEC, size_t N) => * VEC = cvec_ensure(* VEC, N);
