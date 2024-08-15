@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstring>
 #include <vector>
 #include <set>
@@ -37,7 +38,8 @@ struct Testware{
 Project projects[] = {
 	{"toollib", {
 		{"ap", ModuleType::LIB},
-		{"csv", ModuleType::LIB}
+		{"csv", ModuleType::LIB},
+		{"cvec", ModuleType::LIB}
 	}}
 };
 
@@ -48,7 +50,8 @@ Testware testware[] = {
 	{"toollib", "ap++", "-l:toollib/libap.a", ModuleLanguage::CXX},
 	{"toollib", "ap++getAll", "-l:toollib/libap.a", ModuleLanguage::CXX},
 	{"toollib", "csv", "-l:toollib/libcsv.a"},
-	{"toollib", "csv++", "-l:toollib/libcsv.a", ModuleLanguage::CXX}
+	{"toollib", "csv++", "-l:toollib/libcsv.a", ModuleLanguage::CXX},
+	{"toollib", "cvec", "-l:toollib/libcvec.a"}
 };
 
 void genMake();
@@ -85,16 +88,16 @@ int main(int argc, const char** argv){
 
 				if(make == 1){
 					if(gen) genMake();
-					if(build) system("make -B testware");
+					if(build) if(system("make -B testware")) return 1;
 				} else if(make == -1){
 					if(gen) genNinja();
-					if(build) system("ninja");
+					if(build) if(system("ninja")) return 1;
 				}
 			} else{
 				// Make is the default for now but:
 				// TODO: Change to ninja
 				genMake();
-				system("make -B testware");
+				if(system("make -B testware")) return 1;
 			}
 
 			size_t all = 0;
@@ -285,6 +288,58 @@ void genNinja(){
 		std::cerr << "ERROR: Failed to create file: build.ninja" << std::endl;
 		return;
 	}
+
+	// TODO: RELEASE mode
+	out << "bin = build" << std::endl;
+	out << std::endl;
+	out << "rule cc" << std::endl;
+	out << "  command = gcc -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude" << std::endl;
+	out << std::endl;
+	out << "rule link" << std::endl;
+	out << "  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -L$bin" << std::endl;
+	out << std::endl;
+	out << "rule lib" << std::endl;
+	out << "  command = ar qc $out $in" << std::endl;
+	out << std::endl;
+
+	for(const auto& proj: projects){
+		for(const auto& mod: proj.modules){
+			std::stringstream bin;
+
+			std::string p = std::string(proj.name) + "/" + std::string(mod.name);
+			for(const auto& e: fs::recursive_directory_iterator(p)){
+				if(!e.is_regular_file())
+					continue;
+
+				auto erel = e.path().lexically_relative(p);
+				if(e.path().extension() == ".c"){
+					bin << " $bin/" << p << ".dir/" << erel.c_str() << ".o"; 
+					out << "build $bin/" << p << ".dir/" << erel.c_str() << ".o: cc " << p << "/" << erel.c_str() << std::endl;
+					if(mod.type == ModuleType::EXE)
+						out << "  flags = -fPIE" << std::endl;
+					else if(mod.type == ModuleType::LIB)
+						out << "  flags = -fPIC" << std::endl;
+				}
+			}
+
+			if(mod.type == ModuleType::EXE){
+				out << "build $bin/" << proj.name << "/" << mod.name << ": link" << bin.str() << std::endl;
+				out << "  flags = " << mod.flags << std::endl;
+				out << std::endl;
+			} else if(mod.type == ModuleType::LIB){
+				out << "build $bin/" << proj.name << "/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
+				out << "  flags = " << mod.flags << std::endl;
+				out << std::endl;
+				out << "build $bin/" << proj.name << "/" << mod.name << ".so: link" << bin.str() << std::endl;
+				out << "  flags = --shared" << std::endl;
+				out << std::endl;
+			}
+		}
+	}
+	// TODO: modules[]
+
+	// TODO: Testware
+	// TODO: RELEASE
 
 	out.close();
 	

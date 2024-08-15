@@ -239,21 +239,21 @@ A simple vector implementation (like dynamic array not math Xd). User gets a poi
 
 #### Structures
 
- - [ ] cvec_Header - A header of a vector that introduces the data.
+ - [x] cvec_Header - A header of a vector that introduces the data.
     - .count (size_t) - the count of elements.
     - .element (size_t) - the size of a single element.
-    - .capacity (size_t) - the amount of allocated memory.
+    - .size (size_t) - the amount of allocated memory.
     - .data (char[]) - the data (flexible array member).
 
 #### Functions
 
- - [ ] void* cvec_new(size_t element, size_t n) - Allocates a new vector with n elements and returns a pointer to the data.
- - [ ] void cvec_free(void* vec) - Frees the vector.
- - [ ] size_t cvec_length(void* vec) - Returns .count of vec, inline.
- - [ ] size_t cvec_capacity(void* vec) - Returns .capacity of vec, inline.
- - [ ] bool cvsc_needsRealloc(void* vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
- - [ ] void* cvec_ensure(void* vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
- - [ ] void* cvec_add(void* vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
+ - [x] void* cvec_new(size_t element, size_t n) - Allocates a new vector with n elements and returns a pointer to the data or NULL.
+ - [x] void cvec_free(void* vec) - Frees the vector.
+ - [x] size_t cvec_length(void* vec) - Returns .count of vec, inline.
+ - [x] size_t cvec_size(void* vec) - Returns .size of vec, inline.
+ - [x] bool cvec_needsRealloc(void* vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
+ - [x] void* cvec_ensure(void* vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
+ - [x] void* cvec_add(void* vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
  - [ ] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
 
 #### Macros
@@ -278,4 +278,66 @@ A simple memory area implementation. An area is a peace of preallocated memory (
  - [ ] void* carea_alloc(carea_Area* area, size_t n) - Returns a pointer to the end of area, if n is bigger than the capacity, a new area page is allocated. Returns 0 on error.
  - [ ] void carea_free(carea_Area* area) - Sets the size of area to 0, if there were any new pages allocated, they will be freed permanently and the area will be expanded.
  - [ ] void carea_freeHard(carea_Area* area) - Frees the area pernamently.
+
+### Taurus Lisp (toollib -> trslisp)
+
+A light-weight library for parsing and evaluating list-based command-first expresions (lisp).
+
+#### Syntax
+
+ - A list is defined inside prentises e.g. (a b c)
+ - A pair is defined by dot e.g. (a . b)
+ - There is special nil value.
+ - Command-first, means that in (a b c) case the 'a' is the command and 'b', 'c' are the arguments.
+ - Vectors (and matrixes) are defined in square brackets e.g. [1 2 3] or [[1 2 3] [4 5 6] [7 8 9]]
+ - Strings are defined in quotes e.g. 'Hello World'
+ - (a . (b . (c . nil))) = (a b c)
+ - All lists are evaluated like calls, vectors and strings are always values.
+ - Symbols begins with $ (instead of ') and represent both in-script defined functions and variables e.g. ($a b c) or ($f (a b c))
+ - However when $ is followed by a number from 0 to 9 it means the index of argument passed to the function. When the argument wasn't passed it is equal to nil. $$ is a list of arguments with indexes greater than 9, $$n where 9 >= n >= 0 means all arguments that follows n, so $$0 is a list of all arguments passed to the function. E.g. ($f (a $1) (b $2 $3) ($f $$4))
+
+#### Types
+
+ - [ ] trslisp_FunctionType (??) - A function pointer that can be called from lisp.
+
+#### Enumerations
+
+TODO
+
+#### Structures
+
+TODO: AST
+ - [ ] trslisp_Lisp - The state.
+    - .data (void*) - A pointer to prealocated memory.
+    - .size (size_t) - The capacity of memory.
+    - .realloc (void*(size_t)) - A function pointer to allocator, NULL if VM is not allowed to reallocate memory.
+    - .error (??) - Set on error.
+
+#### Functions
+
+ - [ ] trslisp_Lisp trslisp_new(void* data, size_t size, void*(size_t) realloc) - Initializes new state, inline.
+ - [ ] ?? trslisp_eval(trslisp_Lisp* st, const char* src) - Evaluates src.
+ - [ ] ?? trslisp_evalFile(trslisp_Lisp* st, FILE* file) - Evaluates the file.
+
+### Taurus Simple Evaluated Values (toollib -> tsev)
+
+A simple and very light-weight library for evaluating simple config files.
+
+#### Types
+
+ - [ ] int - a signed integer
+ - [ ] seq - aka string
+
+#### Syntax
+
+ - [ ] A name is a sequense that matches \[a-zA-Z_]\[a-zA-Z0-9_]*
+ - [ ] A value is int if matches \[0-9]+ otherwise it is a seq
+ - [ ] Defining/overriding NAME = VALUE
+ - [ ] Basic algebra with ints (+, -, /, *, %)
+ - [ ] Concatencion with plus sign (+)
+ - [ ] Evaluation priority may be changed with preanteces e.g. (1 + 2) * 3
+ - [ ] Comments with double-slash (//)
+
+TODO
+
 

@@ -3,7 +3,7 @@ BUILD ?= build
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 getsrc=$(patsubst $(BUILD)/%,%,$(patsubst $(word 1,$(subst .dir,.dir ,$1))/%.o,$(word 1,$(subst .dir, ,$1))/%,$1))
 
-dirs := $(BUILD)/toollib $(BUILD)/toollib/ap.dir $(BUILD)/toollib/csv.dir
+dirs := $(BUILD)/toollib $(BUILD)/toollib/ap.dir $(BUILD)/toollib/csv.dir $(BUILD)/toollib/cvec.dir
 
 testware_dirs := $(BUILD)/testware/toollib
 
@@ -11,7 +11,7 @@ testware_dirs := $(BUILD)/testware/toollib
 all: $(dirs) toollib
 
 .PHONY: toollib
-toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(if $(RELEASE),$(BUILD)/toollib/ap.so,) $(BUILD)/toollib/libcsv.a $(if $(RELEASE),$(BUILD)/toollib/csv.so,)
+toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(if $(RELEASE),$(BUILD)/toollib/ap.so,) $(BUILD)/toollib/libcsv.a $(if $(RELEASE),$(BUILD)/toollib/csv.so,) $(BUILD)/toollib/libcvec.a $(if $(RELEASE),$(BUILD)/toollib/cvec.so,)
 
 clean:
 	$(RM) -r $(BUILD)
@@ -38,6 +38,14 @@ $(BUILD)/toollib/libcsv.a: $(bin)
 $(BUILD)/toollib/csv.so: $(bin)
 	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
+bin = $(patsubst toollib/cvec/%,$(BUILD)/toollib/cvec.dir/%.o,$(call rwildcard,toollib/cvec,*.c *.cpp))
+libbin += $(bin)
+$(BUILD)/toollib/libcvec.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/toollib/cvec.so: $(bin)
+	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
 .SECONDEXPANSION:
 
 $(filter %.c.o, $(libbin)): %: $$(call getsrc,%)
@@ -53,7 +61,7 @@ $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
 	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 .PHONY: testware
-testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++
+testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++ $(BUILD)/testware/toollib/cvec
 
 $(BUILD)/testware/toollib/ap: testware/toollib/ap.c
 	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
@@ -69,4 +77,7 @@ $(BUILD)/testware/toollib/csv: testware/toollib/csv.c
 
 $(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp
 	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcsv.a
+
+$(BUILD)/testware/toollib/cvec: testware/toollib/cvec.c
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcvec.a
 
