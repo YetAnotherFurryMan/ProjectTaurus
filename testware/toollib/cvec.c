@@ -36,13 +36,13 @@ int main(void){
 	if(!cvec_needsRealloc(vec, 20)) FAIL("int[19] does not need to be realloced for 20 ints.");
 
 	for(int i = 0; i < 10; i++)
-		vec = cvec_add(vec, &i);
+		cvec_addN(vec, &i);
 
 	for(int i = 0; i < 20; i++)
 		if(vec[i] != i % 10) FAIL("Failed to fill by cvec_add");
 
 	int arr[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-	vec = cvec_addArray(vec, arr, 10);
+	cvec_addArrayN(vec, arr, 10);
 
 	for(int i = 0; i < 20; i++)
 		if(vec[i] != i % 10) FAIL("Failed to fill by cvec_addArray");
