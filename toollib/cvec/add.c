@@ -7,7 +7,7 @@ void* cvec_add(void* vec, void* val){
 
 	cvec_Header* head = &((cvec_Header*)vec)[-1];
 
-	memcpy(vec + (head->m_Count * head->m_Element), val, head->m_Element);
+	memcpy(((char*)vec) + (head->m_Count * head->m_Element), val, head->m_Element);
 	head->m_Count++;
 
 	return vec;
@@ -18,7 +18,7 @@ void* cvec_addArray(void* vec, void* arr, size_t n){
 
 	cvec_Header* head = &((cvec_Header*)vec)[-1];
 
-	memcpy(vec + (head->m_Count * head->m_Element), arr, head->m_Element * n);
+	memcpy(((char*)vec) + (head->m_Count * head->m_Element), arr, head->m_Element * n);
 	head->m_Count += n;
 
 	return vec;

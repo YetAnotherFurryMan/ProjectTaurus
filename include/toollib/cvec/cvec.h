@@ -34,4 +34,8 @@ static inline bool cvec_needsRealloc(void* vec, size_t n){
 	return (head.m_Size - (head.m_Element * head.m_Count)) < (head.m_Element * n);
 }
 
+#define cvec_ensureN(VEC, N) VEC = cvec_ensure(VEC, N)
+#define cvec_addN(VEC, VAL) VEC = cvec_add(VEC, VAL)
+#define cvec_addArrayN(VEC, ARR, N) VEC = cvec_addArray(VEC, ARR, N)
+
 #endif // _CVEC_H_

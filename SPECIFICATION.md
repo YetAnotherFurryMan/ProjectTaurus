@@ -257,9 +257,10 @@ A simple vector implementation (like dynamic array not math Xd). User gets a poi
  - [x] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
 
 #### Macros
- - [ ] cvsc_ensureN(void** VEC, size_t N) => * VEC = cvec_ensure(* VEC, N);
- - [ ] cvec_addN(void** VEC, void* VAL) => * VEC = cvec_add(* VEC, VAL);
- - [ ] cvec_addArrayN(void** VEC, void* ARR, size_t N) => * VEC = cvec_addArray(* VEC, ARR, N);
+
+ - [x] cvsc_ensureN(void** VEC, size_t N) => * VEC = cvec_ensure(* VEC, N);
+ - [x] cvec_addN(void** VEC, void* VAL) => * VEC = cvec_add(* VEC, VAL);
+ - [x] cvec_addArrayN(void** VEC, void* ARR, size_t N) => * VEC = cvec_addArray(* VEC, ARR, N);
 
 ### C Area (toollib -> carea)
 
