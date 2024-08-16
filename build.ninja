@@ -1,0 +1,59 @@
+bin = build
+
+rule cc
+  command = gcc -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude
+
+rule cxx
+  command = g++ -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -Iinclude
+
+rule link
+  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -L$bin
+
+rule lib
+  command = ar qc $out $in
+
+rule testware
+  command = gcc $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude
+
+rule testwarexx
+  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -Iinclude
+
+build toollib: phony $bin/toollib/libap.a $bin/toollib/ap.so $bin/toollib/libcsv.a $bin/toollib/csv.so $bin/toollib/libcvec.a $bin/toollib/cvec.so
+build $bin/toollib/ap.dir/ap.c.o: cc toollib/ap/ap.c
+  flags = -fPIC
+build $bin/toollib/libap.a: lib $bin/toollib/ap.dir/ap.c.o
+
+build $bin/toollib/ap.so: link $bin/toollib/ap.dir/ap.c.o
+  flags = --shared 
+
+build $bin/toollib/csv.dir/freeRow.c.o: cc toollib/csv/freeRow.c
+  flags = -fPIC
+build $bin/toollib/csv.dir/strrow.c.o: cc toollib/csv/strrow.c
+  flags = -fPIC
+build $bin/toollib/csv.dir/parseRow.c.o: cc toollib/csv/parseRow.c
+  flags = -fPIC
+build $bin/toollib/csv.dir/encoding.c.o: cc toollib/csv/encoding.c
+  flags = -fPIC
+build $bin/toollib/csv.dir/fgetrow.c.o: cc toollib/csv/fgetrow.c
+  flags = -fPIC
+build $bin/toollib/libcsv.a: lib $bin/toollib/csv.dir/freeRow.c.o $bin/toollib/csv.dir/strrow.c.o $bin/toollib/csv.dir/parseRow.c.o $bin/toollib/csv.dir/encoding.c.o $bin/toollib/csv.dir/fgetrow.c.o
+
+build $bin/toollib/csv.so: link $bin/toollib/csv.dir/freeRow.c.o $bin/toollib/csv.dir/strrow.c.o $bin/toollib/csv.dir/parseRow.c.o $bin/toollib/csv.dir/encoding.c.o $bin/toollib/csv.dir/fgetrow.c.o
+  flags = --shared 
+
+build $bin/toollib/cvec.dir/add.c.o: cc toollib/cvec/add.c
+  flags = -fPIC
+build $bin/toollib/cvec.dir/memory.c.o: cc toollib/cvec/memory.c
+  flags = -fPIC
+build $bin/toollib/libcvec.a: lib $bin/toollib/cvec.dir/add.c.o $bin/toollib/cvec.dir/memory.c.o
+
+build $bin/toollib/cvec.so: link $bin/toollib/cvec.dir/add.c.o $bin/toollib/cvec.dir/memory.c.o
+  flags = --shared 
+
+build testware: phony  $bin/testware/toollib/ap $bin/testware/toollib/ap++ $bin/testware/toollib/ap++getAll $bin/testware/toollib/csv $bin/testware/toollib/csv++ $bin/testware/toollib/cvec
+build $bin/testware/toollib/ap: testware testware/toollib/ap.c $bin/toollib/libap.a
+build $bin/testware/toollib/ap++: testwarexx testware/toollib/ap++.cpp $bin/toollib/libap.a
+build $bin/testware/toollib/ap++getAll: testwarexx testware/toollib/ap++getAll.cpp $bin/toollib/libap.a
+build $bin/testware/toollib/csv: testware testware/toollib/csv.c $bin/toollib/libcsv.a
+build $bin/testware/toollib/csv++: testwarexx testware/toollib/csv++.cpp $bin/toollib/libcsv.a
+build $bin/testware/toollib/cvec: testware testware/toollib/cvec.c $bin/toollib/libcvec.a

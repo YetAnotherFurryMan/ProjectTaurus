@@ -63,21 +63,21 @@ $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
 .PHONY: testware
 testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++ $(BUILD)/testware/toollib/cvec
 
-$(BUILD)/testware/toollib/ap: testware/toollib/ap.c
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
+$(BUILD)/testware/toollib/ap: testware/toollib/ap.c $(BUILD)/toollib/libap.a
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
-$(BUILD)/testware/toollib/ap++: testware/toollib/ap++.cpp
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
+$(BUILD)/testware/toollib/ap++: testware/toollib/ap++.cpp $(BUILD)/toollib/libap.a
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
-$(BUILD)/testware/toollib/ap++getAll: testware/toollib/ap++getAll.cpp
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libap.a
+$(BUILD)/testware/toollib/ap++getAll: testware/toollib/ap++getAll.cpp $(BUILD)/toollib/libap.a
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
-$(BUILD)/testware/toollib/csv: testware/toollib/csv.c
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcsv.a
+$(BUILD)/testware/toollib/csv: testware/toollib/csv.c $(BUILD)/toollib/libcsv.a
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
-$(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcsv.a
+$(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp $(BUILD)/toollib/libcsv.a
+	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
-$(BUILD)/testware/toollib/cvec: testware/toollib/cvec.c
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb -l:toollib/libcvec.a
+$(BUILD)/testware/toollib/cvec: testware/toollib/cvec.c $(BUILD)/toollib/libcvec.a
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
