@@ -13,12 +13,12 @@ rule lib
   command = ar qc $out $in
 
 rule testware
-  command = gcc $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude
+  command = gcc $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude -ggdb
 
 rule testwarexx
-  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -Iinclude
+  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -Iinclude -ggdb
 
-build toollib: phony $bin/toollib/libap.a $bin/toollib/ap.so $bin/toollib/libcsv.a $bin/toollib/csv.so $bin/toollib/libcvec.a $bin/toollib/cvec.so
+build toollib: phony $bin/toollib/libap.a $bin/toollib/ap.so $bin/toollib/libcsv.a $bin/toollib/csv.so $bin/toollib/libcvec.a $bin/toollib/cvec.so $bin/toollib/libcarea.a $bin/toollib/carea.so
 build $bin/toollib/ap.dir/ap.c.o: cc toollib/ap/ap.c
   flags = -fPIC
 build $bin/toollib/libap.a: lib $bin/toollib/ap.dir/ap.c.o
@@ -50,10 +50,18 @@ build $bin/toollib/libcvec.a: lib $bin/toollib/cvec.dir/add.c.o $bin/toollib/cve
 build $bin/toollib/cvec.so: link $bin/toollib/cvec.dir/add.c.o $bin/toollib/cvec.dir/memory.c.o
   flags = --shared 
 
-build testware: phony  $bin/testware/toollib/ap $bin/testware/toollib/ap++ $bin/testware/toollib/ap++getAll $bin/testware/toollib/csv $bin/testware/toollib/csv++ $bin/testware/toollib/cvec
+build $bin/toollib/carea.dir/carea.c.o: cc toollib/carea/carea.c
+  flags = -fPIC
+build $bin/toollib/libcarea.a: lib $bin/toollib/carea.dir/carea.c.o
+
+build $bin/toollib/carea.so: link $bin/toollib/carea.dir/carea.c.o
+  flags = --shared 
+
+build testware: phony  $bin/testware/toollib/ap $bin/testware/toollib/ap++ $bin/testware/toollib/ap++getAll $bin/testware/toollib/csv $bin/testware/toollib/csv++ $bin/testware/toollib/cvec $bin/testware/toollib/carea
 build $bin/testware/toollib/ap: testware testware/toollib/ap.c $bin/toollib/libap.a
 build $bin/testware/toollib/ap++: testwarexx testware/toollib/ap++.cpp $bin/toollib/libap.a
 build $bin/testware/toollib/ap++getAll: testwarexx testware/toollib/ap++getAll.cpp $bin/toollib/libap.a
 build $bin/testware/toollib/csv: testware testware/toollib/csv.c $bin/toollib/libcsv.a
 build $bin/testware/toollib/csv++: testwarexx testware/toollib/csv++.cpp $bin/toollib/libcsv.a
 build $bin/testware/toollib/cvec: testware testware/toollib/cvec.c $bin/toollib/libcvec.a
+build $bin/testware/toollib/carea: testware testware/toollib/carea.c $bin/toollib/libcarea.a

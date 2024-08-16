@@ -21,6 +21,7 @@ struct Module{
 	std::string_view name;
 	ModuleType type = ModuleType::EXE;
 	std::string_view flags = "";
+	std::vector<std::string_view> deps;
 };
 
 struct Project{
@@ -31,36 +32,36 @@ struct Project{
 struct Testware{
 	std::string_view project;
 	std::string_view name;
-	std::string_view flags;
+	std::vector<std::string_view> deps;
 	ModuleLanguage language = ModuleLanguage::C;
+	std::string_view flags = "";
 };
 
 Project projects[] = {
 	{"toollib", {
 		{"ap", ModuleType::LIB},
 		{"csv", ModuleType::LIB},
-		{"cvec", ModuleType::LIB}
+		{"cvec", ModuleType::LIB},
+		{"carea", ModuleType::LIB}
 	}}
 };
 
 Module modules[] = {};
 
 Testware testware[] = {
-	{"toollib", "ap", "-l:toollib/libap.a"},
-	{"toollib", "ap++", "-l:toollib/libap.a", ModuleLanguage::CXX},
-	{"toollib", "ap++getAll", "-l:toollib/libap.a", ModuleLanguage::CXX},
-	{"toollib", "csv", "-l:toollib/libcsv.a"},
-	{"toollib", "csv++", "-l:toollib/libcsv.a", ModuleLanguage::CXX},
-	{"toollib", "cvec", "-l:toollib/libcvec.a"}
+	{"toollib", "ap", {"toollib/libap.a"}},
+	{"toollib", "ap++", {"toollib/libap.a"}, ModuleLanguage::CXX},
+	{"toollib", "ap++getAll", {"toollib/libap.a"}, ModuleLanguage::CXX},
+	{"toollib", "csv", {"toollib/libcsv.a"}},
+	{"toollib", "csv++", {"toollib/libcsv.a"}, ModuleLanguage::CXX},
+	{"toollib", "cvec", {"toollib/libcvec.a"}},
+	{"toollib", "carea", {"toollib/libcarea.a"}}
 };
 
 void genMake();
 void genNinja();
 
 int main(int argc, const char** argv){
-
-	// TODO: ./buildsystem test
-
 	if(argc > 1){
 		const char* arg = argv[1];
 		if(strcmp(arg, "make") == 0){
@@ -94,10 +95,8 @@ int main(int argc, const char** argv){
 					if(build) if(system("ninja")) return 1;
 				}
 			} else{
-				// Make is the default for now but:
-				// TODO: Change to ninja
-				genMake();
-				if(system("make -B testware")) return 1;
+				genNinja();
+				if(system("ninja testware")) return 1;
 			}
 
 			size_t all = 0;
@@ -211,7 +210,10 @@ void genMake(){
 			out << "bin = $(patsubst " << p << "/%,$(BUILD)/" << p << ".dir/%.o,$(call rwildcard," << p << ",*.c *.cpp))" << std::endl;
 			if(mod.type == ModuleType::EXE){
 				out << "exebin += $(bin)" << std::endl;
-				out << "$(BUILD)/" << proj.name << "/" << mod.name << ": $(bin)" << std::endl;
+				out << "$(BUILD)/" << proj.name << "/" << mod.name << ": $(bin)";
+				for(const auto& dep: mod.deps)
+					out << " $(BUILD)/" << dep;
+				out << std::endl;
 				out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,)" << mod.flags << std::endl;
 				out << std::endl;
 			} else if(mod.type == ModuleType::LIB){
@@ -266,7 +268,10 @@ void genMake(){
 
 	for(const auto& tw: testware){
 		std::string p = "testware/" + (tw.project.empty()?"":std::string(tw.project) + "/") + std::string(tw.name);
-		out << "$(BUILD)/" << p << ": " << p << (tw.language == ModuleLanguage::C?".c":".cpp") << std::endl;
+		out << "$(BUILD)/" << p << ": " << p << (tw.language == ModuleLanguage::C?".c":".cpp");
+		for(const auto& dep: tw.deps)
+			out << " $(BUILD)/" << dep;
+		out << std::endl;
 		if(tw.language == ModuleLanguage::C)
 			out << "\t$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb " << tw.flags << std::endl;
 		else if(tw.language == ModuleLanguage::CXX)
@@ -295,13 +300,36 @@ void genNinja(){
 	out << "rule cc" << std::endl;
 	out << "  command = gcc -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude" << std::endl;
 	out << std::endl;
+	out << "rule cxx" << std::endl;
+	out << "  command = g++ -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -Iinclude" << std::endl;
+	out << std::endl;
 	out << "rule link" << std::endl;
 	out << "  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -L$bin" << std::endl;
 	out << std::endl;
 	out << "rule lib" << std::endl;
 	out << "  command = ar qc $out $in" << std::endl;
 	out << std::endl;
+	out << "rule testware" << std::endl;
+	out << "  command = gcc $in -o $out -Wall -Wextra -Wpedantic $flags -std=c17 -Iinclude -ggdb" << std::endl;
+	out << std::endl;
+	out << "rule testwarexx" << std::endl;
+	out << "  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=c++17 -Iinclude -ggdb" << std::endl;
+	out << std::endl;
 
+	// Projects
+	for(const auto& proj: projects){
+		out << "build " << proj.name << ": phony";
+		for(const auto& mod: proj.modules){
+			out << " $bin/" << proj.name << "/";
+			if(mod.type == ModuleType::EXE)
+				out << mod.name;
+			else if(mod.type == ModuleType::LIB)
+				out << "lib" << mod.name << ".a $bin/" << proj.name << "/" << mod.name << ".so";
+		}
+		out << std::endl;
+	}
+
+	// Modules
 	for(const auto& proj: projects){
 		for(const auto& mod: proj.modules){
 			std::stringstream bin;
@@ -315,31 +343,53 @@ void genNinja(){
 				if(e.path().extension() == ".c"){
 					bin << " $bin/" << p << ".dir/" << erel.c_str() << ".o"; 
 					out << "build $bin/" << p << ".dir/" << erel.c_str() << ".o: cc " << p << "/" << erel.c_str() << std::endl;
-					if(mod.type == ModuleType::EXE)
-						out << "  flags = -fPIE" << std::endl;
-					else if(mod.type == ModuleType::LIB)
-						out << "  flags = -fPIC" << std::endl;
+				} else if(e.path().extension() == ".cpp"){
+					bin << " $bin/" << p << ".dir/" << erel.c_str() << ".o"; 
+					out << "build $bin/" << p << ".dir/" << erel.c_str() << ".o: cxx " << p << "/" << erel.c_str() << std::endl;
 				}
+
+				if(mod.type == ModuleType::EXE)
+					out << "  flags = -fPIE" << std::endl;
+				else if(mod.type == ModuleType::LIB)
+					out << "  flags = -fPIC" << std::endl;
 			}
 
 			if(mod.type == ModuleType::EXE){
-				out << "build $bin/" << proj.name << "/" << mod.name << ": link" << bin.str() << std::endl;
+				out << "build $bin/" << proj.name << "/" << mod.name << ": link" << bin.str();
+				for(const auto& dep: mod.deps)
+					out << " $bin/" << dep;
+				out << std::endl;
 				out << "  flags = " << mod.flags << std::endl;
 				out << std::endl;
 			} else if(mod.type == ModuleType::LIB){
 				out << "build $bin/" << proj.name << "/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
-				out << "  flags = " << mod.flags << std::endl;
 				out << std::endl;
 				out << "build $bin/" << proj.name << "/" << mod.name << ".so: link" << bin.str() << std::endl;
-				out << "  flags = --shared" << std::endl;
+				out << "  flags = --shared " << mod.flags << std::endl;
 				out << std::endl;
 			}
 		}
 	}
 	// TODO: modules[]
 
-	// TODO: Testware
 	// TODO: RELEASE
+
+	// Testware
+	out << "build testware: phony ";
+	for(const auto& tw: testware)
+		out << " $bin/testware/" << tw.project << "/" << tw.name;
+	out << std::endl;
+
+	for(const auto& tw: testware){
+		out << "build $bin/testware/" << tw.project << "/" << tw.name << ": ";
+		if(tw.language == ModuleLanguage::C)
+			out << "testware testware/" << tw.project << "/" << tw.name << ".c";
+		else if(tw.language == ModuleLanguage::CXX)
+			out << "testwarexx testware/" << tw.project << "/" << tw.name << ".cpp";
+		for(const auto& dep: tw.deps)
+			out << " $bin/" << dep;
+		out << std::endl;
+	}
 
 	out.close();
 	

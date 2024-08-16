@@ -255,12 +255,14 @@ A simple vector implementation (like dynamic array not math Xd). User gets a poi
  - [x] void* cvec_ensure(void* vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
  - [x] void* cvec_add(void* vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
  - [x] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
+ - [ ] void cvec_remove(void* vec, size_t index) - Remove element at index.
 
 #### Macros
 
  - [x] cvsc_ensureN(void** VEC, size_t N) => * VEC = cvec_ensure(* VEC, N);
  - [x] cvec_addN(void** VEC, void* VAL) => * VEC = cvec_add(* VEC, VAL);
  - [x] cvec_addArrayN(void** VEC, void* ARR, size_t N) => * VEC = cvec_addArray(* VEC, ARR, N);
+ - [ ] cvec_addAllN(void** VEC, ...) => * VEC = cvec_addArray(* VEC, ...);
 
 ### C Area (toollib -> carea)
 
@@ -268,15 +270,15 @@ A simple memory area implementation. An area is a peace of preallocated memory (
 
 #### Structures
 
- - [ ] carea_Area - Holds information about the state of the area.
+ - [x] carea_Area - Holds information about the state of the area.
     - .capacity (size_t) - the amount of preallocated memory. 
     - .size (size_t) - the amount of allocated memory inside the area.
     - .data (void*) - the data.
 
 #### Functions
 
- - [ ] carea_Area carea_new(size_t cap) - Creates a new area.
- - [ ] void* carea_alloc(carea_Area* area, size_t n) - Returns a pointer to the end of area, if n is bigger than the capacity, a new area page is allocated. Returns 0 on error.
+ - [x] carea_Area carea_new(size_t cap) - Creates a new area.
+ - [x] void* carea_alloc(carea_Area* area, size_t n) - Returns a pointer to the end of area, if n is bigger than the capacity, a new area page is allocated. Returns 0 on error.
  - [ ] void carea_free(carea_Area* area) - Sets the size of area to 0, if there were any new pages allocated, they will be freed permanently and the area will be expanded.
  - [ ] void carea_freeHard(carea_Area* area) - Frees the area pernamently.
 
