@@ -3,43 +3,59 @@
 #include <malloc.h>
 #include <string.h>
 
-carea_Area carea_new(size_t cap){
-	carea_Area area = {0};
-
-	carea_Area* data = malloc(cap + sizeof(carea_Area));
+void* carea_new(){
+	carea_Header* data = malloc(CAREA_PAGE_SIZE);
 	if(!data)
-		return area;
+		return NULL;
 
-	memset(data, 0, sizeof(carea_Area));
-	area.m_Data = data + 1;
-	area.m_Capacity = cap;
+	data->m_Size = sizeof(carea_Header);
+	data->m_Capacity = CAREA_PAGE_SIZE;
+	data->m_Next = 0;
 
-	return area;
+	return data;
 }
 
-void* carea_alloc(carea_Area* area, size_t n){
-	if(area->m_Capacity - area->m_Size >= n){
-		area->m_Size += n;
-		return ((char*)area->m_Data) + n + area->m_Size;
+void* carea_alloc(void* area, size_t n){
+	carea_Header* head = area;
+
+	if(head->m_Capacity - head->m_Size >= n){
+		char* data = head->m_Data + head->m_Size;
+		head->m_Size += n;
+		return data;
 	}
 
-	carea_Area* a = &((carea_Area*)area->m_Data)[-1];
-	if(!a->m_Data){
-		size_t nn = area->m_Capacity + (2 * n);
-		if(nn > CAREA_PAGE_SIZE - sizeof(carea_Area)) nn = CAREA_PAGE_SIZE - sizeof(carea_Area);
-		if(nn < n) nn = n;
+	if(head->m_Next)
+		return carea_alloc(head->m_Next, n);
 
-		carea_Area* data = malloc(nn + sizeof(carea_Area));
-		if(!data)
-			return 0;
+	n += sizeof(carea_Header);
 
-		memset(data, 0, sizeof(carea_Area));
-		a->m_Data = data + 1;
-		a->m_Capacity = nn;
-		a->m_Size = n;
-		return a->m_Data;
+	size_t page = n > CAREA_PAGE_SIZE ? n : CAREA_PAGE_SIZE;
+	carea_Header* next = malloc(page);
+	if(!next)
+		return NULL;
+
+	next->m_Size = n;
+	next->m_Capacity = page;
+	next->m_Next = 0;
+	head->m_Next = next;
+
+	return next->m_Data + sizeof(carea_Header);
+}
+
+void carea_free(void* area){
+	carea_Header* head = area;
+	while(head){
+		head->m_Size = sizeof(carea_Header);
+		head = head->m_Next;
 	}
+}
 
-	return carea_alloc(a, n);
+void carea_freeHard(void* area){
+	carea_Header* head = area;
+	while(head){
+		void* next = head->m_Next;
+		free(head);
+		head = next;
+	}
 }
 

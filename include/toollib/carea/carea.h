@@ -7,13 +7,18 @@
 
 #include <stddef.h>
 
-typedef struct carea_Area{
-	size_t m_Capacity;
+struct carea_Header{
 	size_t m_Size;
-	void* m_Data;
-} carea_Area;
+	size_t m_Capacity;
+	struct carea_Header* m_Next;
+	char m_Data[];
+};
 
-carea_Area carea_new(size_t cap);
-void* carea_alloc(carea_Area* area, size_t n);
+typedef struct carea_Header carea_Header;
+
+void* carea_new();
+void* carea_alloc(void* area, size_t n);
+void carea_free(void* area);
+void carea_freeHard(void* area);
 
 #endif // _CAREA_H_
