@@ -19,17 +19,17 @@ A library for parsing command-line argumants.
 
  - [x] ap_Type - Describes type of an argument
     - AP_ARG_TYPE_FLAG
-	- AP_ARG_TYPE_VALUE
-	- AP_ARG_TYPE_VALUE_OPTIONAL
-	- AP_ARG_TYPE_VALUE2
-	- AP_ARG_TYPE_VALUE2_OPTIONAL
+    - AP_ARG_TYPE_VALUE
+    - AP_ARG_TYPE_VALUE_OPTIONAL
+    - AP_ARG_TYPE_VALUE2
+    - AP_ARG_TYPE_VALUE2_OPTIONAL
  - [x] ap_Status - Describes state of parsing
     - AP_ARG_STATUS_EOI
     - AP_ARG_STATUS_OK
     - AP_ARG_STATUS_ERR_SHORT
     - AP_ARG_STATUS_ERR_LONG
-	- AP_ARG_STATUS_ERR_VALUE
-	- AP_ARG_STATUS_ERR_VALUE2 
+    - AP_ARG_STATUS_ERR_VALUE
+    - AP_ARG_STATUS_ERR_VALUE2 
 
 #### Structures
 
@@ -216,10 +216,10 @@ A toolkit/library for regex (BRE/ERE + Taurus Regular Expresion Extension) token
 
  - [ ] re_Token - Result of re_getToken, represents a single expression.
     - .type (re_TokenType) - the type of token.
-	- .value (const char*) - the value of token.
-	- .length (size_t) - the length of value.
-	- .min (size_t) - the minimal expected amount of maches (default - 1, ? - 0, + - 1, * - 0).
-	- .max (size_t) - the maximal expected amount of matches, zero if infinity (default - 1, ? - 1, + - 0, * - 0).
+    - .value (const char*) - the value of token.
+    - .length (size_t) - the length of value.
+    - .min (size_t) - the minimal expected amount of maches (default - 1, ? - 0, + - 1, * - 0).
+    - .max (size_t) - the maximal expected amount of matches, zero if infinity (default - 1, ? - 1, + - 0, * - 0).
 
 #### Functions
 
@@ -306,22 +306,45 @@ A light-weight library for parsing and evaluating list-based command-first expre
 
 #### Enumerations
 
-TODO
+ - [ ] trslisp_AST - A list of possible AST.
+    - TRSLISP_LIST
+    - TRSLISP_VALUE
+ - [ ] trslisp_Type - A list of types.
+    - TRSLISP_INT
+    - TRSLISP_FLOAT
+    - TRSLISP_SEQ
+    - TRSLISP_VEC
+ - [ ] trslisp_Error - A list of possible state errors.
+    - TRSLISP_OK = 0
+    - TRSLISP_EXPEXTED_LIST_END
+    - TRSLISP_EXPECTED_VEC_END
+    - TRSLISP_EXPECTED_SEQ_END
+    - TRSLISP_UNKNOWN_COMMAND
+    - TRSLISP_COMMAND_FAILED
+    - TRSLISP_EOM  - End Of Memeory
 
 #### Structures
 
-TODO: AST
  - [ ] trslisp_Lisp - The state.
     - .data (void*) - A pointer to prealocated memory.
     - .size (size_t) - The capacity of memory.
     - .realloc (void*(size_t)) - A function pointer to allocator, NULL if VM is not allowed to reallocate memory.
-    - .error (??) - Set on error.
+    - .error (trslisp_Error) - Set on error.
+ - [ ] trslisp_Value - A value litteral.
+    - .type (trslisp_AST) - AST, always on top.
+    - .valueType (trslisp_Type) - the value type.
+    - .value (void*) - Pointer to the data.
+ - [ ] trslisp_List - A list AST.
+    - .type (trslisp_AST) - AST, always on top.
+    - .command (const char*) - The list command (first element).
+    - .count (size_t) - A count of elements of the list.
+    - .data (void*) - The elements.
 
 #### Functions
 
  - [ ] trslisp_Lisp trslisp_new(void* data, size_t size, void*(size_t) realloc) - Initializes new state, inline.
- - [ ] ?? trslisp_eval(trslisp_Lisp* st, const char* src) - Evaluates src.
- - [ ] ?? trslisp_evalFile(trslisp_Lisp* st, FILE* file) - Evaluates the file.
+ - [ ] trslisp_Value trslisp_eval(trslisp_Lisp* st, const char* src) - Evaluates src and returns value.
+ - [ ] trslisp_Value trslisp_evalFile(trslisp_Lisp* st, FILE* file) - Evaluates the file and returns value.
 
 ### Taurus Simple Evaluated Values (toollib -> tsev)
 
@@ -342,6 +365,22 @@ A simple and very light-weight library for evaluating simple config files.
  - [ ] Evaluation priority may be changed with preanteces e.g. (1 + 2) * 3
  - [ ] Comments with double-slash (//)
 
-TODO
+#### Enumerations
 
+ - [ ] tsev_Type - A list of types
+    - TSEV_INT
+    - TSEV_SEQ
+
+#### Structures
+
+ - [ ] tsev_Value - A single value.
+    - .name (const char*) - A value name.
+    - .value (void*) - A value (not a ptr if .type = INT else char*)
+    - .type (tsev_Type) - A type.
+
+#### Functions
+
+ - [ ] size_t tsev_eval(const char* str, tsev_Value* out) - Evaluates str and returns a list of values (by out) with last element 0ed out and its size.
+ - [ ] size_t tsev_evalFile(FILE* file, tsev_Value* out)  - Reads file and calls tsev_eval.
+ - [ ] void tsev_free(tsev_Value* vals) - Frees values.
 
