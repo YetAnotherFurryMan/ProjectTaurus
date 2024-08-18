@@ -57,6 +57,13 @@ build $bin/toollib/libcarea.a: lib $bin/toollib/carea.dir/carea.c.o
 build $bin/toollib/carea.so: link $bin/toollib/carea.dir/carea.c.o
   flags = --shared 
 
+build $bin/trs.dir/main.c.o: cc trs/main.c
+  flags = -fPIE
+build $bin/trs.dir/help.c.o: cc trs/help.c
+  flags = -fPIE
+build $bin/trs: link $bin/trs.dir/main.c.o $bin/trs.dir/help.c.o $bin/toollib/libap.a $bin/toollib/libcvec.a $bin/toollib/libcarea.a
+  flags = 
+
 build testware: phony  $bin/testware/toollib/ap $bin/testware/toollib/ap++ $bin/testware/toollib/ap++getAll $bin/testware/toollib/csv $bin/testware/toollib/csv++ $bin/testware/toollib/cvec $bin/testware/toollib/carea
 build $bin/testware/toollib/ap: testware testware/toollib/ap.c $bin/toollib/libap.a
 build $bin/testware/toollib/ap++: testwarexx testware/toollib/ap++.cpp $bin/toollib/libap.a

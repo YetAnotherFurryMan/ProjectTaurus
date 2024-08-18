@@ -3,12 +3,12 @@ BUILD ?= build
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 getsrc=$(patsubst $(BUILD)/%,%,$(patsubst $(word 1,$(subst .dir,.dir ,$1))/%.o,$(word 1,$(subst .dir, ,$1))/%,$1))
 
-dirs := $(BUILD)/toollib $(BUILD)/toollib/ap.dir $(BUILD)/toollib/csv.dir $(BUILD)/toollib/cvec.dir $(BUILD)/toollib/carea.dir
+dirs := $(BUILD)/toollib $(BUILD)/toollib/ap.dir $(BUILD)/toollib/csv.dir $(BUILD)/toollib/cvec.dir $(BUILD)/toollib/carea.dir $(BUILD)/trs.dir
 
 testware_dirs := $(BUILD)/testware/toollib
 
 .PHONY: all
-all: $(dirs) toollib
+all: $(dirs) toollib $(BUILD)/trs
 
 .PHONY: toollib
 toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(if $(RELEASE),$(BUILD)/toollib/ap.so,) $(BUILD)/toollib/libcsv.a $(if $(RELEASE),$(BUILD)/toollib/csv.so,) $(BUILD)/toollib/libcvec.a $(if $(RELEASE),$(BUILD)/toollib/cvec.so,) $(BUILD)/toollib/libcarea.a $(if $(RELEASE),$(BUILD)/toollib/carea.so,)
@@ -53,6 +53,11 @@ $(BUILD)/toollib/libcarea.a: $(bin)
 
 $(BUILD)/toollib/carea.so: $(bin)
 	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
+bin = $(patsubst trs/%,$(BUILD)/trs.dir/%.o,$(call rwildcard,trs,*.c *.cpp))
+exebin += $(bin)
+$(BUILD)/trs: $(bin) $(BUILD)/toollib/libap.a $(BUILD)/toollib/libcvec.a $(BUILD)/toollib/libcarea.a
+	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,)
 
 .SECONDEXPANSION:
 

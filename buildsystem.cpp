@@ -20,8 +20,8 @@ enum class ModuleLanguage{
 struct Module{
 	std::string_view name;
 	ModuleType type = ModuleType::EXE;
-	std::string_view flags = "";
 	std::vector<std::string_view> deps;
+	std::string_view flags = "";
 };
 
 struct Project{
@@ -46,7 +46,9 @@ Project projects[] = {
 	}}
 };
 
-Module modules[] = {};
+Module modules[] = {
+	{"trs", ModuleType::EXE, {"toollib/libap.a", "toollib/libcvec.a", "toollib/libcarea.a"}}
+};
 
 Testware testware[] = {
 	{"toollib", "ap", {"toollib/libap.a"}},
@@ -150,7 +152,14 @@ void genMake(){
 			}
 		}
 	}
-	// TODO: modules[]
+	for(const auto& mod: modules){
+		out << " $(BUILD)/" << mod.name << ".dir";
+		for(const auto& dir: fs::recursive_directory_iterator(mod.name)){
+			if(dir.is_directory()){
+				out << " $(BUILD)/" << mod.name << ".dir/" << dir.path().string();
+			}
+		}
+	}
 	out << std::endl << std::endl;
 
 	std::set<std::string> testware_dirs_set;
@@ -171,7 +180,13 @@ void genMake(){
 	for(const auto& proj: projects){
 		out << " " << proj.name;
 	}
-	// TODO: modules[]
+	for(const auto& mod: modules){
+		out << " $(BUILD)/";
+		if(mod.type == ModuleType::EXE)
+			out << mod.name;
+		else if(mod.type == ModuleType::LIB)
+			out << "lib" << mod.name << ".a $(if $(RELEASE),$(BUILD)/" << mod.name << ".so,)";
+	}
 	out << std::endl << std::endl;
 
 	// projects
@@ -233,7 +248,33 @@ void genMake(){
 			}
 		}
 	}
-	// TODO: modules[]
+	for(const auto& mod: modules){
+		out << "bin = $(patsubst " << mod.name << "/%,$(BUILD)/" << mod.name << ".dir/%.o,$(call rwildcard," << mod.name << ",*.c *.cpp))" << std::endl;
+		if(mod.type == ModuleType::EXE){
+			out << "exebin += $(bin)" << std::endl;
+			out << "$(BUILD)/" << mod.name << ": $(bin)";
+			for(const auto& dep: mod.deps)
+				out << " $(BUILD)/" << dep;
+			out << std::endl;
+			out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,)" << mod.flags << std::endl;
+			out << std::endl;
+		} else if(mod.type == ModuleType::LIB){
+			out << "libbin += $(bin)" << std::endl;
+
+			// libXYZ.a
+			out << "$(BUILD)/lib" << mod.name << ".a: $(bin)" << std::endl;
+			out << "\t$(AR) qc $@ $^" << std::endl;
+			out << std::endl;
+			
+			// XYZ.so
+			out << "$(BUILD)/" << mod.name << ".so: $(bin)" << std::endl;
+			out << "\t$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)" << std::endl;
+			out << std::endl;
+
+			// TODO: If you want to have .dll, you are welcome to write your code here :-)
+		}
+	}
+
 	
 	out << ".SECONDEXPANSION:" << std::endl;
 	out << std::endl;
@@ -370,7 +411,43 @@ void genNinja(){
 			}
 		}
 	}
-	// TODO: modules[]
+	for(const auto& mod: modules){
+		std::stringstream bin;
+
+		for(const auto& e: fs::recursive_directory_iterator(mod.name)){
+			if(!e.is_regular_file())
+				continue;
+
+			auto erel = e.path().lexically_relative(mod.name);
+			if(e.path().extension() == ".c"){
+				bin << " $bin/" << mod.name << ".dir/" << erel.c_str() << ".o"; 
+				out << "build $bin/" << mod.name << ".dir/" << erel.c_str() << ".o: cc " << mod.name << "/" << erel.c_str() << std::endl;
+			} else if(e.path().extension() == ".cpp"){
+				bin << " $bin/" << mod.name << ".dir/" << erel.c_str() << ".o"; 
+				out << "build $bin/" << mod.name << ".dir/" << erel.c_str() << ".o: cxx " << mod.name << "/" << erel.c_str() << std::endl;
+			}
+
+			if(mod.type == ModuleType::EXE)
+				out << "  flags = -fPIE" << std::endl;
+			else if(mod.type == ModuleType::LIB)
+				out << "  flags = -fPIC" << std::endl;
+		}
+
+		if(mod.type == ModuleType::EXE){
+			out << "build $bin/" << mod.name << ": link" << bin.str();
+			for(const auto& dep: mod.deps)
+				out << " $bin/" << dep;
+			out << std::endl;
+			out << "  flags = " << mod.flags << std::endl;
+			out << std::endl;
+		} else if(mod.type == ModuleType::LIB){
+			out << "build $bin/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
+			out << std::endl;
+			out << "build $bin/" << mod.name << ".so: link" << bin.str() << std::endl;
+			out << "  flags = --shared " << mod.flags << std::endl;
+			out << std::endl;
+		}
+	}
 
 	// TODO: RELEASE
 
