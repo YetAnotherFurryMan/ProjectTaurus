@@ -9,7 +9,7 @@ void* cvec_new(size_t element, size_t n){
 		return NULL;
 
 	cvec_Header* head = malloc(basesize + sizeof(cvec_Header));
-	head->m_Count = n;
+	head->m_Count = 0;
 	head->m_Element = element;
 	head->m_Size = basesize;
 
