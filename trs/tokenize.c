@@ -1,9 +1,13 @@
 #include <trs/ast.h>
 
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include <toollib/carea/carea.h>
+
+Token g_Lookahed = {0};
+size_t g_LineNo = 0;
 
 static inline void nextTokenStr(void* area, FILE* f, Token* tok){
 	char c = getc(f); // Consume "
@@ -17,21 +21,33 @@ static inline void nextTokenStr(void* area, FILE* f, Token* tok){
 	}
 
 	while(c != '\"' && !feof(f)){
+		if(c == '\n')
+			g_LineNo++;
+
 		if(c == '\\'){
 			c = getc(f);
 			switch(c){
 				case '\"':
 				case '\'':
-					break;
-				case 'n':
-					c = '\n';
+				case '\\':
 					break;
 				case 't':
-					c = '\t';
+					c = '\t'; // 0x09
 					break;
-				// TODO: \v etc
+				case 'n':
+					c = '\n'; // 0x0a
+					break;
+				case 'v':
+					c = '\v'; // 0x0b
+					break;
+				case 'f':
+					c = '\f'; // 0x0c
+					break;
+				case 'r':
+					c = '\r'; // 0x0d
+					break;
 			}
-			// TODO \x \000
+			// TODO \x00 \000
 		}
 
 		str[i++] = c;
@@ -108,14 +124,42 @@ static inline void nextTokenId(void* area, FILE* f, Token* tok){
 }
 
 Token nextToken(void* area, FILE* f){
+	if(g_Lookahed.m_Type != 0){
+		Token tok = g_Lookahed;
+		g_Lookahed.m_Type = 0;
+		return tok;
+	}
+
 	Token tok = {0};
 	if(feof(f)){
+		tok.m_LineNo = g_LineNo;
 		tok.m_Type = TOK_EOF;
 		return tok;
 	}
 
 	char c = getc(f);
+	while(isspace(c)){
+		if(c == '\n')
+			g_LineNo++;
+		c = getc(f);
+	}
+
+	tok.m_LineNo = g_LineNo;
+	
+	if(feof(f)){
+		tok.m_Type = TOK_EOF;
+		return tok;
+	}
+	
 	switch(c){
+		case ';':
+			tok.m_Type = TOK_SEMICOLON;
+			tok.m_Value = ";";
+			break;
+		case ',':
+			tok.m_Type = TOK_COMMA;
+			tok.m_Value = ",";
+			break;
 		case '(':
 			tok.m_Type = TOK_PRENTICE_L;
 			tok.m_Value = "(";
@@ -124,7 +168,7 @@ Token nextToken(void* area, FILE* f){
 			tok.m_Type = TOK_PRENTICE_R;
 			tok.m_Value = ")";
 			break;
-	}
+		}
 
 	if(tok.m_Type == TOK_ERR){
 		if((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_'){

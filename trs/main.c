@@ -86,8 +86,10 @@ int main(int argc, const char** argv){
 					}
 					printf("\n");
 				}
-				ast = ast->m_Next;
+			} else{
+				printf("DEBUG: %d\n", ast->m_Type);
 			}
+			ast = ast->m_Next;
 		}
 		// int result = eval(&state, ast);
 
