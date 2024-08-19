@@ -59,9 +59,13 @@ build $bin/toollib/carea.so: link $bin/toollib/carea.dir/carea.c.o
 
 build $bin/trs.dir/main.c.o: cc trs/main.c
   flags = -fPIE
+build $bin/trs.dir/parse.c.o: cc trs/parse.c
+  flags = -fPIE
+build $bin/trs.dir/tokenize.c.o: cc trs/tokenize.c
+  flags = -fPIE
 build $bin/trs.dir/help.c.o: cc trs/help.c
   flags = -fPIE
-build $bin/trs: link $bin/trs.dir/main.c.o $bin/trs.dir/help.c.o $bin/toollib/libap.a $bin/toollib/libcvec.a $bin/toollib/libcarea.a
+build $bin/trs: link $bin/trs.dir/main.c.o $bin/trs.dir/parse.c.o $bin/trs.dir/tokenize.c.o $bin/trs.dir/help.c.o $bin/toollib/libap.a $bin/toollib/libcvec.a $bin/toollib/libcarea.a
   flags = 
 
 build testware: phony  $bin/testware/toollib/ap $bin/testware/toollib/ap++ $bin/testware/toollib/ap++getAll $bin/testware/toollib/csv $bin/testware/toollib/csv++ $bin/testware/toollib/cvec $bin/testware/toollib/carea

@@ -1,8 +1,14 @@
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include <toollib/ap/ap.h>
 #include <toollib/cvec/cvec.h>
+#include <toollib/carea/carea.h>
+
+#include <trs/ast.h>
+
+#define MAX_FILES 1000
 
 const char* g_program;
 
@@ -43,11 +49,54 @@ int main(int argc, const char** argv){
 		arg = ap_next(0, 0, &argc, &argv);
 	}
 
-	printf("DEBUG: %ld\n", cvec_length(files));
-	for(size_t i = cvec_length(files); i > 0; i--){
-		printf("DEBUG: %s\n", files[i - 1]);
+	if(cvec_length(files) > MAX_FILES){
+		fprintf(stderr, "ERROR: Too many files.\n");
+		return 1;
 	}
 
+	void* area = carea_new();
+	if(!area){
+		fprintf(stderr, "ERROR: Out of memory.\n");
+		return 1;
+	}
+
+	printf("DEBUG: %ld\n", cvec_length(files));
+	for(int i = (int)cvec_length(files) - 1; i >= 0; i--){
+		printf("DEBUG: %s\n", files[i]);
+		
+		FILE* file = fopen(files[i], "r");
+		if(!file){
+			fprintf(stderr, "ERROR: Failed to open file %s - %s\n", files[i], strerror(errno));
+			return 1;
+		}
+
+		AST* ast = parsef(area, file);
+		ASTBlock* block = (ASTBlock*)ast;
+		ast = block->m_Insides;
+		while(ast){
+			if(ast->m_Type == AST_CALL){
+				ASTCall* call = (ASTCall*)ast;
+				if(strcmp(call->m_Name, "println") == 0){
+					AST* arg = call->m_Args;
+					while(arg){
+						if(arg->m_Type == AST_STR){
+							printf("%s", ((ASTStr*)arg)->m_Value);
+						}
+						arg = arg->m_Next;
+					}
+					printf("\n");
+				}
+				ast = ast->m_Next;
+			}
+		}
+		// int result = eval(&state, ast);
+
+		fclose(file);
+
+		carea_free(area);
+	}
+
+	carea_freeHard(area);
 	cvec_free(files);
 
 	return 0;
