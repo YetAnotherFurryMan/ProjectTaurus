@@ -10,6 +10,10 @@ int main(void){
 
 	int* vec = cvec_new(sizeof(int), 10);
 	if(!vec) FAIL("Failed to allocate memeory for int[10].");
+	if(cvec_length(vec) != 0) FAIL("Length != 0.");
+	if(cvec_size(vec) != 10 * sizeof(int)) FAIL("Size != sizeof(int[10]).");
+
+	cvec_addArrayN(vec, NULL, 10);
 
 	if(cvec_length(vec) != 10) FAIL("Length != 10.");
 	if(cvec_size(vec) != 10 * sizeof(int)) FAIL("Size != sizeof(int[10]).");

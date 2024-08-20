@@ -25,6 +25,9 @@ void cvec_free(void* vec){
 }
 
 void* cvec_ensure(void* vec, size_t n){
+	if(!vec)
+		return NULL;
+
 	if(!cvec_needsRealloc(vec, n))
 		return vec;
 

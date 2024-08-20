@@ -24,6 +24,11 @@ static inline size_t cvec_length(void* vec){
 	return ((cvec_Header*)vec)[-1].m_Count;
 }
 
+static inline size_t cvec_element(void* vec){
+	if(!vec) return 0;
+	return ((cvec_Header*)vec)[-1].m_Element;
+}
+
 static inline size_t cvec_size(void* vec){
 	if(!vec) return 0;
 	return ((cvec_Header*)vec)[-1].m_Size;

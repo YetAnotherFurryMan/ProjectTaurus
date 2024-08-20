@@ -253,7 +253,7 @@ In addition to the vector the library provides an implementation for an associat
 
  - [x] void* cvec_new(size_t element, size_t n) - Allocates a new vector with n elements and returns a pointer to the data or NULL.
  - [x] void cvec_free(void* vec) - Frees the vector.
- - [ ] size_t cvec_element(void* vec) - Returns .element of vec, inline.
+ - [x] size_t cvec_element(void* vec) - Returns .element of vec, inline.
  - [x] size_t cvec_length(void* vec) - Returns .count of vec, inline.
  - [x] size_t cvec_size(void* vec) - Returns .size of vec, inline.
  - [x] bool cvec_needsRealloc(void* vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
