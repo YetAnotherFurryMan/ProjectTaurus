@@ -236,6 +236,7 @@ TODO
 ### C Vector (toollib -> cvec)
 
 A simple vector implementation (like dynamic array not math Xd). User gets a pointer to the data, not the header itself.
+In addition to the vector the library provides an implementation for an associative vector.
 
 #### Structures
 
@@ -244,18 +245,31 @@ A simple vector implementation (like dynamic array not math Xd). User gets a poi
     - .element (size_t) - the size of a single element.
     - .size (size_t) - the amount of allocated memory.
     - .data (char[]) - the data (flexible array member).
+ - [ ] cassoc_Header - A header of an associativ vector that introduces the data.
+    - .values (cvec) - A pointer to the value vector.
+    - .keys (cvec) - A pointer to the vector of key-hash pairs.
 
 #### Functions
 
  - [x] void* cvec_new(size_t element, size_t n) - Allocates a new vector with n elements and returns a pointer to the data or NULL.
  - [x] void cvec_free(void* vec) - Frees the vector.
+ - [ ] size_t cvec_element(void* vec) - Returns .element of vec, inline.
  - [x] size_t cvec_length(void* vec) - Returns .count of vec, inline.
  - [x] size_t cvec_size(void* vec) - Returns .size of vec, inline.
  - [x] bool cvec_needsRealloc(void* vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
  - [x] void* cvec_ensure(void* vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
  - [x] void* cvec_add(void* vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
  - [x] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
+ - [ ] void* cvec_insert(void* vec, size_t index, void* val) - Inserds the valueat index, or to the end of the vec, in case of reallocation behaves as cvec_add.
+ - [ ] void* cvec_insertArray(void* vec, size_t index, void* arr) - Like addArray but insert.
  - [ ] void cvec_remove(void* vec, size_t index) - Remove element at index.
+ - [ ] void* cvec_get(void* vec, size_t index) - Returns a pointer to the element at index or NULL.
+ - [ ] void* cassoc_new(size_t value, size_t n) - Allocates a new associative vector with n elements.
+ - [ ] void cassoc_free(void* vec) - Frees the vec.
+ - [ ] void* cassoc_keys(void* vec, size_t* count) - Returns the keys and theirs amount (by argument).
+ - [ ] void* cassoc_values(void* vec, size_t count) - Returns the values and theirs amount (by argument).
+ - [ ] void* cassoc_set(const char* key, void* val) - Sets the value assocated with the key, inserts if needed.
+ - [ ] void* cassoc_get(const char* key) - Returns a pointer to the value assocated with the key or NULL.
 
 #### Macros
 
@@ -263,6 +277,10 @@ A simple vector implementation (like dynamic array not math Xd). User gets a poi
  - [x] cvec_addN(void** VEC, void* VAL) => * VEC = cvec_add(* VEC, VAL);
  - [x] cvec_addArrayN(void** VEC, void* ARR, size_t N) => * VEC = cvec_addArray(* VEC, ARR, N);
  - [ ] cvec_addAllN(void** VEC, ...) => * VEC = cvec_addArray(* VEC, ...);
+ - [ ] cvec_insertN(void** VEC, size_t index, void* VAL) => * VEC = cvec_insert(* VEC, VAL);
+ - [ ] cvec_insertArrayN(void** VEC, size_t index, void* ARR, size_t N) => * VEC = cvec_insertArray(* VEC, ARR, N);
+ - [ ] cvec_insertAllN(void** VEC, size_t index, ...) => * VEC = cvec_insertArray(* VEC, ...);
+ - [ ] cassoc_setN(void** VEC, void* KEY, void* VAL) => * VEC = cassoc_set(* VEC, KEY, VAL);
 
 ### C Area (toollib -> carea)
 
