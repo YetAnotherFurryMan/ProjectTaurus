@@ -17,6 +17,7 @@ void cvec_free(void* vec);
 
 void* cvec_addArray(void* vec, void* arr, size_t n);
 void* cvec_insertArray(void* vec, size_t index, void* arr, size_t n);
+void cvec_remove(void* vec, size_t index);
 
 static inline size_t cvec_length(void* vec){
 	if(!vec) return 0;
@@ -44,6 +45,10 @@ static inline void* cvec_add(void* vec, void* val){
 
 static inline void* cvec_insert(void* vec, size_t index, void* val){
 	return cvec_insertArray(vec, index, val, 1);
+}
+
+static inline void* cvec_get(void* vec, size_t index){
+	return ((char*)vec) + (((cvec_Header*)vec)[-1].m_Element * index);
 }
 
 #define cvec_ensureN(VEC, N) VEC = cvec_ensure(VEC, N)

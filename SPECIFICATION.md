@@ -262,8 +262,8 @@ In addition to the vector the library provides an implementation for an associat
  - [x] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
  - [x] void* cvec_insert(void* vec, size_t index, void* val) - Inserds the valueat index, or to the end of the vec, in case of reallocation behaves as cvec_add.
  - [x] void* cvec_insertArray(void* vec, size_t index, void* arr, size_t n) - Like addArray but insert.
- - [ ] void cvec_remove(void* vec, size_t index) - Remove element at index.
- - [ ] void* cvec_get(void* vec, size_t index) - Returns a pointer to the element at index or NULL.
+ - [x] void cvec_remove(void* vec, size_t index) - Remove element at index.
+ - [x] void* cvec_get(void* vec, size_t index) - Returns a pointer to the element at index or NULL.
  - [ ] void* cassoc_new(size_t value, size_t n) - Allocates a new associative vector with n elements.
  - [ ] void cassoc_free(void* vec) - Frees the vec.
  - [ ] void* cassoc_keys(void* vec, size_t* count) - Returns the keys and theirs amount (by argument).

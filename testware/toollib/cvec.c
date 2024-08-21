@@ -83,6 +83,21 @@ int main(void){
 	for(size_t i = 0; i < 10; i++)
 		if(vec[i + 31] != arr[i]) FAIL("Failed to insert array #3");
 
+	cvec_remove(vec, 1);
+
+	if(cvec_length(vec) != 40) FAIL("Length != 40");
+
+	for(int i = 0; i < 20; i++)
+		if(vec[i] != i % 10) FAIL("Failed to remove #1");
+
+	for(size_t i = 0; i < 20; i++)
+		if(vec[i + 20] != arr[i % 10]) FAIL("Failed to remove #2");
+
+	for(size_t i = 0; i < cvec_length(vec); i++){
+		if(!cvec_get(vec, i)) FAIL("Got NULL.")
+		else if(*((int*)cvec_get(vec, i)) != vec[i]) FAIL("Failed to get.");
+	}
+
 	cvec_free(vec);
 
 	printf("OK\n");
