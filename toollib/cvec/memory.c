@@ -2,7 +2,7 @@
 
 #include <malloc.h>
 
-void* cvec_new(size_t element, size_t n){
+cvec cvec_new(size_t element, size_t n){
 	size_t basesize = element * n;
 
 	if(basesize == 0)
@@ -16,7 +16,7 @@ void* cvec_new(size_t element, size_t n){
 	return head->m_Data;
 }
 
-void cvec_free(void* vec){
+void cvec_free(cvec vec){
 	if(!vec) 
 		return;
 
@@ -24,7 +24,7 @@ void cvec_free(void* vec){
 	free(head);
 }
 
-void* cvec_ensure(void* vec, size_t n){
+cvec cvec_ensure(cvec vec, size_t n){
 	if(!vec)
 		return NULL;
 

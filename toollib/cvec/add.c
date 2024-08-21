@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-void* cvec_addArray(void* vec, void* arr, size_t n){
+cvec cvec_addArray(cvec vec, void* arr, size_t n){
 	vec = cvec_ensure(vec, n);
 
 	if(!vec)
@@ -18,7 +18,7 @@ void* cvec_addArray(void* vec, void* arr, size_t n){
 	return vec;
 }
 
-void* cvec_insertArray(void* vec, size_t index, void* arr, size_t n){
+cvec cvec_insertArray(cvec vec, size_t index, void* arr, size_t n){
 	vec = cvec_ensure(vec, n);
 
 	if(!vec)
@@ -41,7 +41,7 @@ void* cvec_insertArray(void* vec, size_t index, void* arr, size_t n){
 	return vec;
 }
 
-void cvec_remove(void* vec, size_t index){
+void cvec_remove(cvec vec, size_t index){
 	if(!vec)
 		return;
 
