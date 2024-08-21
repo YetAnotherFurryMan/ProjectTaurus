@@ -57,6 +57,7 @@ Testware testware[] = {
 	{"toollib", "csv", {"toollib/libcsv.a"}},
 	{"toollib", "csv++", {"toollib/libcsv.a"}, ModuleLanguage::CXX},
 	{"toollib", "cvec", {"toollib/libcvec.a"}},
+	{"toollib", "cassoc", {"toollib/libcvec.a"}},
 	{"toollib", "carea", {"toollib/libcarea.a"}}
 };
 

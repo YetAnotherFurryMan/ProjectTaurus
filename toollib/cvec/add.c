@@ -56,3 +56,12 @@ void cvec_remove(cvec vec, size_t index){
 	head->m_Count--;
 }
 
+void cassoc_set(cassoc vec, const char* key, void* val){
+	// TODO
+}
+
+void* cassoc_get(cassoc vec, const char* key){
+	// TODO
+	return NULL;
+}
+

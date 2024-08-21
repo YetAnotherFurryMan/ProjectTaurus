@@ -238,6 +238,11 @@ TODO
 A simple vector implementation (like dynamic array not math Xd). User gets a pointer to the data, not the header itself.
 In addition to the vector the library provides an implementation for an associative vector.
 
+#### Types
+
+ - [x] cvec = void*
+ - [x] cassoc = void*
+
 #### Structures
 
  - [x] cvec_Header - A header of a vector that introduces the data.
@@ -245,31 +250,35 @@ In addition to the vector the library provides an implementation for an associat
     - .element (size_t) - the size of a single element.
     - .size (size_t) - the amount of allocated memory.
     - .data (char[]) - the data (flexible array member).
- - [ ] cassoc_Header - A header of an associativ vector that introduces the data.
-    - .values (cvec) - A pointer to the value vector.
-    - .keys (cvec) - A pointer to the vector of key-hash pairs.
+ - [x] cassoc_Key - A pair of key and its hash.
+    - .hash (unsigned int) - the hash.
+    - .key (const char*) - the key str.
+    - .index (size_t) - the index of value.
+ - [x] cassoc_Header - An associative vector that introduces the data.
+    - .keys (cassoc_Key*) - A pointer to the vector of key-hash pairs.
+    - .values (cvec_Header) - A header of the value vector.
 
 #### Functions
 
- - [x] void* cvec_new(size_t element, size_t n) - Allocates a new vector with n elements and returns a pointer to the data or NULL.
- - [x] void cvec_free(void* vec) - Frees the vector.
- - [x] size_t cvec_element(void* vec) - Returns .element of vec, inline.
- - [x] size_t cvec_length(void* vec) - Returns .count of vec, inline.
- - [x] size_t cvec_size(void* vec) - Returns .size of vec, inline.
- - [x] bool cvec_needsRealloc(void* vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
- - [x] void* cvec_ensure(void* vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
- - [x] void* cvec_add(void* vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
- - [x] void* cvec_addArray(void* vec, void* arr, size_t n) - Same as cvec_add but for arrays.
- - [x] void* cvec_insert(void* vec, size_t index, void* val) - Inserds the valueat index, or to the end of the vec, in case of reallocation behaves as cvec_add.
- - [x] void* cvec_insertArray(void* vec, size_t index, void* arr, size_t n) - Like addArray but insert.
- - [x] void cvec_remove(void* vec, size_t index) - Remove element at index.
- - [x] void* cvec_get(void* vec, size_t index) - Returns a pointer to the element at index or NULL.
- - [ ] void* cassoc_new(size_t value, size_t n) - Allocates a new associative vector with n elements.
- - [ ] void cassoc_free(void* vec) - Frees the vec.
- - [ ] void* cassoc_keys(void* vec, size_t* count) - Returns the keys and theirs amount (by argument).
- - [ ] void* cassoc_values(void* vec, size_t count) - Returns the values and theirs amount (by argument).
- - [ ] void* cassoc_set(const char* key, void* val) - Sets the value assocated with the key, inserts if needed.
- - [ ] void* cassoc_get(const char* key) - Returns a pointer to the value assocated with the key or NULL.
+ - [x] cvec cvec_new(size_t element, size_t n) - Allocates a new vector with n elements and returns a pointer to the data or NULL.
+ - [x] void cvec_free(cvec vec) - Frees the vector.
+ - [x] size_t cvec_element(cvec vec) - Returns .element of vec, inline.
+ - [x] size_t cvec_length(cvec vec) - Returns .count of vec, inline.
+ - [x] size_t cvec_size(cvec vec) - Returns .size of vec, inline.
+ - [x] bool cvec_needsRealloc(cvec vec, size_t n) - Returns true if vec needs reallocating for n additional elements.
+ - [x] cvec cvec_ensure(cvec vec, size_t n) - Reallocates memory of the vec to fit the n new elements if needed and returns a new pointer to the data, or the vec otherwise.
+ - [x] cvec cvec_add(cvec vec, void* val) - Appends the value behind val to the vec, realocates if needed and returns vec or a new pointer.
+ - [x] cvec cvec_addArray(cvec vec, void* arr, size_t n) - Same as cvec_add but for arrays.
+ - [x] cvec cvec_insert(cvec vec, size_t index, void* val) - Inserds the valueat index, or to the end of the vec, in case of reallocation behaves as cvec_add.
+ - [x] cvec cvec_insertArray(cvec vec, size_t index, void* arr, size_t n) - Like addArray but insert.
+ - [x] void cvec_remove(cvec vec, size_t index) - Remove element at index.
+ - [x] cvec cvec_get(cvec vec, size_t index) - Returns a pointer to the element at index or NULL.
+ - [x] cassoc cassoc_new(size_t value, size_t n) - Allocates a new associative vector with n elements.
+ - [x] void cassoc_free(cassoc vec) - Frees the vec.
+ - [x] cvec cassoc_keys(cassoc vec) - Returns the keys, inline.
+ - [x] cvec cassoc_values(cassoc vec) - Returns the values, inline.
+ - [ ] void cassoc_set(cassoc vec, const char* key, void* val) - Sets the value assocated with the key, inserts if needed.
+ - [ ] void* cassoc_get(cassoc vec, const char* key) - Returns a pointer to the value assocated with the key or NULL.
 
 #### Macros
 

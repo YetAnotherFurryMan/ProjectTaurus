@@ -74,7 +74,7 @@ $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
 	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 .PHONY: testware
-testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++ $(BUILD)/testware/toollib/cvec $(BUILD)/testware/toollib/carea
+testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++ $(BUILD)/testware/toollib/cvec $(BUILD)/testware/toollib/cassoc $(BUILD)/testware/toollib/carea
 
 $(BUILD)/testware/toollib/ap: testware/toollib/ap.c $(BUILD)/toollib/libap.a
 	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
@@ -92,6 +92,9 @@ $(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp $(BUILD)/toollib/lib
 	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/testware/toollib/cvec: testware/toollib/cvec.c $(BUILD)/toollib/libcvec.a
+	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/testware/toollib/cassoc: testware/toollib/cassoc.c $(BUILD)/toollib/libcvec.a
 	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/testware/toollib/carea: testware/toollib/carea.c $(BUILD)/toollib/libcarea.a
