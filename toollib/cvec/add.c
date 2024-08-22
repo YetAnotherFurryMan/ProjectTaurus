@@ -56,12 +56,65 @@ void cvec_remove(cvec vec, size_t index){
 	head->m_Count--;
 }
 
+static unsigned int hash(const char* str){
+	// DJB2
+	unsigned long h = 5381;
+
+	char c;
+	while((c = *str)){
+		h = (h << 5) + h + c; // h * 33 * c
+		str++;
+	}
+
+	return (unsigned int)(h % -1L);
+}
+
 void cassoc_set(cassoc vec, const char* key, void* val){
-	// TODO
+	if(!vec)
+		return;
+
+	cassoc_Header* head = &((cassoc_Header*)vec)[-1];
+
+	unsigned int h = hash(key);
+
+	// TODO: use binary search maybe
+	size_t index = 0;
+	while(index < head->m_Count && h > head->m_Keys[index].m_Hash)
+		index++;
+	
+	while(index < head->m_Count && h == head->m_Keys[index].m_Hash && strcmp(key, head->m_Keys[index].m_Key) != 0)
+		index++;
+
+	if(index < head->m_Count && h == head->m_Keys[index].m_Hash){
+		index = head->m_Keys[index].m_Index;
+		memcpy(cvec_get(vec, index), val, cvec_element(vec));
+	} else{
+		cassoc_Key k = {h, key, cvec_length(vec)};
+		cvec_insertN(head->m_Keys, index, &k);
+		cvec_addN(vec, val);
+	}
 }
 
 void* cassoc_get(cassoc vec, const char* key){
-	// TODO
-	return NULL;
+	if(!vec)
+		return NULL;
+
+	cassoc_Header* head = &((cassoc_Header*)vec)[-1];
+
+	unsigned int h = hash(key);
+
+	// TODO: use binary search here too, if it has sense
+	size_t index = 0;
+	while(index < head->m_Count && h > head->m_Keys[index].m_Hash)
+		index++;
+	
+	while(index < head->m_Count && h == head->m_Keys[index].m_Hash && strcmp(key, head->m_Keys[index].m_Key) != 0)
+		index++;
+
+	if(index >= head->m_Count || head->m_Keys[index].m_Hash != h || strcmp(head->m_Keys[index].m_Key, key) != 0)
+		return NULL;
+
+	index = head->m_Keys[index].m_Index;
+	return cvec_get(vec, index);
 }
 

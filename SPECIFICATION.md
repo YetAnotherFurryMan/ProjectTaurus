@@ -277,8 +277,8 @@ In addition to the vector the library provides an implementation for an associat
  - [x] void cassoc_free(cassoc vec) - Frees the vec.
  - [x] cvec cassoc_keys(cassoc vec) - Returns the keys, inline.
  - [x] cvec cassoc_values(cassoc vec) - Returns the values, inline.
- - [ ] void cassoc_set(cassoc vec, const char* key, void* val) - Sets the value assocated with the key, inserts if needed.
- - [ ] void* cassoc_get(cassoc vec, const char* key) - Returns a pointer to the value assocated with the key or NULL.
+ - [x] void cassoc_set(cassoc vec, const char* key, void* val) - Sets the value assocated with the key, inserts if needed.
+ - [x] void* cassoc_get(cassoc vec, const char* key) - Returns a pointer to the value assocated with the key or NULL.
 
 #### Macros
 
@@ -289,7 +289,6 @@ In addition to the vector the library provides an implementation for an associat
  - [x] cvec_insertN(void** VEC, size_t IDX, void* VAL) => * VEC = cvec_insert(* VEC, IDX, VAL);
  - [x] cvec_insertArrayN(void** VEC, size_t IDX, void* ARR, size_t N) => * VEC = cvec_insertArray(* VEC, IDX, ARR, N);
  - [ ] cvec_insertAllN(void** VEC, size_t index, ...) => * VEC = cvec_insertArray(* VEC, ...);
- - [ ] cassoc_setN(void** VEC, void* KEY, void* VAL) => * VEC = cassoc_set(* VEC, KEY, VAL);
 
 ### C Area (toollib -> carea)
 
