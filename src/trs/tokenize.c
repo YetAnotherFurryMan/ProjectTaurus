@@ -3,29 +3,37 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <toollib/carea/carea.h>
 
-Token g_Lookahed = {0};
-size_t g_LineNo = 0;
+#include <trs/error.h>
+#include <trs/state.h>
 
-static inline void nextTokenStr(void* area, FILE* f, Token* tok){
+Token g_Lookahed = {0};
+
+// TODO: Fix s->m_ColNo to point at the begining not the end of the token
+
+static inline void nextTokenStr(State* s, FILE* f, Token* tok){
+	void* area = s->m_Area;
 	char c = getc(f); // Consume "
+	s->m_ColNo++;
 
 	size_t i = 0;
 	size_t len = 32;
 	char* str = malloc(32);
-	if(!str){
-		fprintf(stderr, "ERROR: Out of memory.\n");
-		exit(1);
-	}
+	if(!str)
+		yell(FE_OUT_OF_MEMORY);
 
 	while(c != '\"' && !feof(f)){
-		if(c == '\n')
-			g_LineNo++;
+		if(c == '\n'){
+			s->m_LineNo++;
+			s->m_ColNo = 0;
+		}
 
 		if(c == '\\'){
 			c = getc(f);
+			s->m_ColNo++;
 			switch(c){
 				case '\"':
 				case '\'':
@@ -52,24 +60,21 @@ static inline void nextTokenStr(void* area, FILE* f, Token* tok){
 
 		str[i++] = c;
 		c = getc(f);
+		s->m_ColNo++;
 
 		if(i >= len){
 			len += 8;
 			str = realloc(str, len);
-			if(!str){
-				fprintf(stderr, "ERROR: Out of memory.\n");
-				exit(1);
-			}
+			if(!str)
+				yell(FE_OUT_OF_MEMORY);
 		}
 	}
 
 	str[i++] = 0;
 
 	tok->m_Value = carea_alloc(area, i);
-	if(!tok->m_Value){
-		fprintf(stderr, "ERROR: Out of memory.\n");
-		exit(1);
-	}
+	if(!tok->m_Value)
+		yell(FE_OUT_OF_MEMORY);
 
 	memcpy((void*)tok->m_Value, str, i);
 	free(str);
@@ -77,20 +82,54 @@ static inline void nextTokenStr(void* area, FILE* f, Token* tok){
 	tok->m_Type = TOK_STR;
 }
 
-static inline void nextTokenId(void* area, FILE* f, Token* tok){
+static inline void nextTokenNum(State* s, FILE* f, Token* tok){
 	char c = getc(f);
+	s->m_ColNo++;
+
+	size_t i = 0;
+	char* str = malloc(21);
+	if(!str)
+		yell(FE_OUT_OF_MEMORY);
+
+
+	while(c >= '0' && c <= '9'){
+		str[i++] = c;
+		c = fgetc(f);
+		s->m_ColNo++;
+
+		if(i > 20)
+			yellp(E_UNPARSABLE_NUMBER, s->m_FileName, s->m_LineNo, s->m_ColNo);
+	}
+	ungetc(c ,f);
+
+	str[i++] = 0;
+
+	tok->m_Value = carea_alloc(s->m_Area, i);
+	if(!tok->m_Value)
+		yell(FE_OUT_OF_MEMORY);
+
+
+	memcpy((void*)tok->m_Value, str, i);
+	free(str);
+
+	tok->m_Type = TOK_NUM;
+}
+
+static inline void nextTokenId(State* s, FILE* f, Token* tok){
+	char c = getc(f);
+	s->m_ColNo++;
 	
 	size_t i = 0;
 	size_t len = 32;
 	char* str = malloc(32);
-	if(!str){
-		fprintf(stderr, "ERROR: Out of memory.\n");
-		exit(1);
-	}
+	if(!str)
+		yell(FE_OUT_OF_MEMORY);
+
 
 	while(((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_') && !feof(f)){
 		str[i++] = c;
 		c = getc(f);
+		s->m_ColNo++;
 
 		if(i >= len){
 			if(i >= 256){
@@ -101,21 +140,20 @@ static inline void nextTokenId(void* area, FILE* f, Token* tok){
 
 			len += 8;
 			str = realloc(str, len);
-			if(!str){
-				fprintf(stderr, "ERROR: Out of memory.\n");
-				exit(1);
-			}
+			if(!str)
+				yell(FE_OUT_OF_MEMORY);
+
 		}
 	}
 	ungetc(c, f);
+	s->m_ColNo--;
 
 	str[i++] = 0;
 
-	tok->m_Value = carea_alloc(area, i);
-	if(!tok->m_Value){
-		fprintf(stderr, "ERROR: Out of memory.\n");
-		exit(1);
-	}
+	tok->m_Value = carea_alloc(s->m_Area, i);
+	if(!tok->m_Value)
+		yell(FE_OUT_OF_MEMORY);
+
 
 	memcpy((void*)tok->m_Value, str, i);
 	free(str);
@@ -123,7 +161,7 @@ static inline void nextTokenId(void* area, FILE* f, Token* tok){
 	tok->m_Type = TOK_ID;
 }
 
-Token nextToken(void* area, FILE* f){
+Token nextToken(State* s, FILE* f){
 	if(g_Lookahed.m_Type != 0){
 		Token tok = g_Lookahed;
 		g_Lookahed.m_Type = 0;
@@ -132,25 +170,28 @@ Token nextToken(void* area, FILE* f){
 
 	Token tok = {0};
 	if(feof(f)){
-		tok.m_LineNo = g_LineNo;
 		tok.m_Type = TOK_EOF;
 		return tok;
 	}
 
 	char c = getc(f);
 	while(isspace(c)){
-		if(c == '\n')
-			g_LineNo++;
+		if(c == '\n'){
+			s->m_LineNo++;
+			s->m_ColNo = 0;
+		}
+
 		c = getc(f);
+		s->m_ColNo++;
 	}
 
-	tok.m_LineNo = g_LineNo;
-	
 	if(feof(f)){
 		tok.m_Type = TOK_EOF;
 		return tok;
 	}
-	
+
+	bool nextEq = false;
+
 	switch(c){
 		case ';':
 			tok.m_Type = TOK_SEMICOLON;
@@ -168,14 +209,33 @@ Token nextToken(void* area, FILE* f){
 			tok.m_Type = TOK_PRENTICE_R;
 			tok.m_Value = ")";
 			break;
-		}
+		case '=':
+			tok.m_Type = TOK_OP_EQ;
+			tok.m_Value = "=";
+			nextEq = true;
+			break;
+	}
 
 	if(tok.m_Type == TOK_ERR){
 		if((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_'){
 			ungetc(c, f);
-			nextTokenId(area, f, &tok);
+			s->m_ColNo--;
+			nextTokenId(s, f, &tok);
+		} else if(c >= '0' && c <= '9'){
+			ungetc(c, f);
+			s->m_ColNo--;
+			nextTokenNum(s, f, &tok);
 		} else if(c == '\"'){
-			nextTokenStr(area, f, &tok);
+			nextTokenStr(s, f, &tok);
+		}
+	} else if(nextEq){
+		c = getc(f);
+		s->m_ColNo++;
+		if(c == '='){
+			// TODO
+		} else{
+			ungetc(c, f);
+			s->m_ColNo--;
 		}
 	}
 

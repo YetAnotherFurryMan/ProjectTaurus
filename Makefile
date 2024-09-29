@@ -1,102 +1,71 @@
 BUILD ?= build
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-getsrc=$(patsubst $(BUILD)/%,%,$(patsubst $(word 1,$(subst .dir,.dir ,$1))/%.o,$(word 1,$(subst .dir, ,$1))/%,$1))
+getsrc=$(patsubst $(BUILD)/obj/%.o,src/%,$1)
 
-dirs := $(BUILD)/toollib $(BUILD)/toollib/ap.dir $(BUILD)/toollib/csv.dir $(BUILD)/toollib/cvec.dir $(BUILD)/toollib/carea.dir $(BUILD)/trs.dir
+dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/toollib/ap $(BUILD)/obj/toollib/csv $(BUILD)/obj/toollib/cvec $(BUILD)/obj/toollib/carea
 
-testware_dirs := $(BUILD)/testware/toollib
+.PHONY: clean all test
 
-.PHONY: all
-all: $(dirs) toollib $(BUILD)/trs
-
-.PHONY: toollib
-toollib: $(filter $(BUILD)/toollib/%, $(dirs)) $(BUILD)/toollib/libap.a $(if $(RELEASE),$(BUILD)/toollib/ap.so,) $(BUILD)/toollib/libcsv.a $(if $(RELEASE),$(BUILD)/toollib/csv.so,) $(BUILD)/toollib/libcvec.a $(if $(RELEASE),$(BUILD)/toollib/cvec.so,) $(BUILD)/toollib/libcarea.a $(if $(RELEASE),$(BUILD)/toollib/carea.so,)
+all: $(dirs) $(BUILD)/lib/libap.a $(if $(RELEASE),$(BUILD)/lib/ap.so,) $(BUILD)/lib/libcsv.a $(if $(RELEASE),$(BUILD)/lib/csv.so,) $(BUILD)/lib/libcvec.a $(if $(RELEASE),$(BUILD)/lib/cvec.so,) $(BUILD)/lib/libcarea.a $(if $(RELEASE),$(BUILD)/lib/carea.so,)
 
 clean:
 	$(RM) -r $(BUILD)
 
-$(dirs) $(testware_dirs):
+$(dirs):
 	mkdir -p $@
 
 exebin := 
 libbin := 
 
-bin = $(patsubst toollib/ap/%,$(BUILD)/toollib/ap.dir/%.o,$(call rwildcard,toollib/ap,*.c *.cpp))
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/ap, *.c))
 libbin += $(bin)
-$(BUILD)/toollib/libap.a: $(bin)
+$(BUILD)/lib/libap.a: $(bin)
 	$(AR) qc $@ $^
 
-$(BUILD)/toollib/ap.so: $(bin)
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+$(BUILD)/lib/ap.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-bin = $(patsubst toollib/csv/%,$(BUILD)/toollib/csv.dir/%.o,$(call rwildcard,toollib/csv,*.c *.cpp))
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/csv, *.c))
 libbin += $(bin)
-$(BUILD)/toollib/libcsv.a: $(bin)
+$(BUILD)/lib/libcsv.a: $(bin)
 	$(AR) qc $@ $^
 
-$(BUILD)/toollib/csv.so: $(bin)
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+$(BUILD)/lib/csv.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-bin = $(patsubst toollib/cvec/%,$(BUILD)/toollib/cvec.dir/%.o,$(call rwildcard,toollib/cvec,*.c *.cpp))
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/cvec, *.c))
 libbin += $(bin)
-$(BUILD)/toollib/libcvec.a: $(bin)
+$(BUILD)/lib/libcvec.a: $(bin)
 	$(AR) qc $@ $^
 
-$(BUILD)/toollib/cvec.so: $(bin)
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+$(BUILD)/lib/cvec.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-bin = $(patsubst toollib/carea/%,$(BUILD)/toollib/carea.dir/%.o,$(call rwildcard,toollib/carea,*.c *.cpp))
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/carea, *.c))
 libbin += $(bin)
-$(BUILD)/toollib/libcarea.a: $(bin)
+$(BUILD)/lib/libcarea.a: $(bin)
 	$(AR) qc $@ $^
 
-$(BUILD)/toollib/carea.so: $(bin)
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+$(BUILD)/lib/carea.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-bin = $(patsubst trs/%,$(BUILD)/trs.dir/%.o,$(call rwildcard,trs,*.c *.cpp))
-exebin += $(bin)
-$(BUILD)/trs: $(bin) $(BUILD)/toollib/libap.a $(BUILD)/toollib/libcvec.a $(BUILD)/toollib/libcarea.a
-	$(CXX) -o $@ $^ -std=c++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,)
+test: all $(BUILD)/test/ap
 
 .SECONDEXPANSION:
 
 $(filter %.c.o, $(libbin)): %: $$(call getsrc,%)
-	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+	$(CC) -c $^ -o $@ -std=gnu17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(filter %.c.o, $(exebin)): %: $$(call getsrc,%)
-	$(CC) -c $^ -o $@ -std=c17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+	$(CC) -c $^ -o $@ -std=gnu17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(filter %.cpp.o, $(libbin)): %: $$(call getsrc,%)
-	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+	$(CXX) -c $^ -o $@ -std=gnu++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
-	$(CXX) -c $^ -o $@ -std=c++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+	$(CXX) -c $^ -o $@ -std=gnu++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
-.PHONY: testware
-testware: all $(testware_dirs) $(BUILD)/testware/toollib/ap $(BUILD)/testware/toollib/ap++ $(BUILD)/testware/toollib/ap++getAll $(BUILD)/testware/toollib/csv $(BUILD)/testware/toollib/csv++ $(BUILD)/testware/toollib/cvec $(BUILD)/testware/toollib/cassoc $(BUILD)/testware/toollib/carea
-
-$(BUILD)/testware/toollib/ap: testware/toollib/ap.c $(BUILD)/toollib/libap.a
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/ap++: testware/toollib/ap++.cpp $(BUILD)/toollib/libap.a
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/ap++getAll: testware/toollib/ap++getAll.cpp $(BUILD)/toollib/libap.a
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/csv: testware/toollib/csv.c $(BUILD)/toollib/libcsv.a
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/csv++: testware/toollib/csv++.cpp $(BUILD)/toollib/libcsv.a
-	$(CXX) -o $@ $^ -std=c++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/cvec: testware/toollib/cvec.c $(BUILD)/toollib/libcvec.a
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/cassoc: testware/toollib/cassoc.c $(BUILD)/toollib/libcvec.a
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/testware/toollib/carea: testware/toollib/carea.c $(BUILD)/toollib/libcarea.a
-	$(CC) -o $@ $^ -std=c17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+$(BUILD)/test/ap: test/toollib/ap.c $(BUILD)/lib/libap.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
