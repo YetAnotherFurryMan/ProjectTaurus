@@ -1,5 +1,5 @@
 #define _GNU_SOURCE
-#include <toollib/csv/csv.h>
+#include <toollib/csv.h>
 
 #include <stdlib.h>
 #include <string.h>

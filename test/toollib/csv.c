@@ -3,7 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include <toollib/csv/csv.h>
+#include <toollib/csv.h>
 
 typedef struct{
 	const char delimeter;

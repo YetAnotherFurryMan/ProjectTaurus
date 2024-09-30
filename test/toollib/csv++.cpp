@@ -5,7 +5,7 @@
 #include <vector>
 #include <string_view>
 
-#include <toollib/csv/csv.hpp>
+#include <toollib/csv.hpp>
 
 namespace tl = toollib;
 

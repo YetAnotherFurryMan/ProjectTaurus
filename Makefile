@@ -50,7 +50,7 @@ $(BUILD)/lib/libcarea.a: $(bin)
 $(BUILD)/lib/carea.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-test: all $(BUILD)/test/ap
+test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/cvec $(BUILD)/test/cassoc $(BUILD)/test/carea
 
 .SECONDEXPANSION:
 
@@ -67,5 +67,26 @@ $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
 	$(CXX) -c $^ -o $@ -std=gnu++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
 
 $(BUILD)/test/ap: test/toollib/ap.c $(BUILD)/lib/libap.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/ap++: test/toollib/ap++.cpp $(BUILD)/lib/libap.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/ap++getAll: test/toollib/ap++getAll.cpp $(BUILD)/lib/libap.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/csv: test/toollib/csv.c $(BUILD)/lib/libcsv.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/csv++: test/toollib/csv++.cpp $(BUILD)/lib/libcsv.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/cvec: test/toollib/cvec.c $(BUILD)/lib/libcvec.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/cassoc: test/toollib/cassoc.c $(BUILD)/lib/libcvec.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/carea: test/toollib/carea.c $(BUILD)/lib/libcarea.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 

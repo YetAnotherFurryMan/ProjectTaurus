@@ -1,4 +1,4 @@
-#include <toollib/cvec/cvec.h>
+#include <toollib/cvec.h>
 
 #include <malloc.h>
 

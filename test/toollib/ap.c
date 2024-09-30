@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <toollib/ap/ap.h>
+#include <toollib/ap.h>
 
 typedef struct Case{
 	const int argc;
