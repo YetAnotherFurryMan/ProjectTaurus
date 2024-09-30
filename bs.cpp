@@ -452,122 +452,205 @@ void genNinja(){
 	out << "rule lib" << std::endl;
 	out << "  command = ar qc $out $in" << std::endl;
 	out << std::endl;
-	out << "rule testware" << std::endl;
+	out << "rule testc" << std::endl;
 	out << "  command = gcc $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu17 -Iinclude -ggdb" << std::endl;
 	out << std::endl;
-	out << "rule testwarexx" << std::endl;
+	out << "rule testcxx" << std::endl;
 	out << "  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu++17 -Iinclude -ggdb" << std::endl;
 	out << std::endl;
 
 	// Projects
-	for(const auto& proj: projects){
-		out << "build " << proj.name << ": phony";
-		for(const auto& mod: proj.modules){
-			out << " $bin/";
-			if(mod.type == ModuleType::EXE)
-				out << "bin/" << mod.name;
-			else if(mod.type == ModuleType::LIB)
-				out << "lib/lib" << mod.name << ".a $bin/lib/" << mod.name << ".so";
-		}
-		out << std::endl;
-	}
+	// for(const auto& proj: projects){
+	// 	out << "build " << proj.name << ": phony";
+	// 	for(const auto& mod: proj.modules){
+	// 		out << " $bin/";
+	// 		if(mod.type == ModuleType::EXE)
+	// 			out << "bin/" << mod.name;
+	// 		else if(mod.type == ModuleType::LIB)
+	// 			out << "lib/lib" << mod.name << ".a $bin/lib/" << mod.name << ".so";
+	// 	}
+	// 	out << std::endl;
+	// }
 
-	// Modules
-	for(const auto& proj: projects){
-		for(const auto& mod: proj.modules){
-			std::stringstream bin;
+	// // Modules
+	// for(const auto& proj: projects){
+	// 	for(const auto& mod: proj.modules){
+	// 		std::stringstream bin;
 
-			std::string p = proj.name + "/" + mod.name;
-			for(const auto& e: fs::recursive_directory_iterator("src/" + p)){
-				if(!e.is_regular_file())
-					continue;
+	// 		std::string p = proj.name + "/" + mod.name;
+	// 		for(const auto& e: fs::recursive_directory_iterator("src/" + p)){
+	// 			if(!e.is_regular_file())
+	// 				continue;
 
-				auto erel = e.path().lexically_relative("src/" + p);
-				if(e.path().extension() == ".c"){
-					bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
-					out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cc src/" << p << "/" << erel.c_str() << std::endl;
-				} else if(e.path().extension() == ".cpp"){
-					bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
-					out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cxx src/" << p << "/" << erel.c_str() << std::endl;
-				}
+	// 			auto erel = e.path().lexically_relative("src/" + p);
+	// 			if(e.path().extension() == ".c"){
+	// 				bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
+	// 				out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cc src/" << p << "/" << erel.c_str() << std::endl;
+	// 			} else if(e.path().extension() == ".cpp"){
+	// 				bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
+	// 				out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cxx src/" << p << "/" << erel.c_str() << std::endl;
+	// 			}
 
-				if(mod.type == ModuleType::EXE)
-					out << "  flags = -fPIE" << std::endl;
-				else if(mod.type == ModuleType::LIB)
-					out << "  flags = -fPIC" << std::endl;
-			}
+	// 			if(mod.type == ModuleType::EXE)
+	// 				out << "  flags = -fPIE" << std::endl;
+	// 			else if(mod.type == ModuleType::LIB)
+	// 				out << "  flags = -fPIC" << std::endl;
+	// 		}
 
-			if(mod.type == ModuleType::EXE){
-				out << "build $bin/bin/" << mod.name << ": link" << bin.str();
-				for(const auto& dep: mod.deps)
-					out << " $bin/lib/" << dep;
-				out << std::endl;
-				out << "  flags = " << mod.flags << std::endl;
-				out << std::endl;
-			} else if(mod.type == ModuleType::LIB){
-				out << "build $bin/lib/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
-				out << std::endl;
-				out << "build $bin/lib/" << mod.name << ".so: link" << bin.str() << std::endl;
-				out << "  flags = --shared " << mod.flags << std::endl;
-				out << std::endl;
-			}
-		}
-	}
-	for(const auto& mod: modules){
+	// 		if(mod.type == ModuleType::EXE){
+	// 			out << "build $bin/bin/" << mod.name << ": link" << bin.str();
+	// 			for(const auto& dep: mod.deps)
+	// 				out << " $bin/lib/" << dep;
+	// 			out << std::endl;
+	// 			out << "  flags = " << mod.flags << std::endl;
+	// 			out << std::endl;
+	// 		} else if(mod.type == ModuleType::LIB){
+	// 			out << "build $bin/lib/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
+	// 			out << std::endl;
+	// 			out << "build $bin/lib/" << mod.name << ".so: link" << bin.str() << std::endl;
+	// 			out << "  flags = --shared " << mod.flags << std::endl;
+	// 			out << std::endl;
+	// 		}
+	// 	}
+	// }
+	// for(const auto& mod: modules){
+	// 	std::stringstream bin;
+
+	// 	for(const auto& e: fs::recursive_directory_iterator("src/" + mod.name)){
+	// 		if(!e.is_regular_file())
+	// 			continue;
+
+	// 		auto erel = e.path().lexically_relative("src/" + mod.name);
+	// 		if(e.path().extension() == ".c"){
+	// 			bin << " $bin/obj/" << mod.name << "/" << erel.c_str() << ".o"; 
+	// 			out << "build $bin/obj/" << mod.name << "/" << erel.c_str() << ".o: cc src/" << mod.name << "/" << erel.c_str() << std::endl;
+	// 		} else if(e.path().extension() == ".cpp"){
+	// 			bin << " $bin/obj" << mod.name << "/" << erel.c_str() << ".o"; 
+	// 			out << "build $bin/obj" << mod.name << "/" << erel.c_str() << ".o: cxx src/" << mod.name << "/" << erel.c_str() << std::endl;
+	// 		}
+
+	// 		if(mod.type == ModuleType::EXE)
+	// 			out << "  flags = -fPIE" << std::endl;
+	// 		else if(mod.type == ModuleType::LIB)
+	// 			out << "  flags = -fPIC" << std::endl;
+	// 	}
+
+	// 	if(mod.type == ModuleType::EXE){
+	// 		out << "build $bin/bin/" << mod.name << ": link" << bin.str();
+	// 		for(const auto& dep: mod.deps)
+	// 			out << " $bin/lib/" << dep;
+	// 		out << std::endl;
+	// 		out << "  flags = " << mod.flags << std::endl;
+	// 		out << std::endl;
+	// 	} else if(mod.type == ModuleType::LIB){
+	// 		out << "build $bin/lib/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
+	// 		out << std::endl;
+	// 		out << "build $bin/lib/" << mod.name << ".so: link" << bin.str() << std::endl;
+	// 		out << "  flags = --shared " << mod.flags << std::endl;
+	// 		out << std::endl;
+	// 	}
+	// }
+
+	for(const auto& mod: mods){
 		std::stringstream bin;
 
-		for(const auto& e: fs::recursive_directory_iterator("src/" + mod.name)){
+		std::string p = (!mod.project.empty()?mod.project + "/":"") + mod.name;
+		for(const auto& e: fs::recursive_directory_iterator("src/" + p)){
 			if(!e.is_regular_file())
 				continue;
 
-			auto erel = e.path().lexically_relative("src/" + mod.name);
+			// TODO: Ignore nonenabled language extensions
+
+			auto erel = e.path().lexically_relative("src/" + p);
 			if(e.path().extension() == ".c"){
-				bin << " $bin/obj/" << mod.name << "/" << erel.c_str() << ".o"; 
-				out << "build $bin/obj/" << mod.name << "/" << erel.c_str() << ".o: cc src/" << mod.name << "/" << erel.c_str() << std::endl;
+				bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
+				out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cc src/" << p << "/" << erel.c_str() << std::endl;
 			} else if(e.path().extension() == ".cpp"){
-				bin << " $bin/obj" << mod.name << "/" << erel.c_str() << ".o"; 
-				out << "build $bin/obj" << mod.name << "/" << erel.c_str() << ".o: cxx src/" << mod.name << "/" << erel.c_str() << std::endl;
+				bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
+				out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cxx src/" << p << "/" << erel.c_str() << std::endl;
 			}
 
-			if(mod.type == ModuleType::EXE)
-				out << "  flags = -fPIE" << std::endl;
-			else if(mod.type == ModuleType::LIB)
-				out << "  flags = -fPIC" << std::endl;
+			switch(mod.type){
+				case ModType::EXE:
+				{
+					out << "  flags = -fPIE";
+				} break;
+				case ModType::LIB:
+				{
+					out << "  flags = -fPIC";
+				} break;
+			}
+			for(const auto& dep: mod.deps){
+				if(dep.type == DepType::EXTERNAL){
+					out << " " << dep["cflags"];
+				}
+			}
+			out << std::endl;
 		}
 
-		if(mod.type == ModuleType::EXE){
-			out << "build $bin/bin/" << mod.name << ": link" << bin.str();
-			for(const auto& dep: mod.deps)
-				out << " $bin/lib/" << dep;
-			out << std::endl;
-			out << "  flags = " << mod.flags << std::endl;
-			out << std::endl;
-		} else if(mod.type == ModuleType::LIB){
-			out << "build $bin/lib/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
-			out << std::endl;
-			out << "build $bin/lib/" << mod.name << ".so: link" << bin.str() << std::endl;
-			out << "  flags = --shared " << mod.flags << std::endl;
-			out << std::endl;
+		std::string lflags = "";
+		switch(mod.type){
+			case ModType::EXE:
+			{
+				out << "build $bin/bin/" << mod.name << ": link" << bin.str();
+				for(const auto& dep: mod.deps){
+					if(dep.type == DepType::INTERNAL)
+						out << " $bin/lib/lib" << dep["name"] << ".a";
+					else
+						lflags += " " + dep["lflags"];
+				}
+			} break;
+			case ModType::LIB:
+			{
+				lflags = " --shared";
+				out << "build $bin/lib/lib" << mod.name << ".a: lib" << bin.str() << std::endl;
+				out << std::endl;
+				out << "build $bin/lib/" << mod.name << ".so: link" << bin.str();
+				for(const auto& dep: mod.deps){
+					if(dep.type == DepType::INTERNAL)
+						out << " $bin/lib/lib" << dep["name"] << ".a";
+					else
+						lflags += " " + dep["lflags"];
+				}
+			} break;
 		}
+		out << std::endl;
+		out << "  flags =" << lflags << std::endl;
+		out << std::endl;
 	}
-
 	// TODO: RELEASE
 
-	// Testware
-	out << "build testware: phony ";
-	for(const auto& tw: testware)
-		out << " $bin/testware/" << tw.project << "/" << tw.name;
+	// Test
+	out << "build test: phony";
+	for(const auto& test: tests)
+		out << " $bin/test/" << test.name;
 	out << std::endl;
 
-	for(const auto& tw: testware){
-		out << "build $bin/test/" << tw.project << "." << tw.name << ": ";
-		if(tw.language == ModuleLanguage::C)
-			out << "testware testware/" << tw.project << "/" << tw.name << ".c";
-		else if(tw.language == ModuleLanguage::CXX)
-			out << "testwarexx testware/" << tw.project << "/" << tw.name << ".cpp";
-		for(const auto& dep: tw.deps)
-			out << " $bin/lib/" << dep;
+	// Test src
+	for(const auto& test: tests){
+		out << "build $bin/test/" << test.name << ": ";
+		out << "test";
+		switch(test.lang){
+			case Lang::C:
+			{
+				out << "c";
+			} break;
+			case Lang::CXX:
+			{
+				out << "cxx";
+			} break;
+		}
+		out << " test/" << test.project << "/" << test.name << "." << langExt(test.lang);
+		std::string flags = "";
+		for(const auto& dep: test.deps){
+			if(dep.type == DepType::INTERNAL)
+				out << " $bin/lib/lib" << dep["name"] << ".a";
+			else
+				flags += " " + dep["cflags"] + " " + dep["lflags"];
+		}
 		out << std::endl;
+		if(!flags.empty())
+			out << "  flags = " << flags << std::endl;
 	}
 
 	out.close();

@@ -12,78 +12,49 @@ rule link
 rule lib
   command = ar qc $out $in
 
-rule testware
+rule testc
   command = gcc $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu17 -Iinclude -ggdb
 
-rule testwarexx
+rule testcxx
   command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu++17 -Iinclude -ggdb
 
-build toollib: phony $bin/lib/libap.a $bin/lib/ap.so $bin/lib/libcsv.a $bin/lib/csv.so $bin/lib/libcvec.a $bin/lib/cvec.so $bin/lib/libcarea.a $bin/lib/carea.so
 build $bin/obj/toollib/ap/ap.c.o: cc src/toollib/ap/ap.c
   flags = -fPIC
 build $bin/lib/libap.a: lib $bin/obj/toollib/ap/ap.c.o
 
 build $bin/lib/ap.so: link $bin/obj/toollib/ap/ap.c.o
-  flags = --shared 
+  flags = --shared
 
-build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
-  flags = -fPIC
-build $bin/obj/toollib/csv/strrow.c.o: cc src/toollib/csv/strrow.c
-  flags = -fPIC
 build $bin/obj/toollib/csv/parseRow.c.o: cc src/toollib/csv/parseRow.c
   flags = -fPIC
 build $bin/obj/toollib/csv/encoding.c.o: cc src/toollib/csv/encoding.c
   flags = -fPIC
 build $bin/obj/toollib/csv/fgetrow.c.o: cc src/toollib/csv/fgetrow.c
   flags = -fPIC
-build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o
-
-build $bin/lib/csv.so: link $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o
-  flags = --shared 
-
-build $bin/obj/toollib/cvec/add.c.o: cc src/toollib/cvec/add.c
+build $bin/obj/toollib/csv/strrow.c.o: cc src/toollib/csv/strrow.c
   flags = -fPIC
+build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
+  flags = -fPIC
+build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+
+build $bin/lib/csv.so: link $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+  flags = --shared
+
 build $bin/obj/toollib/cvec/memory.c.o: cc src/toollib/cvec/memory.c
   flags = -fPIC
-build $bin/lib/libcvec.a: lib $bin/obj/toollib/cvec/add.c.o $bin/obj/toollib/cvec/memory.c.o
+build $bin/obj/toollib/cvec/add.c.o: cc src/toollib/cvec/add.c
+  flags = -fPIC
+build $bin/lib/libcvec.a: lib $bin/obj/toollib/cvec/memory.c.o $bin/obj/toollib/cvec/add.c.o
 
-build $bin/lib/cvec.so: link $bin/obj/toollib/cvec/add.c.o $bin/obj/toollib/cvec/memory.c.o
-  flags = --shared 
+build $bin/lib/cvec.so: link $bin/obj/toollib/cvec/memory.c.o $bin/obj/toollib/cvec/add.c.o
+  flags = --shared
 
 build $bin/obj/toollib/carea/carea.c.o: cc src/toollib/carea/carea.c
   flags = -fPIC
 build $bin/lib/libcarea.a: lib $bin/obj/toollib/carea/carea.c.o
 
 build $bin/lib/carea.so: link $bin/obj/toollib/carea/carea.c.o
-  flags = --shared 
+  flags = --shared
 
-build $bin/obj/trs/main.c.o: cc src/trs/main.c
-  flags = -fPIE
-build $bin/obj/trs/error.c.o: cc src/trs/error.c
-  flags = -fPIE
-build $bin/obj/trs/state.c.o: cc src/trs/state.c
-  flags = -fPIE
-build $bin/obj/trs/eval.c.o: cc src/trs/eval.c
-  flags = -fPIE
-build $bin/obj/trs/loadStd.c.o: cc src/trs/loadStd.c
-  flags = -fPIE
-build $bin/obj/trs/parse.c.o: cc src/trs/parse.c
-  flags = -fPIE
-build $bin/obj/trs/std.c.o: cc src/trs/std.c
-  flags = -fPIE
-build $bin/obj/trs/tokenize.c.o: cc src/trs/tokenize.c
-  flags = -fPIE
-build $bin/obj/trs/help.c.o: cc src/trs/help.c
-  flags = -fPIE
-build $bin/bin/trs: link $bin/obj/trs/main.c.o $bin/obj/trs/error.c.o $bin/obj/trs/state.c.o $bin/obj/trs/eval.c.o $bin/obj/trs/loadStd.c.o $bin/obj/trs/parse.c.o $bin/obj/trs/std.c.o $bin/obj/trs/tokenize.c.o $bin/obj/trs/help.c.o $bin/lib/libap.a $bin/lib/libcvec.a $bin/lib/libcarea.a
-  flags = 
-
-build testware: phony  $bin/testware/toollib/ap $bin/testware/toollib/ap++ $bin/testware/toollib/ap++getAll $bin/testware/toollib/csv $bin/testware/toollib/csv++ $bin/testware/toollib/cvec $bin/testware/toollib/cassoc $bin/testware/toollib/carea
-build $bin/test/toollib.ap: testware testware/toollib/ap.c $bin/lib/libap.a
-build $bin/test/toollib.ap++: testwarexx testware/toollib/ap++.cpp $bin/lib/libap.a
-build $bin/test/toollib.ap++getAll: testwarexx testware/toollib/ap++getAll.cpp $bin/lib/libap.a
-build $bin/test/toollib.csv: testware testware/toollib/csv.c $bin/lib/libcsv.a
-build $bin/test/toollib.csv++: testwarexx testware/toollib/csv++.cpp $bin/lib/libcsv.a
-build $bin/test/toollib.cvec: testware testware/toollib/cvec.c $bin/lib/libcvec.a
-build $bin/test/toollib.cassoc: testware testware/toollib/cassoc.c $bin/lib/libcvec.a
-build $bin/test/toollib.carea: testware testware/toollib/carea.c $bin/lib/libcarea.a
+build test: phony $bin/test/ap
+build $bin/test/ap: testc test/toollib/ap.c $bin/lib/libap.a
