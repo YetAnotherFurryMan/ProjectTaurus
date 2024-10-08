@@ -25,19 +25,19 @@ build $bin/lib/libap.a: lib $bin/obj/toollib/ap/ap.c.o
 build $bin/lib/ap.so: link $bin/obj/toollib/ap/ap.c.o
   flags = --shared
 
+build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
+  flags = -fPIC
+build $bin/obj/toollib/csv/strrow.c.o: cc src/toollib/csv/strrow.c
+  flags = -fPIC
 build $bin/obj/toollib/csv/parseRow.c.o: cc src/toollib/csv/parseRow.c
   flags = -fPIC
 build $bin/obj/toollib/csv/encoding.c.o: cc src/toollib/csv/encoding.c
   flags = -fPIC
 build $bin/obj/toollib/csv/fgetrow.c.o: cc src/toollib/csv/fgetrow.c
   flags = -fPIC
-build $bin/obj/toollib/csv/strrow.c.o: cc src/toollib/csv/strrow.c
-  flags = -fPIC
-build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
-  flags = -fPIC
-build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o
 
-build $bin/lib/csv.so: link $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+build $bin/lib/csv.so: link $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o
   flags = --shared
 
 build $bin/obj/toollib/vec/vec.c.o: cc src/toollib/vec/vec.c
@@ -47,13 +47,13 @@ build $bin/lib/libvec.a: lib $bin/obj/toollib/vec/vec.c.o
 build $bin/lib/vec.so: link $bin/obj/toollib/vec/vec.c.o
   flags = --shared
 
-build $bin/obj/toollib/cvec/memory.c.o: cc src/toollib/cvec/memory.c
-  flags = -fPIC
 build $bin/obj/toollib/cvec/add.c.o: cc src/toollib/cvec/add.c
   flags = -fPIC
-build $bin/lib/libcvec.a: lib $bin/obj/toollib/cvec/memory.c.o $bin/obj/toollib/cvec/add.c.o
+build $bin/obj/toollib/cvec/memory.c.o: cc src/toollib/cvec/memory.c
+  flags = -fPIC
+build $bin/lib/libcvec.a: lib $bin/obj/toollib/cvec/add.c.o $bin/obj/toollib/cvec/memory.c.o
 
-build $bin/lib/cvec.so: link $bin/obj/toollib/cvec/memory.c.o $bin/obj/toollib/cvec/add.c.o
+build $bin/lib/cvec.so: link $bin/obj/toollib/cvec/add.c.o $bin/obj/toollib/cvec/memory.c.o
   flags = --shared
 
 build $bin/obj/toollib/carea/carea.c.o: cc src/toollib/carea/carea.c

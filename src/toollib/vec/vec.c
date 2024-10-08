@@ -5,7 +5,7 @@
 
 static inline vec_Header* vec_realloc(vec_Header* head, size_t size){
 	size_t ns = head->cap * 2 + size;
-	head = realloc(head, ns);
+	head = realloc(head, ns + sizeof(vec_Header));
 	if(head) 
 		head->cap = ns;
 	return head;
@@ -75,7 +75,7 @@ void* vec_insert(vec* v, size_t offset, size_t size){
 
 	char* data = head->data + offset;
 	memmove(data + size, data, head->size - offset);
-	head->cap += size;
+	head->size += size;
 	*v = head->data;
 	return data;
 }
@@ -89,7 +89,7 @@ void vec_delete(vec v, size_t offset, size_t size){
 		return;
 
 	head->size -= size;
-	memmove(head->data + offset, head->data + offset + size, size);
+	memmove(head->data + offset, head->data + offset + size, head->size - offset);
 }
 
 void vec_free(vec v){
