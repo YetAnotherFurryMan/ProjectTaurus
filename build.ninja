@@ -40,6 +40,13 @@ build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/
 build $bin/lib/csv.so: link $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
   flags = --shared
 
+build $bin/obj/toollib/vec/vec.c.o: cc src/toollib/vec/vec.c
+  flags = -fPIC
+build $bin/lib/libvec.a: lib $bin/obj/toollib/vec/vec.c.o
+
+build $bin/lib/vec.so: link $bin/obj/toollib/vec/vec.c.o
+  flags = --shared
+
 build $bin/obj/toollib/cvec/memory.c.o: cc src/toollib/cvec/memory.c
   flags = -fPIC
 build $bin/obj/toollib/cvec/add.c.o: cc src/toollib/cvec/add.c
@@ -56,12 +63,13 @@ build $bin/lib/libcarea.a: lib $bin/obj/toollib/carea/carea.c.o
 build $bin/lib/carea.so: link $bin/obj/toollib/carea/carea.c.o
   flags = --shared
 
-build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/cvec $bin/test/cassoc $bin/test/carea
+build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/cvec $bin/test/cassoc $bin/test/carea
 build $bin/test/ap: testc test/toollib/ap.c $bin/lib/libap.a
 build $bin/test/ap++: testcxx test/toollib/ap++.cpp $bin/lib/libap.a
 build $bin/test/ap++getAll: testcxx test/toollib/ap++getAll.cpp $bin/lib/libap.a
 build $bin/test/csv: testc test/toollib/csv.c $bin/lib/libcsv.a
 build $bin/test/csv++: testcxx test/toollib/csv++.cpp $bin/lib/libcsv.a
+build $bin/test/vec: testc test/toollib/vec.c $bin/lib/libvec.a
 build $bin/test/cvec: testc test/toollib/cvec.c $bin/lib/libcvec.a
 build $bin/test/cassoc: testc test/toollib/cassoc.c $bin/lib/libcvec.a
 build $bin/test/carea: testc test/toollib/carea.c $bin/lib/libcarea.a

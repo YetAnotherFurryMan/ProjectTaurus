@@ -3,11 +3,11 @@ BUILD ?= build
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 getsrc=$(patsubst $(BUILD)/obj/%.o,src/%,$1)
 
-dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/toollib/ap $(BUILD)/obj/toollib/csv $(BUILD)/obj/toollib/cvec $(BUILD)/obj/toollib/carea
+dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/toollib/ap $(BUILD)/obj/toollib/csv $(BUILD)/obj/toollib/vec $(BUILD)/obj/toollib/cvec $(BUILD)/obj/toollib/carea
 
 .PHONY: clean all test
 
-all: $(dirs) $(BUILD)/lib/libap.a $(if $(RELEASE),$(BUILD)/lib/ap.so,) $(BUILD)/lib/libcsv.a $(if $(RELEASE),$(BUILD)/lib/csv.so,) $(BUILD)/lib/libcvec.a $(if $(RELEASE),$(BUILD)/lib/cvec.so,) $(BUILD)/lib/libcarea.a $(if $(RELEASE),$(BUILD)/lib/carea.so,)
+all: $(dirs) $(BUILD)/lib/libap.a $(if $(RELEASE),$(BUILD)/lib/ap.so,) $(BUILD)/lib/libcsv.a $(if $(RELEASE),$(BUILD)/lib/csv.so,) $(BUILD)/lib/libvec.a $(if $(RELEASE),$(BUILD)/lib/vec.so,) $(BUILD)/lib/libcvec.a $(if $(RELEASE),$(BUILD)/lib/cvec.so,) $(BUILD)/lib/libcarea.a $(if $(RELEASE),$(BUILD)/lib/carea.so,)
 
 clean:
 	$(RM) -r $(BUILD)
@@ -34,6 +34,14 @@ $(BUILD)/lib/libcsv.a: $(bin)
 $(BUILD)/lib/csv.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/vec, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libvec.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/lib/vec.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/cvec, *.c))
 libbin += $(bin)
 $(BUILD)/lib/libcvec.a: $(bin)
@@ -50,7 +58,7 @@ $(BUILD)/lib/libcarea.a: $(bin)
 $(BUILD)/lib/carea.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/cvec $(BUILD)/test/cassoc $(BUILD)/test/carea
+test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/vec $(BUILD)/test/cvec $(BUILD)/test/cassoc $(BUILD)/test/carea
 
 .SECONDEXPANSION:
 
@@ -80,6 +88,9 @@ $(BUILD)/test/csv: test/toollib/csv.c $(BUILD)/lib/libcsv.a
 
 $(BUILD)/test/csv++: test/toollib/csv++.cpp $(BUILD)/lib/libcsv.a
 	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/vec: test/toollib/vec.c $(BUILD)/lib/libvec.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/test/cvec: test/toollib/cvec.c $(BUILD)/lib/libcvec.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
