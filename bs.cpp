@@ -110,6 +110,7 @@ struct Mod{
 Mod mods[] = {
 	{ModType::LIB, "toollib", "ap", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "csv", { Lang::C }, {}},
+	{ModType::LIB, "toollib", "vec", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "cvec", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "carea", { Lang::C }, {}}
 
@@ -131,6 +132,9 @@ Test tests[] = {
 	}},
 	{"toollib", "csv++", Lang::CXX, {
 		Dep::idep("toollib", "csv")
+	}},
+	{"toollib", "vec", Lang::C, {
+		Dep::idep("toollib", "vec")
 	}},
 	{"toollib", "cvec", Lang::C, {
 		Dep::idep("toollib", "cvec")
