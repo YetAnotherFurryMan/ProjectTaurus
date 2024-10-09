@@ -47,6 +47,13 @@ build $bin/lib/libvec.a: lib $bin/obj/toollib/vec/vec.c.o
 build $bin/lib/vec.so: link $bin/obj/toollib/vec/vec.c.o
   flags = --shared
 
+build $bin/obj/toollib/assoc/assoc.c.o: cc src/toollib/assoc/assoc.c
+  flags = -fPIC
+build $bin/lib/libassoc.a: lib $bin/obj/toollib/assoc/assoc.c.o
+
+build $bin/lib/assoc.so: link $bin/obj/toollib/assoc/assoc.c.o
+  flags = --shared
+
 build $bin/obj/toollib/cvec/add.c.o: cc src/toollib/cvec/add.c
   flags = -fPIC
 build $bin/obj/toollib/cvec/memory.c.o: cc src/toollib/cvec/memory.c
