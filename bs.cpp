@@ -143,6 +143,9 @@ Test tests[] = {
 	{"toollib", "assoc", Lang::C, {
 		Dep::idep("toollib", "assoc")
 	}},
+	{"toollib", "assoc_int", Lang::C, {
+		Dep::idep("toollib", "assoc")
+	}},
 	{"toollib", "cvec", Lang::C, {
 		Dep::idep("toollib", "cvec")
 	}},

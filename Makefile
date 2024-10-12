@@ -66,7 +66,7 @@ $(BUILD)/lib/libcarea.a: $(bin)
 $(BUILD)/lib/carea.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/cvec $(BUILD)/test/cassoc $(BUILD)/test/carea
+test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/cvec $(BUILD)/test/cassoc $(BUILD)/test/carea
 
 .SECONDEXPANSION:
 
@@ -104,6 +104,9 @@ $(BUILD)/test/vec_int: test/toollib/vec_int.c $(BUILD)/lib/libvec.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/test/assoc: test/toollib/assoc.c $(BUILD)/lib/libassoc.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/assoc_int: test/toollib/assoc_int.c $(BUILD)/lib/libassoc.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/test/cvec: test/toollib/cvec.c $(BUILD)/lib/libcvec.a

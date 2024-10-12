@@ -70,7 +70,7 @@ build $bin/lib/libcarea.a: lib $bin/obj/toollib/carea/carea.c.o
 build $bin/lib/carea.so: link $bin/obj/toollib/carea/carea.c.o
   flags = --shared
 
-build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/cvec $bin/test/cassoc $bin/test/carea
+build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/cvec $bin/test/cassoc $bin/test/carea
 build $bin/test/ap: testc test/toollib/ap.c $bin/lib/libap.a
 build $bin/test/ap++: testcxx test/toollib/ap++.cpp $bin/lib/libap.a
 build $bin/test/ap++getAll: testcxx test/toollib/ap++getAll.cpp $bin/lib/libap.a
@@ -79,6 +79,7 @@ build $bin/test/csv++: testcxx test/toollib/csv++.cpp $bin/lib/libcsv.a
 build $bin/test/vec: testc test/toollib/vec.c $bin/lib/libvec.a
 build $bin/test/vec_int: testc test/toollib/vec_int.c $bin/lib/libvec.a
 build $bin/test/assoc: testc test/toollib/assoc.c $bin/lib/libassoc.a
+build $bin/test/assoc_int: testc test/toollib/assoc_int.c $bin/lib/libassoc.a
 build $bin/test/cvec: testc test/toollib/cvec.c $bin/lib/libcvec.a
 build $bin/test/cassoc: testc test/toollib/cassoc.c $bin/lib/libcvec.a
 build $bin/test/carea: testc test/toollib/carea.c $bin/lib/libcarea.a

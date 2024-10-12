@@ -60,6 +60,18 @@ static inline void* assoc_valueAt(assoc a, size_t index){
 	return head->keys[index].data;
 }
 
-// TODO: assoc_GEN_FOR_TYPE
+#define assoc_GEN_FOR_TYPE(T)                                                                                                                  \
+	typedef struct assoc_Key_##T assoc_Key_##T;                                                                                                \
+	struct assoc_Key_##T                                                                  { uint64_t hash; char* key; T* data;};               \
+	static inline assoc          assoc_new_##T(size_t count)                              { return assoc_new(count); }                         \
+	static inline T*             assoc_set_##T(assoc* a, const char* key)                 { return assoc_set(a, key, sizeof(T)); }             \
+	static inline assoc_Key_##T* assoc_find_##T(assoc a, const char* key)                 { return (assoc_Key_##T*) assoc_find(a, key); }      \
+	static inline void           assoc_free_##T(assoc a)                                  { assoc_free(a); }                                   \
+	static inline T*             assoc_get_##T(assoc a, const char* key)                  { return assoc_get(a, key); }                        \
+	static inline T              assoc_getOrDefault_##T(assoc a, const char* key, T def)  { T* p = assoc_get(a, key); return p?*p:def; }       \
+	static inline bool           assoc_has_##T(assoc a, const char* key)                  { return assoc_has(a, key); }                        \
+	static inline assoc_Key_##T* assoc_keyAt_##T(assoc a, size_t index)                   { return (assoc_Key_##T*) assoc_keyAt(a, index); }   \
+	static inline T*             assoc_valueAt_##T(assoc a, size_t index)                 { return assoc_valueAt(a, index); }                  \
+	static inline T              assoc_valueAtOrDefault_##T(assoc a, size_t index, T def) { T* p = assoc_valueAt(a, index); return p?*p:def; }
 
 #endif // _ASSOC_H_
