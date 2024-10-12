@@ -56,6 +56,7 @@ void* assoc_set(assoc* a, const char* key, size_t size){
 		head->keys[ix].hash = h;
 		head->keys[ix].key = key_cpy;
 		head->keys[ix].data = data;
+		head->count++;
 
 		return data;
 	}
@@ -79,9 +80,9 @@ assoc_Key* assoc_find(assoc a, const char* key){
 	while(p < q){
 		size_t c = (p + q) / 2;
 		if(head->keys[c].hash < h){
-			q = c;
+			p = c + 1;
 		} else if(head->keys[c].hash > h){
-			p = c;
+			q = c;
 		} else{
 			while(c > 0 && head->keys[c].hash == h) 
 				c--;
