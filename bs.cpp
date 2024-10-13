@@ -112,6 +112,7 @@ Mod mods[] = {
 	{ModType::LIB, "toollib", "csv", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "vec", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "assoc", { Lang::C }, {}},
+	{ModType::LIB, "toollib", "pgm", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "carea", { Lang::C }, {}}
 
 	//{"trs", ModuleType::EXE, {"libap.a", "libcvec.a", "libcarea.a"}}
@@ -144,6 +145,9 @@ Test tests[] = {
 	}},
 	{"toollib", "assoc_int", Lang::C, {
 		Dep::idep("toollib", "assoc")
+	}},
+	{"toollib", "pgm", Lang::C, {
+		Dep::idep("toollib", "pgm")
 	}},
 	{"toollib", "carea", Lang::C, {
 		Dep::idep("toollib", "carea")

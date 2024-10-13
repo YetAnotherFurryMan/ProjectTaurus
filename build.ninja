@@ -54,6 +54,13 @@ build $bin/lib/libassoc.a: lib $bin/obj/toollib/assoc/assoc.c.o
 build $bin/lib/assoc.so: link $bin/obj/toollib/assoc/assoc.c.o
   flags = --shared
 
+build $bin/obj/toollib/pgm/pgm.c.o: cc src/toollib/pgm/pgm.c
+  flags = -fPIC
+build $bin/lib/libpgm.a: lib $bin/obj/toollib/pgm/pgm.c.o
+
+build $bin/lib/pgm.so: link $bin/obj/toollib/pgm/pgm.c.o
+  flags = --shared
+
 build $bin/obj/toollib/carea/carea.c.o: cc src/toollib/carea/carea.c
   flags = -fPIC
 build $bin/lib/libcarea.a: lib $bin/obj/toollib/carea/carea.c.o
@@ -61,7 +68,7 @@ build $bin/lib/libcarea.a: lib $bin/obj/toollib/carea/carea.c.o
 build $bin/lib/carea.so: link $bin/obj/toollib/carea/carea.c.o
   flags = --shared
 
-build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/carea
+build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm $bin/test/carea
 build $bin/test/ap: testc test/toollib/ap.c $bin/lib/libap.a
 build $bin/test/ap++: testcxx test/toollib/ap++.cpp $bin/lib/libap.a
 build $bin/test/ap++getAll: testcxx test/toollib/ap++getAll.cpp $bin/lib/libap.a
@@ -71,4 +78,5 @@ build $bin/test/vec: testc test/toollib/vec.c $bin/lib/libvec.a
 build $bin/test/vec_int: testc test/toollib/vec_int.c $bin/lib/libvec.a
 build $bin/test/assoc: testc test/toollib/assoc.c $bin/lib/libassoc.a
 build $bin/test/assoc_int: testc test/toollib/assoc_int.c $bin/lib/libassoc.a
+build $bin/test/pgm: testc test/toollib/pgm.c $bin/lib/libpgm.a
 build $bin/test/carea: testc test/toollib/carea.c $bin/lib/libcarea.a
