@@ -2,15 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+#include <trs/IR.h>
+#include <trs/cg.h>
+
 const char* g_src = 
 "A = 1 + 2 + 1;\n"
 "B = A * 8;\n"
 "A = A * B * 2;\n";
 
 const char* g_src2 = 
-"(set A (add 1 1))\n"
-"(set B (mul A 2))\n"
-"(set A (mul A B))";
+"(set A (add 1 (add 2 1)))\n"
+"(set B (mul A 8))\n"
+"(set A (mul A (mul B 2)))\n";
 
 const char* g_out = "out.nasm";
 
@@ -56,75 +60,46 @@ static inline void freeToken(Token* tok){
 Token lexNext(const char* src);
 Token lexLookahead();
 
-typedef enum{
-	IRCMD_ERROR = 0,
-	IRCMD_LOAD,
-	IRCMD_INTVAL,
-	IRCMD_SET,
-	IRCMD_ADD,
-	IRCMD_MUL,
-} IRCmd;
+trs_IR* parse(const char* src);
 
-static inline const char* strIRCmd(IRCmd v){
-#define CASE(X) case IRCMD_##X: return #X;
-	switch(v){
-		CASE(ERROR)
-		CASE(LOAD)
-		CASE(INTVAL)
-		CASE(SET)
-		CASE(ADD)
-		CASE(MUL)
-		default: return "???";
-	}
-#undef CASE
-}
+void cgCompile(FILE* out, trs_IR* ir);
 
-typedef struct IR{
-	IRCmd cmd;
-	struct IR* args;
-	struct IR* next;
-	char* text;
-} IR;
-
-static inline void freeIR(IR* ir){
-	while(ir){
-		IR* i = ir;
-		ir = i->next;
-		freeIR(i->args);
-		free(i->text);
-		free(i);
-	}
-}
-
-IR* parse(const char* src);
-
-void cgCompile(FILE* out, IR* ir);
-
+// CodeGen: trs.cg.{TARGET}.so
+//     TARGET: x86, x86-64, arm, aarch64, nasm_x86, nasm_x86-64, nasm_arm, nasm_aarch64, LLVM, QBE, lisp
 int main(int argc, const char** argv){
-	(void) argc;
-	(void) argv;
+	const char* target = "nasm_x86";
+	if(argc >= 2)
+		target = argv[1];
 
-	IR* ir = parse(g_src);
+	// Load codegen for nasm_x86
+	trs_CG cg_nasm_x86 = trs_cgLoad(target);
+	if(!cg_nasm_x86.hnd)
+		return 1;
 	
-	cgCompile(stdout, ir);
+	trs_IR* ir = parse(g_src);
 	
-	freeIR(ir);
+	//cgCompile(stdout, ir);
+	cg_nasm_x86.compile(stdout, ir);
+	
+	trs_freeIR(ir);
+
+	trs_cgUnload(&cg_nasm_x86);
 	return 0;
 }
 
-void cgCompileCmd(FILE* out, IR* ir){
+void cgCompileCmd(FILE* out, trs_IR* ir){
 	switch(ir->cmd){
-		case IRCMD_LOAD:
+		case TRS_IRCMD_LOAD:
 		{
 			// Load a value to eax
 			fprintf(out, "\tmov eax, dword [%s]\n", ir->text);
 		} break;
-		case IRCMD_INTVAL:
+		case TRS_IRCMD_INTVAL:
 		{
 			// Put the intval into eax
 			fprintf(out, "\tmov eax, %s\n", ir->text);
 		} break;
-		case IRCMD_SET:
+		case TRS_IRCMD_SET:
 		{
 			// Compile arg into eax and then save to destination
 			if(!ir->args){
@@ -135,7 +110,7 @@ void cgCompileCmd(FILE* out, IR* ir){
 			cgCompileCmd(out, ir->args);
 			fprintf(out, "\tmov dword [%s], eax\n", ir->text);
 		} break;
-		case IRCMD_ADD:
+		case TRS_IRCMD_ADD:
 		{
 			// Compile 2nd arg into eax, move eax to ebx, compile 1st arg to eax, add eax and ebx
 			if(!ir->args || !ir->args->next){
@@ -148,7 +123,7 @@ void cgCompileCmd(FILE* out, IR* ir){
 			cgCompileCmd(out, ir->args);
 			fputs("\tadd eax, ebx\n", out);
 		} break;
-		case IRCMD_MUL:
+		case TRS_IRCMD_MUL:
 		{
 			// Compile 2nd arg into eax, move eax to ebx, compile 1st arg to eax, mul by ebx
 			if(!ir->args || !ir->args->next){
@@ -162,13 +137,13 @@ void cgCompileCmd(FILE* out, IR* ir){
 			fputs("\tmul ebx\n", out);
 		} break;
 		default:
-			fprintf(stderr, "ERROR: Unexpected %s\n", strIRCmd(ir->cmd));
+			fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(ir->cmd));
 			break;
 	}
 }
 
 // ECX EDX
-void cgCompile(FILE* out, IR* ir){
+void cgCompile(FILE* out, trs_IR* ir){
 	// Runtime
 	fputs("section .data\n", out);
 	fputs("\tA dd 0\n", out);
@@ -258,7 +233,7 @@ void cgCompile(FILE* out, IR* ir){
 	fputs("main:\n", out);
 
 	while(ir){
-		fprintf(stderr, "INFO: IR(%s)\n", strIRCmd(ir->cmd));
+		fprintf(stderr, "INFO: IR(%s)\n", trs_IRCmdToString(ir->cmd));
 		cgCompileCmd(out, ir);
 		ir = ir->next;
 	}
@@ -267,31 +242,22 @@ void cgCompile(FILE* out, IR* ir){
 	fputs("\tret\n", out);
 }
 
-static inline IR* mallocIR(){
-	IR* ir = malloc(sizeof(IR));
-	ir->cmd = IRCMD_ERROR;
-	ir->args = NULL;
-	ir->text = NULL;
-	ir->next = NULL;
-	return ir;
-}
-
-IR* parse(const char* src){
+trs_IR* parse(const char* src){
 	Token tok = lexNext(src);
 	switch(tok.type){
 		case TT_ID:
 		{
-			IR* ir = mallocIR();
+			trs_IR* ir = trs_mallocIR();
 			if(!ir) return NULL;
-			ir->cmd = IRCMD_LOAD;
+			ir->cmd = TRS_IRCMD_LOAD;
 			ir->text = tok.text;
 
 			tok = lexLookahead();
 
 			switch(tok.type){
-				case TT_OP_PLUS: ir->cmd = IRCMD_ADD; break;
-				case TT_OP_MUL: ir->cmd = IRCMD_MUL; break;
-				case TT_OP_EQ: ir->cmd = IRCMD_SET; break;
+				case TT_OP_PLUS: ir->cmd = TRS_IRCMD_ADD; break;
+				case TT_OP_MUL: ir->cmd = TRS_IRCMD_MUL; break;
+				case TT_OP_EQ: ir->cmd = TRS_IRCMD_SET; break;
 				case TT_EOE: lexNext(NULL); return ir; // Consume
 				default: return ir;
 			}
@@ -299,16 +265,16 @@ IR* parse(const char* src){
 			// Consume
 			lexNext(NULL);
 			
-			if(ir->cmd == IRCMD_SET){
+			if(ir->cmd == TRS_IRCMD_SET){
 				ir->args = parse(NULL);
 				ir->next = parse(NULL);
 			} else{
-				IR* arg = mallocIR();
+				trs_IR* arg = trs_mallocIR();
 				if(!arg) return NULL;
-				arg->cmd = IRCMD_LOAD;
+				arg->cmd = TRS_IRCMD_LOAD;
 				arg->text = ir->text;
 				arg->next = parse(NULL);
-				
+
 				ir->args = arg;
 				ir->text = NULL;
 				// ir->next = parse(NULL);
@@ -318,18 +284,18 @@ IR* parse(const char* src){
 		} break;
 		case TT_INT:
 		{
-			IR* v = mallocIR();
+			trs_IR* v = trs_mallocIR();
 			if(!v) return NULL;
-			v->cmd = IRCMD_INTVAL;
+			v->cmd = TRS_IRCMD_INTVAL;
 			v->text = tok.text;
 
 			tok = lexLookahead(NULL);
 
-			IRCmd cmd;
+			trs_IRCmd cmd;
 			switch(tok.type){
-				case TT_OP_PLUS: cmd = IRCMD_ADD; break;
-				case TT_OP_MUL: cmd = IRCMD_MUL; break;
-				case TT_OP_EQ: v->cmd = IRCMD_ERROR; return v; // [int] = ... is invalid
+				case TT_OP_PLUS: cmd = TRS_IRCMD_ADD; break;
+				case TT_OP_MUL: cmd = TRS_IRCMD_MUL; break;
+				case TT_OP_EQ: v->cmd = TRS_IRCMD_ERROR; return v; // [int] = ... is invalid
 				case TT_EOE: lexNext(NULL); return v; // Consume
 				default: return v;
 			}
@@ -337,7 +303,7 @@ IR* parse(const char* src){
 			// Consume
 			lexNext(NULL);
 
-			IR* ir = mallocIR();
+			trs_IR* ir = trs_mallocIR();
 			if(!ir) return NULL;
 			ir->cmd = cmd;
 			ir->args = v;

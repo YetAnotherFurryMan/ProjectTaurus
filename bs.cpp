@@ -114,7 +114,9 @@ Mod mods[] = {
 	{ModType::LIB, "toollib", "assoc", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "pgm", { Lang::C }, {}},
 
-	{ModType::EXE, "trs", "trsc", { Lang::C }, {}},
+	{ModType::EXE, "trs", "trsc", { Lang::C }, { Dep::edep("", "-ldl") }},
+	{ModType::LIB, "trs", "trs.cg.nasm_x86", { Lang::C }, {}},
+	{ModType::LIB, "trs", "trs.cg.lisp", { Lang::C }, {}},
 
 	//{"trs", ModuleType::EXE, {"libap.a", "libcvec.a", "libcarea.a"}}
 };

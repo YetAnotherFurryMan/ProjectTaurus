@@ -62,9 +62,23 @@ build $bin/lib/pgm.so: link $bin/obj/toollib/pgm/pgm.c.o
   flags = --shared
 
 build $bin/obj/trs/trsc/main.c.o: cc src/trs/trsc/main.c
-  flags = -fPIE
+  flags = -fPIE 
 build $bin/bin/trsc: link $bin/obj/trs/trsc/main.c.o
-  flags =
+  flags = -ldl
+
+build $bin/obj/trs/trs.cg.nasm_x86/cg.c.o: cc src/trs/trs.cg.nasm_x86/cg.c
+  flags = -fPIC
+build $bin/lib/libtrs.cg.nasm_x86.a: lib $bin/obj/trs/trs.cg.nasm_x86/cg.c.o
+
+build $bin/lib/trs.cg.nasm_x86.so: link $bin/obj/trs/trs.cg.nasm_x86/cg.c.o
+  flags = --shared
+
+build $bin/obj/trs/trs.cg.lisp/cg.c.o: cc src/trs/trs.cg.lisp/cg.c
+  flags = -fPIC
+build $bin/lib/libtrs.cg.lisp.a: lib $bin/obj/trs/trs.cg.lisp/cg.c.o
+
+build $bin/lib/trs.cg.lisp.so: link $bin/obj/trs/trs.cg.lisp/cg.c.o
+  flags = --shared
 
 build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm
 build $bin/test/ap: testc test/toollib/ap.c $bin/lib/libap.a
