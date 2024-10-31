@@ -25,19 +25,19 @@ build $bin/lib/libap.a: lib $bin/obj/toollib/ap/ap.c.o
 build $bin/lib/ap.so: link $bin/obj/toollib/ap/ap.c.o
   flags = --shared
 
+build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
+  flags = -fPIC
 build $bin/obj/toollib/csv/parseRow.c.o: cc src/toollib/csv/parseRow.c
-  flags = -fPIC
-build $bin/obj/toollib/csv/encoding.c.o: cc src/toollib/csv/encoding.c
-  flags = -fPIC
-build $bin/obj/toollib/csv/fgetrow.c.o: cc src/toollib/csv/fgetrow.c
   flags = -fPIC
 build $bin/obj/toollib/csv/strrow.c.o: cc src/toollib/csv/strrow.c
   flags = -fPIC
-build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
+build $bin/obj/toollib/csv/fgetrow.c.o: cc src/toollib/csv/fgetrow.c
   flags = -fPIC
-build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+build $bin/obj/toollib/csv/encoding.c.o: cc src/toollib/csv/encoding.c
+  flags = -fPIC
+build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/encoding.c.o
 
-build $bin/lib/csv.so: link $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+build $bin/lib/csv.so: link $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/encoding.c.o
   flags = --shared
 
 build $bin/obj/toollib/vec/vec.c.o: cc src/toollib/vec/vec.c
@@ -61,13 +61,15 @@ build $bin/lib/libpgm.a: lib $bin/obj/toollib/pgm/pgm.c.o
 build $bin/lib/pgm.so: link $bin/obj/toollib/pgm/pgm.c.o
   flags = --shared
 
-build $bin/obj/trs/trsparser/parse.c.o: cc src/trs/trsparser/parse.c
+build $bin/obj/trs/trsparser/lisp.c.o: cc src/trs/trsparser/lisp.c
   flags = -fPIC
 build $bin/obj/trs/trsparser/lex.c.o: cc src/trs/trsparser/lex.c
   flags = -fPIC
-build $bin/lib/libtrsparser.a: lib $bin/obj/trs/trsparser/parse.c.o $bin/obj/trs/trsparser/lex.c.o
+build $bin/obj/trs/trsparser/parse.c.o: cc src/trs/trsparser/parse.c
+  flags = -fPIC
+build $bin/lib/libtrsparser.a: lib $bin/obj/trs/trsparser/lisp.c.o $bin/obj/trs/trsparser/lex.c.o $bin/obj/trs/trsparser/parse.c.o
 
-build $bin/lib/trsparser.so: link $bin/obj/trs/trsparser/parse.c.o $bin/obj/trs/trsparser/lex.c.o
+build $bin/lib/trsparser.so: link $bin/obj/trs/trsparser/lisp.c.o $bin/obj/trs/trsparser/lex.c.o $bin/obj/trs/trsparser/parse.c.o
   flags = --shared
 
 build $bin/obj/trs/trs.cg.nasm_x86/cg.c.o: cc src/trs/trs.cg.nasm_x86/cg.c

@@ -50,9 +50,15 @@ void trs_lexNext(trs_Token* tok, const char* src){
 		case ';':
 			tt = TRS_TT_EOE;
 			break;
+		case '(':
+			tt = TRS_TT_LB;
+			break;
+		case ')':
+			tt = TRS_TT_RB;
+			break;
 		default:
 		{
-			if(*s >= '0' && *s <= '9'){
+			if(isdigit(*s)){
 				tt = TRS_TT_INT;
 
 				size_t i = 1;
@@ -67,11 +73,11 @@ void trs_lexNext(trs_Token* tok, const char* src){
 				text[i] = 0;
 				
 				s += i - 1;
-			} else if(*s == '_' || (*s >= 'A' && *s <= 'Z') || (*s >= 'a' && *s <= 'z')){
+			} else if(*s == '_' || isalpha(*s)){
 				tt = TRS_TT_ID;
 
 				size_t i = 1;
-				while(s[i] && (s[i] == '_' || isalnum(s[i])))
+				while(s[i] == '_' || isalnum(s[i]))
 					i++;
 				
 				text = malloc((i + 1) * sizeof(char));
@@ -97,8 +103,8 @@ ret:
 	tok->text = text;
 }
 
-void trs_lexLH(trs_Token* tok){
+void trs_lexLH(trs_Token* tok, const char* src){
 	if(g_trs_lexLookahead.type == TRS_TT_UKN)
-		trs_lexNext(&g_trs_lexLookahead, NULL);
+		trs_lexNext(&g_trs_lexLookahead, src);
 	*tok = g_trs_lexLookahead;
 }

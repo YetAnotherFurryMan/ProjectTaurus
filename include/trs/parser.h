@@ -31,7 +31,7 @@ struct trs_Token{
 extern trs_Token g_trs_lexLookahead;
 
 void trs_lexNext(trs_Token* tok, const char* src);
-void trs_lexLH(trs_Token* tok);
+void trs_lexLH(trs_Token* tok, const char* src);
 
 trs_IR* trs_parse(const char* src);
 trs_IR* trs_parseLisp(const char* src);
