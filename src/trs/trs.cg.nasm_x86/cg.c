@@ -1,6 +1,99 @@
 #include <trs/cg.h>
 
+int trs_cgCompileAdd(FILE* out, trs_IR* args){
+	if(!args){
+		fprintf(stderr, "ERROR: ADD expects at least one argument!\n");
+		return 1;
+	}
+
+	// First arg to eax
+	int err = trs_cgCompileCmd(out, args);
+
+	args = args->next;
+	while(args && !err){
+		switch(args->cmd){
+			case TRS_IRCMD_LOAD:
+			{
+				fprintf(out, "\tadd eax, dword [%s]\n", args->text);
+			} break;
+			case TRS_IRCMD_INTVAL:
+			{
+				fprintf(out, "\tadd eax, %s\n", args->text);
+			} break;
+			case TRS_IRCMD_ADD:
+			case TRS_IRCMD_MUL:
+			{
+				fprintf(out, "\tpush eax\n");
+				err = trs_cgCompileCmd(out, args);
+				fprintf(out, "\tpop ebx\n");
+				fprintf(out, "\tadd eax, ebx\n");
+			} break;
+			case TRS_IRCMD_SET:
+			{
+				fprintf(stderr, "ERROR: Cannot do SET operation inside of ADD.\n");
+				err = 1;
+			} break;
+			default:
+				fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(args->cmd));
+				err = 1;
+		}
+
+		args = args->next;
+	}
+
+	return err;
+}
+
+int trs_cgCompileMul(FILE* out, trs_IR* args){
+	if(!args){
+		fprintf(stderr, "ERROR: MUL expects at least one argument!\n");
+		return 1;
+	}
+
+	// First arg to eax
+	int err = trs_cgCompileCmd(out, args);
+
+	args = args->next;
+	while(args && !err){
+		switch(args->cmd){
+			case TRS_IRCMD_LOAD:
+			{
+				fprintf(out, "\tmov ebx, dword [%s]\n", args->text);
+				fprintf(out, "\tmul ebx\n");
+			} break;
+			case TRS_IRCMD_INTVAL:
+			{
+				fprintf(out, "\tmov ebx, %s\n", args->text);
+				fprintf(out, "\tmul ebx\n");
+			} break;
+			case TRS_IRCMD_ADD:
+			case TRS_IRCMD_MUL:
+			{
+				fprintf(out, "\tpush eax\n");
+				err = trs_cgCompileCmd(out, args);
+				fprintf(out, "\tpop ebx\n");
+				fprintf(out, "\tmul ebx\n");
+			} break;
+			case TRS_IRCMD_SET:
+			{
+				fprintf(stderr, "ERROR: Cannot do SET operation inside of MUL.\n");
+				err = 1;
+			} break;
+			default:
+				fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(args->cmd));
+				err = 1;
+		}
+
+		args = args->next;
+	}
+
+	return err;
+}
+
+
 int trs_cgCompileCmd(FILE* out, trs_IR* ir){
+	int err = 0;
+
 	switch(ir->cmd){
 		case TRS_IRCMD_LOAD:
 		{
@@ -20,41 +113,19 @@ int trs_cgCompileCmd(FILE* out, trs_IR* ir){
 				return 1;
 			}
 
-			trs_cgCompileCmd(out, ir->args);
+			err = trs_cgCompileCmd(out, ir->args);
 			fprintf(out, "\tmov dword [%s], eax\n", ir->text);
 		} break;
 		case TRS_IRCMD_ADD:
-		{
-			// Compile 2nd arg into eax, move eax to ebx, compile 1st arg to eax, add eax and ebx
-			if(!ir->args || !ir->args->next){
-				fprintf(stderr, "ERROR: ADD expects 2 arguments!\n");
-				return 1;
-			}
-
-			trs_cgCompileCmd(out, ir->args->next);
-			fputs("\tmov ebx, eax\n", out);
-			trs_cgCompileCmd(out, ir->args);
-			fputs("\tadd eax, ebx\n", out);
-		} break;
+			return trs_cgCompileAdd(out, ir->args);
 		case TRS_IRCMD_MUL:
-		{
-			// Compile 2nd arg into eax, move eax to ebx, compile 1st arg to eax, mul by ebx
-			if(!ir->args || !ir->args->next){
-				fprintf(stderr, "ERROR: MUL expects 2 arguments!\n");
-				return 1;
-			}
-
-			trs_cgCompileCmd(out, ir->args->next);
-			fputs("\tmov ebx, eax\n", out);
-			trs_cgCompileCmd(out, ir->args);
-			fputs("\tmul ebx\n", out);
-		} break;
+			return trs_cgCompileMul(out, ir->args);
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(ir->cmd));
 			return 1;
 	}
 
-	return 0;
+	return err;
 }
 
 // ECX EDX
