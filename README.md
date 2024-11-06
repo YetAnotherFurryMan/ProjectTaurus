@@ -23,21 +23,21 @@ Building Taurus form source is preatty easy. All you need is C/C++ compiler like
  ninja
 ```
 
-Both Makefile and build.ninja are auto-generated, if you want you can use buildsystem.cpp to re-generate them.
+Both Makefile and build.ninja are auto-generated, if you want you can use bs.cpp to re-generate them.
 
 ``` bash
  g++ buildsyatem.cpp -o buildsyatem -std=c++17
- ./buildsystem
+ ./bs
 ```
 
 ``` bash
  clang buildsyatem.cpp -o buildsyatem -std=c++17
- ./buildsystem
+ ./bs
 ```
 
-Also there is testware folder with all the tests for the project. You can use the buildsystem executable to automatically perform the tests.
+Also there is testware folder with all the tests for the project. You can use the bs executable to automatically perform the tests.
 
 ``` bash
- ./buildsystem test
+ ./bs test
 ```
 
