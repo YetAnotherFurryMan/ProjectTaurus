@@ -26,12 +26,12 @@ Building Taurus form source is preatty easy. All you need is C/C++ compiler like
 Both Makefile and build.ninja are auto-generated, if you want you can use bs.cpp to re-generate them.
 
 ``` bash
- g++ buildsyatem.cpp -o buildsyatem -std=c++17
+ g++ bs.cpp -o bs
  ./bs
 ```
 
 ``` bash
- clang buildsyatem.cpp -o buildsyatem -std=c++17
+ clang bs.cpp -o bs
  ./bs
 ```
 
