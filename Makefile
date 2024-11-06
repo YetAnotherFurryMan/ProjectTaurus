@@ -1,52 +1,135 @@
 BUILD ?= build
 
-INCLUDE := include
+rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+getsrc=$(patsubst $(BUILD)/obj/%.o,src/%,$1)
 
-CXXSTD := 17
-CSTD := 17
+dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/toollib/ap $(BUILD)/obj/toollib/csv $(BUILD)/obj/toollib/vec $(BUILD)/obj/toollib/assoc $(BUILD)/obj/toollib/pgm $(BUILD)/obj/trs/trsparser $(BUILD)/obj/trs/trs.cg.nasm_x86 $(BUILD)/obj/trs/trs.cg.lisp $(BUILD)/obj/trs/trsc
 
-dirs = $(BUILD) $(BUILD)/trsap.dir $(BUILD)/trsp.dir $(BUILD)/trsre $(BUILD)/trsc
-dirs_testware = $(BUILD)/testware $(BUILD)/testware/trsap.dir $(BUILD)/testware/trsap++.dir $(BUILD)/testware/trsap++getAll.dir
+.PHONY: clean all test
 
-.PHONY: all 
-all: $(dirs) $(BUILD)/libtrsap.a
-testware: all $(dirs_testware) $(BUILD)/testware/trsap $(BUILD)/testware/trsap++ $(BUILD)/testware/trsap++getAll
+all: $(dirs) $(BUILD)/lib/libap.a $(if $(RELEASE),$(BUILD)/lib/ap.so,) $(BUILD)/lib/libcsv.a $(if $(RELEASE),$(BUILD)/lib/csv.so,) $(BUILD)/lib/libvec.a $(if $(RELEASE),$(BUILD)/lib/vec.so,) $(BUILD)/lib/libassoc.a $(if $(RELEASE),$(BUILD)/lib/assoc.so,) $(BUILD)/lib/libpgm.a $(if $(RELEASE),$(BUILD)/lib/pgm.so,) $(BUILD)/lib/libtrsparser.a $(if $(RELEASE),$(BUILD)/lib/trsparser.so,) $(BUILD)/lib/libtrs.cg.nasm_x86.a $(if $(RELEASE),$(BUILD)/lib/trs.cg.nasm_x86.so,) $(BUILD)/lib/libtrs.cg.lisp.a $(if $(RELEASE),$(BUILD)/lib/trs.cg.lisp.so,) $(BUILD)/bin/trsc
 
 clean:
 	$(RM) -r $(BUILD)
 
-$(dirs) $(dirs_testware):
+$(dirs):
 	mkdir -p $@
 
-trsap_src := $(wildcard trsap/**/*.c trsap/*.c)
-trsap_bin := $(patsubst trsap/%,$(BUILD)/trsap.dir/%.o,$(trsap_src))
-$(BUILD)/libtrsap.a: $(trsap_bin)
+exebin := 
+libbin := 
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/ap, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libap.a: $(bin)
 	$(AR) qc $@ $^
 
-$(filter %.c.o,$(trsap_bin)): $(BUILD)/trsap.dir/%.o: trsap/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIC
+$(BUILD)/lib/ap.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-testware_trsap_src := $(wildcard testware/trsap/**/*.c testware/trsap/*.c)
-testware_trsap_bin := $(patsubst testware/trsap/%,$(BUILD)/testware/trsap.dir/%.o,$(testware_trsap_src))
-$(BUILD)/testware/trsap: $(testware_trsap_bin) $(BUILD)/libtrsap.a
-	$(CC) -o $@ $^ -std=c$(CSTD)
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/csv, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libcsv.a: $(bin)
+	$(AR) qc $@ $^
 
-$(filter %.c.o,$(testware_trsap_bin)): $(BUILD)/testware/trsap.dir/%.o: testware/trsap/%
-	$(CC) -c -o $@ $^ -std=c$(CSTD) -I $(INCLUDE) -fPIE
+$(BUILD)/lib/csv.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-testware_trsapxx_src := $(wildcard testware/trsap++/**/*.cpp testware/trsap++/*.cpp)
-testware_trsapxx_bin := $(patsubst testware/trsap++/%,$(BUILD)/testware/trsap++.dir/%.o,$(testware_trsapxx_src))
-$(BUILD)/testware/trsap++: $(testware_trsapxx_bin) $(BUILD)/libtrsap.a
-	$(CXX) -o $@ $^ -std=c++$(CSTD)
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/vec, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libvec.a: $(bin)
+	$(AR) qc $@ $^
 
-$(filter %.cpp.o,$(testware_trsapxx_bin)): $(BUILD)/testware/trsap++.dir/%.o: testware/trsap++/%
-	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE
+$(BUILD)/lib/vec.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-testware_trsapxxgetAll_src := $(wildcard testware/trsap++getAll/**/*.cpp testware/trsap++getAll/*.cpp)
-testware_trsapxxgetAll_bin := $(patsubst testware/trsap++getAll/%,$(BUILD)/testware/trsap++getAll.dir/%.o,$(testware_trsapxxgetAll_src))
-$(BUILD)/testware/trsap++getAll: $(testware_trsapxxgetAll_bin) $(BUILD)/libtrsap.a
-	$(CXX) -o $@ $^ -std=c++$(CSTD)
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/assoc, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libassoc.a: $(bin)
+	$(AR) qc $@ $^
 
-$(filter %.cpp.o,$(testware_trsapxxgetAll_bin)): $(BUILD)/testware/trsap++getAll.dir/%.o: testware/trsap++getAll/%
-	$(CXX) -c -o $@ $^ -std=c++$(CSTD) -I $(INCLUDE) -fPIE
+$(BUILD)/lib/assoc.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/toollib/pgm, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libpgm.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/lib/pgm.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trsparser, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libtrsparser.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/lib/trsparser.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trs.cg.nasm_x86, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libtrs.cg.nasm_x86.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/lib/trs.cg.nasm_x86.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trs.cg.lisp, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libtrs.cg.lisp.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/lib/trs.cg.lisp.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trsc, *.c))
+exebin += $(bin)
+$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/libtrsparser.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
+
+test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm
+
+.SECONDEXPANSION:
+
+$(filter %.c.o, $(libbin)): %: $$(call getsrc,%)
+	$(CC) -c $^ -o $@ -std=gnu17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+
+$(filter %.c.o, $(exebin)): %: $$(call getsrc,%)
+	$(CC) -c $^ -o $@ -std=gnu17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+
+$(filter %.cpp.o, $(libbin)): %: $$(call getsrc,%)
+	$(CXX) -c $^ -o $@ -std=gnu++17 -Wall -Wextra -Wpedantic -Iinclude -fPIC $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+
+$(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
+	$(CXX) -c $^ -o $@ -std=gnu++17 -Wall -Wextra -Wpedantic -Iinclude -fPIE $(if $(RELEASE),-O3 -DNODEBUG -DRELEASE,) $(if $(DEBUG),-ggdb -DDEBUG,)
+
+$(BUILD)/test/ap: test/toollib/ap.c $(BUILD)/lib/libap.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/ap++: test/toollib/ap++.cpp $(BUILD)/lib/libap.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/ap++getAll: test/toollib/ap++getAll.cpp $(BUILD)/lib/libap.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/csv: test/toollib/csv.c $(BUILD)/lib/libcsv.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/csv++: test/toollib/csv++.cpp $(BUILD)/lib/libcsv.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/vec: test/toollib/vec.c $(BUILD)/lib/libvec.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/vec_int: test/toollib/vec_int.c $(BUILD)/lib/libvec.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/assoc: test/toollib/assoc.c $(BUILD)/lib/libassoc.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/assoc_int: test/toollib/assoc_int.c $(BUILD)/lib/libassoc.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/pgm: test/toollib/pgm.c $(BUILD)/lib/libpgm.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
