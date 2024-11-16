@@ -1,7 +1,11 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
+#include <toollib/assoc.h>
+
 #include "IR.h"
+
+assoc_GEN_FOR_TYPE(trs_IRCmd)
 
 #define TRS_PARSER_X_enum_TokenType \
 	X(UKN)                          \
@@ -29,6 +33,11 @@ struct trs_Token{
 };
 
 extern trs_Token g_trs_lexLookahead;
+extern assoc g_trs_lexLispKW;
+extern assoc g_trs_lexTaurusKW;
+
+bool trs_lexInit(void);
+void trs_lexTerminate(void);
 
 void trs_lexNext(trs_Token* tok, const char* src);
 void trs_lexLH(trs_Token* tok, const char* src);

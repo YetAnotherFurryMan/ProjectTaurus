@@ -4,18 +4,20 @@
 #include <string.h>
 
 static inline trs_IRCmd trs_parseLispCmd(const trs_Token* tok){
-	// TODO: use assoc
+	/* // TODO: use assoc */
 	
 	if(tok->type != TRS_TT_ID)
 		return TRS_IRCMD_ERROR;
 
-#define CASE(X, Y) if(strcmp(tok->text, #X) == 0) return TRS_IRCMD_##Y;
-	CASE(load, LOAD)
-	else CASE(set, SET)
-	else CASE(add, ADD)
-	else CASE(mul, MUL)
-	else return TRS_IRCMD_ERROR;
-#undef CASE
+/* #define CASE(X, Y) if(strcmp(tok->text, #X) == 0) return TRS_IRCMD_##Y; */
+	/* CASE(load, LOAD) */
+	/* else CASE(set, SET) */
+	/* else CASE(add, ADD) */
+	/* else CASE(mul, MUL) */
+	/* else return TRS_IRCMD_ERROR; */
+/* #undef CASE */
+
+	return assoc_getOrDefault_trs_IRCmd(g_trs_lexLispKW, tok->text, TRS_IRCMD_ERROR);
 }
 
 static inline trs_IR* trs_parseLispOrVal();

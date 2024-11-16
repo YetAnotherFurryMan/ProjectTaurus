@@ -120,6 +120,7 @@ Mod mods[] = {
 	{ModType::EXE, "trs", "trsc", { Lang::C }, { 
 		Dep::edep("", "-ldl"),
 		Dep::idep("trs", "trsparser"),
+		Dep::idep("toollib", "assoc"),
 	}},
 
 	//{"trs", ModuleType::EXE, {"libap.a", "libcvec.a", "libcarea.a"}}

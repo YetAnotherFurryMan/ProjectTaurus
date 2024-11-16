@@ -46,6 +46,8 @@ int main(int argc, const char** argv){
 	const char* src = g_src;
 	if(!src)
 		src = g_src1;
+
+	trs_lexInit();
 	
 	trs_IR* ir = NULL;
 	switch(g_whatToParse){
@@ -56,6 +58,8 @@ int main(int argc, const char** argv){
 			ir = trs_parse(src);
 			break;
 	}
+
+	trs_lexTerminate();
 
 	free(g_src);
 

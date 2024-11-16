@@ -65,11 +65,13 @@ build $bin/obj/trs/trsparser/lisp.c.o: cc src/trs/trsparser/lisp.c
   flags = -fPIC
 build $bin/obj/trs/trsparser/lex.c.o: cc src/trs/trsparser/lex.c
   flags = -fPIC
+build $bin/obj/trs/trsparser/init.c.o: cc src/trs/trsparser/init.c
+  flags = -fPIC
 build $bin/obj/trs/trsparser/parse.c.o: cc src/trs/trsparser/parse.c
   flags = -fPIC
-build $bin/lib/libtrsparser.a: lib $bin/obj/trs/trsparser/lisp.c.o $bin/obj/trs/trsparser/lex.c.o $bin/obj/trs/trsparser/parse.c.o
+build $bin/lib/libtrsparser.a: lib $bin/obj/trs/trsparser/lisp.c.o $bin/obj/trs/trsparser/lex.c.o $bin/obj/trs/trsparser/init.c.o $bin/obj/trs/trsparser/parse.c.o
 
-build $bin/lib/trsparser.so: link $bin/obj/trs/trsparser/lisp.c.o $bin/obj/trs/trsparser/lex.c.o $bin/obj/trs/trsparser/parse.c.o
+build $bin/lib/trsparser.so: link $bin/obj/trs/trsparser/lisp.c.o $bin/obj/trs/trsparser/lex.c.o $bin/obj/trs/trsparser/init.c.o $bin/obj/trs/trsparser/parse.c.o
   flags = --shared
 
 build $bin/obj/trs/trs.cg.nasm_x86/cg.c.o: cc src/trs/trs.cg.nasm_x86/cg.c
@@ -88,7 +90,7 @@ build $bin/lib/trs.cg.lisp.so: link $bin/obj/trs/trs.cg.lisp/cg.c.o
 
 build $bin/obj/trs/trsc/main.c.o: cc src/trs/trsc/main.c
   flags = -fPIE 
-build $bin/bin/trsc: link $bin/obj/trs/trsc/main.c.o $bin/lib/libtrsparser.a
+build $bin/bin/trsc: link $bin/obj/trs/trsc/main.c.o $bin/lib/libtrsparser.a $bin/lib/libassoc.a
   flags = -ldl
 
 build test: phony $bin/test/ap $bin/test/ap++ $bin/test/ap++getAll $bin/test/csv $bin/test/csv++ $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm

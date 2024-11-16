@@ -84,7 +84,7 @@ $(BUILD)/lib/trs.cg.lisp.so: $(bin)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trsc, *.c))
 exebin += $(bin)
-$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/libtrsparser.a
+$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/libtrsparser.a $(BUILD)/lib/libassoc.a
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
 
 test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm
