@@ -24,7 +24,7 @@ struct assoc_Key{
 };
 ```
 
- 3. struct assoc_Header is a header of every assoc storing information about capacity, count of elements and an array of keys.
+ 3. struct assoc_Header is a header of every assoc storing information about capacity, amount (count) of elements and an array of keys.
 
 ``` C
 struct assoc_Header{
