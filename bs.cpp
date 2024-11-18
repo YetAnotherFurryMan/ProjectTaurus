@@ -114,12 +114,12 @@ Mod mods[] = {
 	{ModType::LIB, "toollib", "assoc", { Lang::C }, {}},
 	{ModType::LIB, "toollib", "pgm", { Lang::C }, {}},
 
-	{ModType::LIB, "trs", "trsparser", { Lang::C }, {}},
+	{ModType::LIB, "trs", "horn", { Lang::C }, {}},
 	{ModType::LIB, "trs", "trs.cg.nasm_x86", { Lang::C }, {}},
 	{ModType::LIB, "trs", "trs.cg.lisp", { Lang::C }, {}},
 	{ModType::EXE, "trs", "trsc", { Lang::C }, { 
 		Dep::edep("", "-ldl"),
-		Dep::idep("trs", "trsparser"),
+		Dep::idep("trs", "horn"),
 		Dep::idep("toollib", "assoc"),
 	}},
 

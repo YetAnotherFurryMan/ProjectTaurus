@@ -4,7 +4,7 @@
 
 #include <trs/IR.h>
 #include <trs/cg.h>
-#include <trs/parser.h>
+#include <trs/horn.h>
 
 char* g_src = NULL;
 
@@ -47,19 +47,19 @@ int main(int argc, const char** argv){
 	if(!src)
 		src = g_src1;
 
-	trs_lexInit();
+	horn_init();
 	
 	trs_IR* ir = NULL;
 	switch(g_whatToParse){
 		case PARSE_LISP:
-			ir = trs_parseLisp(src);
+			ir = horn_parseLisp(src);
 			break;
 		case PARSE_TRS:
-			ir = trs_parse(src);
+			ir = horn_parseTaurus(src);
 			break;
 	}
 
-	trs_lexTerminate();
+	horn_terminate();
 
 	free(g_src);
 

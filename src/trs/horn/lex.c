@@ -1,27 +1,27 @@
-#include <trs/parser.h>
+#include <trs/horn.h>
 
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
 
-trs_Token g_trs_lexLookahead = {0};
+horn_Token g_horn_lookahead = {0};
 
-void trs_lexNext(trs_Token* tok, const char* src){
+void horn_next(horn_Token* tok, const char* src){
 	static const char* s = NULL;
 	if(src){
 		s = src;
-		g_trs_lexLookahead = (trs_Token){0};
+		g_horn_lookahead = (horn_Token){0};
 	}
 
-	if(g_trs_lexLookahead.type != TRS_TT_UKN){
-		*tok = g_trs_lexLookahead;
-		g_trs_lexLookahead = (trs_Token){0};
-		fprintf(stderr, "INFO: Lookahead(%s): %s\n", trs_TokenTypeToString(tok->type), tok->text);
+	if(g_horn_lookahead.type != TRS_TT_UKN){
+		*tok = g_horn_lookahead;
+		g_horn_lookahead = (horn_Token){0};
+		fprintf(stderr, "INFO: Lookahead(%s): %s\n", horn_TokenTypeToString(tok->type), tok->text);
 		return;
 	}
 
 	if(!s || !*s){
-		*tok = (trs_Token){TRS_TT_EOF, NULL};
+		*tok = (horn_Token){TRS_TT_EOF, NULL};
 		return;
 	}
 
@@ -30,11 +30,11 @@ void trs_lexNext(trs_Token* tok, const char* src){
 
 	if(!*s){
 		s = NULL;
-		*tok = (trs_Token){TRS_TT_EOF, NULL};
+		*tok = (horn_Token){TRS_TT_EOF, NULL};
 		return;
 	}
 
-	trs_TokenType tt = TRS_TT_UKN;
+	horn_TokenType tt = TRS_TT_UKN;
 	char* text = NULL;
 
 	switch(*s){
@@ -98,13 +98,13 @@ void trs_lexNext(trs_Token* tok, const char* src){
 		s = NULL;
 
 ret:
-	fprintf(stderr, "INFO: Token(%s): %s\n", trs_TokenTypeToString(tt), text);
+	fprintf(stderr, "INFO: Token(%s): %s\n", horn_TokenTypeToString(tt), text);
 	tok->type = tt;
 	tok->text = text;
 }
 
-void trs_lexLH(trs_Token* tok, const char* src){
-	if(g_trs_lexLookahead.type == TRS_TT_UKN)
-		trs_lexNext(&g_trs_lexLookahead, src);
-	*tok = g_trs_lexLookahead;
+void horn_LH(horn_Token* tok, const char* src){
+	if(g_horn_lookahead.type == TRS_TT_UKN)
+		horn_next(&g_horn_lookahead, src);
+	*tok = g_horn_lookahead;
 }

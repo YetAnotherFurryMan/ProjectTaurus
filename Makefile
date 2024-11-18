@@ -3,11 +3,11 @@ BUILD ?= build
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 getsrc=$(patsubst $(BUILD)/obj/%.o,src/%,$1)
 
-dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/toollib/ap $(BUILD)/obj/toollib/csv $(BUILD)/obj/toollib/vec $(BUILD)/obj/toollib/assoc $(BUILD)/obj/toollib/pgm $(BUILD)/obj/trs/trsparser $(BUILD)/obj/trs/trs.cg.nasm_x86 $(BUILD)/obj/trs/trs.cg.lisp $(BUILD)/obj/trs/trsc
+dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/toollib/ap $(BUILD)/obj/toollib/csv $(BUILD)/obj/toollib/vec $(BUILD)/obj/toollib/assoc $(BUILD)/obj/toollib/pgm $(BUILD)/obj/trs/horn $(BUILD)/obj/trs/trs.cg.nasm_x86 $(BUILD)/obj/trs/trs.cg.lisp $(BUILD)/obj/trs/trsc
 
 .PHONY: clean all test
 
-all: $(dirs) $(BUILD)/lib/libap.a $(if $(RELEASE),$(BUILD)/lib/ap.so,) $(BUILD)/lib/libcsv.a $(if $(RELEASE),$(BUILD)/lib/csv.so,) $(BUILD)/lib/libvec.a $(if $(RELEASE),$(BUILD)/lib/vec.so,) $(BUILD)/lib/libassoc.a $(if $(RELEASE),$(BUILD)/lib/assoc.so,) $(BUILD)/lib/libpgm.a $(if $(RELEASE),$(BUILD)/lib/pgm.so,) $(BUILD)/lib/libtrsparser.a $(if $(RELEASE),$(BUILD)/lib/trsparser.so,) $(BUILD)/lib/libtrs.cg.nasm_x86.a $(if $(RELEASE),$(BUILD)/lib/trs.cg.nasm_x86.so,) $(BUILD)/lib/libtrs.cg.lisp.a $(if $(RELEASE),$(BUILD)/lib/trs.cg.lisp.so,) $(BUILD)/bin/trsc
+all: $(dirs) $(BUILD)/lib/libap.a $(if $(RELEASE),$(BUILD)/lib/ap.so,) $(BUILD)/lib/libcsv.a $(if $(RELEASE),$(BUILD)/lib/csv.so,) $(BUILD)/lib/libvec.a $(if $(RELEASE),$(BUILD)/lib/vec.so,) $(BUILD)/lib/libassoc.a $(if $(RELEASE),$(BUILD)/lib/assoc.so,) $(BUILD)/lib/libpgm.a $(if $(RELEASE),$(BUILD)/lib/pgm.so,) $(BUILD)/lib/libhorn.a $(if $(RELEASE),$(BUILD)/lib/horn.so,) $(BUILD)/lib/libtrs.cg.nasm_x86.a $(if $(RELEASE),$(BUILD)/lib/trs.cg.nasm_x86.so,) $(BUILD)/lib/libtrs.cg.lisp.a $(if $(RELEASE),$(BUILD)/lib/trs.cg.lisp.so,) $(BUILD)/bin/trsc
 
 clean:
 	$(RM) -r $(BUILD)
@@ -58,12 +58,12 @@ $(BUILD)/lib/libpgm.a: $(bin)
 $(BUILD)/lib/pgm.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
-bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trsparser, *.c))
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/horn, *.c))
 libbin += $(bin)
-$(BUILD)/lib/libtrsparser.a: $(bin)
+$(BUILD)/lib/libhorn.a: $(bin)
 	$(AR) qc $@ $^
 
-$(BUILD)/lib/trsparser.so: $(bin)
+$(BUILD)/lib/horn.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trs.cg.nasm_x86, *.c))
@@ -84,7 +84,7 @@ $(BUILD)/lib/trs.cg.lisp.so: $(bin)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs/trsc, *.c))
 exebin += $(bin)
-$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/libtrsparser.a $(BUILD)/lib/libassoc.a
+$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
 
 test: all $(BUILD)/test/ap $(BUILD)/test/ap++ $(BUILD)/test/ap++getAll $(BUILD)/test/csv $(BUILD)/test/csv++ $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm

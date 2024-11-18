@@ -1,10 +1,10 @@
-#include <trs/parser.h>
+#include <trs/horn.h>
 
 #include <stdio.h>
 
-trs_IR* trs_parse(const char* src){
-	trs_Token tok = {0};
-	trs_lexNext(&tok, src);
+trs_IR* horn_parseTaurus(const char* src){
+	horn_Token tok = {0};
+	horn_next(&tok, src);
 
 	switch(tok.type){
 		case TRS_TT_ID:
@@ -14,28 +14,28 @@ trs_IR* trs_parse(const char* src){
 			ir->cmd = TRS_IRCMD_LOAD;
 			ir->text = tok.text;
 
-			trs_lexLH(&tok, NULL);
+			horn_LH(&tok, NULL);
 
 			switch(tok.type){
 				case TRS_TT_OP_PLUS: ir->cmd = TRS_IRCMD_ADD; break;
 				case TRS_TT_OP_MUL: ir->cmd = TRS_IRCMD_MUL; break;
 				case TRS_TT_OP_EQ: ir->cmd = TRS_IRCMD_SET; break;
-				case TRS_TT_EOE: trs_lexNext(&tok, NULL); return ir; // Consume
+				case TRS_TT_EOE: horn_next(&tok, NULL); return ir; // Consume
 				default: return ir;
 			}
 
 			// Consume
-			trs_lexNext(&tok, NULL);
+			horn_next(&tok, NULL);
 			
 			if(ir->cmd == TRS_IRCMD_SET){
-				ir->args = trs_parse(NULL);
-				ir->next = trs_parse(NULL);
+				ir->args = horn_parseTaurus(NULL);
+				ir->next = horn_parseTaurus(NULL);
 			} else{
 				trs_IR* arg = trs_mallocIR();
 				if(!arg) return NULL;
 				arg->cmd = TRS_IRCMD_LOAD;
 				arg->text = ir->text;
-				arg->next = trs_parse(NULL);
+				arg->next = horn_parseTaurus(NULL);
 
 				ir->args = arg;
 				ir->text = NULL;
@@ -50,26 +50,26 @@ trs_IR* trs_parse(const char* src){
 			v->cmd = TRS_IRCMD_INTVAL;
 			v->text = tok.text;
 
-			trs_lexLH(&tok, NULL);
+			horn_LH(&tok, NULL);
 
 			trs_IRCmd cmd;
 			switch(tok.type){
 				case TRS_TT_OP_PLUS: cmd = TRS_IRCMD_ADD; break;
 				case TRS_TT_OP_MUL: cmd = TRS_IRCMD_MUL; break;
 				case TRS_TT_OP_EQ: v->cmd = TRS_IRCMD_ERROR; return v; // [int] = ... is invalid
-				case TRS_TT_EOE: trs_lexNext(&tok, NULL); return v; // Consume
+				case TRS_TT_EOE: horn_next(&tok, NULL); return v; // Consume
 				default: return v;
 			}
 
 			// Consume
-			trs_lexNext(&tok, NULL);
+			horn_next(&tok, NULL);
 
 			trs_IR* ir = trs_mallocIR();
 			if(!ir) return NULL;
 			ir->cmd = cmd;
 			ir->args = v;
 
-			v->next = trs_parse(NULL);
+			v->next = horn_parseTaurus(NULL);
 
 			return ir;
 		} break;
@@ -78,7 +78,7 @@ trs_IR* trs_parse(const char* src){
 			break;
 		default:
 		{
-			fprintf(stderr, "ERROR: Unexpected token: %s\n", trs_TokenTypeToString(tok.type));
+			fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
 			free(tok.text);
 		}
 	}
