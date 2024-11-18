@@ -1,80 +1,83 @@
 #include <trs/horn.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
-trs_IR* horn_parseTaurus(const char* src){
+static inline horn_Obj* horn_alloc();
+
+horn_Obj* horn_parseTaurus(const char* src){
 	horn_Token tok = {0};
 	horn_next(&tok, src);
 
 	switch(tok.type){
-		case TRS_TT_ID:
+		case HORN_TT_ID:
 		{
-			trs_IR* ir = trs_mallocIR();
-			if(!ir) return NULL;
-			ir->cmd = TRS_IRCMD_LOAD;
-			ir->text = tok.text;
+			horn_Obj* obj = horn_alloc();
+			if(!obj) return NULL;
+			obj->cmd = HORN_CMD_ID;
+			obj->text = tok.text;
 
 			horn_LH(&tok, NULL);
 
 			switch(tok.type){
-				case TRS_TT_OP_PLUS: ir->cmd = TRS_IRCMD_ADD; break;
-				case TRS_TT_OP_MUL: ir->cmd = TRS_IRCMD_MUL; break;
-				case TRS_TT_OP_EQ: ir->cmd = TRS_IRCMD_SET; break;
-				case TRS_TT_EOE: horn_next(&tok, NULL); return ir; // Consume
-				default: return ir;
+				case HORN_TT_OP_PLUS: obj->cmd = HORN_CMD_ADD; break;
+				case HORN_TT_OP_MUL: obj->cmd = HORN_CMD_MUL; break;
+				case HORN_TT_OP_EQ: obj->cmd = HORN_CMD_SET; break;
+				case HORN_TT_EOE: horn_next(&tok, NULL); return obj; // Consume
+				default: return obj;
 			}
 
 			// Consume
 			horn_next(&tok, NULL);
 			
-			if(ir->cmd == TRS_IRCMD_SET){
-				ir->args = horn_parseTaurus(NULL);
-				ir->next = horn_parseTaurus(NULL);
+			if(obj->cmd == HORN_CMD_SET){
+				obj->args = horn_parseTaurus(NULL);
+				obj->next = horn_parseTaurus(NULL);
 			} else{
-				trs_IR* arg = trs_mallocIR();
+				horn_Obj* arg = horn_alloc();
 				if(!arg) return NULL;
-				arg->cmd = TRS_IRCMD_LOAD;
-				arg->text = ir->text;
+				arg->cmd = HORN_CMD_ID;
+				arg->text = obj->text;
 				arg->next = horn_parseTaurus(NULL);
 
-				ir->args = arg;
-				ir->text = NULL;
+				obj->args = arg;
+				obj->text = NULL;
 			}
 
-			return ir;
+			return obj;
 		} break;
-		case TRS_TT_INT:
+		case HORN_TT_INT:
 		{
-			trs_IR* v = trs_mallocIR();
+			horn_Obj* v = horn_alloc();
 			if(!v) return NULL;
-			v->cmd = TRS_IRCMD_INTVAL;
+			v->cmd = HORN_CMD_INTVAL;
 			v->text = tok.text;
 
 			horn_LH(&tok, NULL);
 
-			trs_IRCmd cmd;
+			horn_Cmd cmd;
 			switch(tok.type){
-				case TRS_TT_OP_PLUS: cmd = TRS_IRCMD_ADD; break;
-				case TRS_TT_OP_MUL: cmd = TRS_IRCMD_MUL; break;
-				case TRS_TT_OP_EQ: v->cmd = TRS_IRCMD_ERROR; return v; // [int] = ... is invalid
-				case TRS_TT_EOE: horn_next(&tok, NULL); return v; // Consume
+				case HORN_TT_OP_PLUS: cmd = HORN_CMD_ADD; break;
+				case HORN_TT_OP_MUL: cmd = HORN_CMD_MUL; break;
+				case HORN_TT_OP_EQ: v->cmd = HORN_CMD_ERROR; return v; // [int] = ... is invalid
+				case HORN_TT_EOE: horn_next(&tok, NULL); return v; // Consume
 				default: return v;
 			}
 
 			// Consume
 			horn_next(&tok, NULL);
 
-			trs_IR* ir = trs_mallocIR();
-			if(!ir) return NULL;
-			ir->cmd = cmd;
-			ir->args = v;
+			horn_Obj* obj = horn_alloc();
+			if(!obj) return NULL;
+			obj->cmd = cmd;
+			obj->args = v;
 
 			v->next = horn_parseTaurus(NULL);
 
-			return ir;
+			return obj;
 		} break;
-		case TRS_TT_EOE: 
-		case TRS_TT_EOF:
+		case HORN_TT_EOE: 
+		case HORN_TT_EOF:
 			break;
 		default:
 		{
@@ -84,4 +87,13 @@ trs_IR* horn_parseTaurus(const char* src){
 	}
 
 	return NULL;
+}
+
+static inline horn_Obj* horn_alloc(){
+	horn_Obj* obj = malloc(sizeof(horn_Obj));
+	obj->cmd = HORN_CMD_ERROR;
+	obj->text = NULL;
+	obj->args = NULL;
+	obj->next = NULL;
+	return obj;
 }

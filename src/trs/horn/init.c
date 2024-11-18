@@ -8,10 +8,11 @@ bool horn_init(void){
 	if(!g_horn_lispKW)
 		return true;
 
-	*assoc_set_trs_IRCmd(&g_horn_lispKW, "load") = TRS_IRCMD_LOAD;
-	*assoc_set_trs_IRCmd(&g_horn_lispKW, "set") = TRS_IRCMD_SET;
-	*assoc_set_trs_IRCmd(&g_horn_lispKW, "add") = TRS_IRCMD_ADD;
-	*assoc_set_trs_IRCmd(&g_horn_lispKW, "mul") = TRS_IRCMD_MUL;
+	// IDK if this makes sense
+	//*assoc_set_horn_Cmd(&g_horn_lispKW, "id") = HORN_CMD_ID;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "set") = HORN_CMD_SET;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "add") = HORN_CMD_ADD;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "mul") = HORN_CMD_MUL;
 	
 	return false;
 }

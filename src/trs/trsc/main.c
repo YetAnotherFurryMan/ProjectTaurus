@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <trs/IR.h>
 #include <trs/cg.h>
 #include <trs/horn.h>
 
@@ -27,6 +26,7 @@ enum{
 	PARSE_TRS
 } g_whatToParse = PARSE_TRS;
 
+static inline void horn_free(horn_Obj* obj);
 void loadSrc(const char* path);
 
 // CodeGen: trs.cg.{TARGET}.so
@@ -49,13 +49,13 @@ int main(int argc, const char** argv){
 
 	horn_init();
 	
-	trs_IR* ir = NULL;
+	horn_Obj* obj = NULL;
 	switch(g_whatToParse){
 		case PARSE_LISP:
-			ir = horn_parseLisp(src);
+			obj = horn_parseLisp(src);
 			break;
 		case PARSE_TRS:
-			ir = horn_parseTaurus(src);
+			obj = horn_parseTaurus(src);
 			break;
 	}
 
@@ -63,14 +63,14 @@ int main(int argc, const char** argv){
 
 	free(g_src);
 
-	if(!ir){
+	if(!obj){
 		fprintf(stderr, "ERROR: Failed to compile.\n");
 		return 1;
 	}
 	
-	cg.compile(stdout, ir);
+	cg.compile(stdout, obj);
 	
-	trs_freeIR(ir);
+	horn_free(obj);
 
 	trs_cgUnload(&cg);
 	return 0;
@@ -108,5 +108,15 @@ void loadSrc(const char* path){
 	fclose(in);
 
 	g_src = src;
+}
+
+static inline void horn_free(horn_Obj* obj){
+	while(obj){
+		horn_Obj* next = obj->next;
+		free(obj->text);
+		horn_free(obj->args);
+		free(obj);
+		obj = next;
+	}
 }
 

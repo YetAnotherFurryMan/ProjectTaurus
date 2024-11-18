@@ -1,6 +1,6 @@
 #include <trs/cg.h>
 
-int trs_cgCompileAdd(FILE* out, trs_IR* args){
+int trs_cgCompileAdd(FILE* out, horn_Obj* args){
 	if(!args){
 		fprintf(stderr, "ERROR: ADD expects at least one argument!\n");
 		return 1;
@@ -12,29 +12,29 @@ int trs_cgCompileAdd(FILE* out, trs_IR* args){
 	args = args->next;
 	while(args && !err){
 		switch(args->cmd){
-			case TRS_IRCMD_LOAD:
+			case HORN_CMD_ID:
 			{
 				fprintf(out, "\tadd eax, dword [%s]\n", args->text);
 			} break;
-			case TRS_IRCMD_INTVAL:
+			case HORN_CMD_INTVAL:
 			{
 				fprintf(out, "\tadd eax, %s\n", args->text);
 			} break;
-			case TRS_IRCMD_ADD:
-			case TRS_IRCMD_MUL:
+			case HORN_CMD_ADD:
+			case HORN_CMD_MUL:
 			{
 				fprintf(out, "\tpush eax\n");
 				err = trs_cgCompileCmd(out, args);
 				fprintf(out, "\tpop ebx\n");
 				fprintf(out, "\tadd eax, ebx\n");
 			} break;
-			case TRS_IRCMD_SET:
+			case HORN_CMD_SET:
 			{
 				fprintf(stderr, "ERROR: Cannot do SET operation inside of ADD.\n");
 				err = 1;
 			} break;
 			default:
-				fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(args->cmd));
+				fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(args->cmd));
 				err = 1;
 		}
 
@@ -44,7 +44,7 @@ int trs_cgCompileAdd(FILE* out, trs_IR* args){
 	return err;
 }
 
-int trs_cgCompileMul(FILE* out, trs_IR* args){
+int trs_cgCompileMul(FILE* out, horn_Obj* args){
 	if(!args){
 		fprintf(stderr, "ERROR: MUL expects at least one argument!\n");
 		return 1;
@@ -56,31 +56,31 @@ int trs_cgCompileMul(FILE* out, trs_IR* args){
 	args = args->next;
 	while(args && !err){
 		switch(args->cmd){
-			case TRS_IRCMD_LOAD:
+			case HORN_CMD_ID:
 			{
 				fprintf(out, "\tmov ebx, dword [%s]\n", args->text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
-			case TRS_IRCMD_INTVAL:
+			case HORN_CMD_INTVAL:
 			{
 				fprintf(out, "\tmov ebx, %s\n", args->text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
-			case TRS_IRCMD_ADD:
-			case TRS_IRCMD_MUL:
+			case HORN_CMD_ADD:
+			case HORN_CMD_MUL:
 			{
 				fprintf(out, "\tpush eax\n");
 				err = trs_cgCompileCmd(out, args);
 				fprintf(out, "\tpop ebx\n");
 				fprintf(out, "\tmul ebx\n");
 			} break;
-			case TRS_IRCMD_SET:
+			case HORN_CMD_SET:
 			{
 				fprintf(stderr, "ERROR: Cannot do SET operation inside of MUL.\n");
 				err = 1;
 			} break;
 			default:
-				fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(args->cmd));
+				fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(args->cmd));
 				err = 1;
 		}
 
@@ -91,37 +91,37 @@ int trs_cgCompileMul(FILE* out, trs_IR* args){
 }
 
 
-int trs_cgCompileCmd(FILE* out, trs_IR* ir){
+int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 	int err = 0;
 
-	switch(ir->cmd){
-		case TRS_IRCMD_LOAD:
+	switch(obj->cmd){
+		case HORN_CMD_ID:
 		{
 			// Load a value to eax
-			fprintf(out, "\tmov eax, dword [%s]\n", ir->text);
+			fprintf(out, "\tmov eax, dword [%s]\n", obj->text);
 		} break;
-		case TRS_IRCMD_INTVAL:
+		case HORN_CMD_INTVAL:
 		{
 			// Put the intval into eax
-			fprintf(out, "\tmov eax, %s\n", ir->text);
+			fprintf(out, "\tmov eax, %s\n", obj->text);
 		} break;
-		case TRS_IRCMD_SET:
+		case HORN_CMD_SET:
 		{
 			// Compile arg into eax and then save to destination
-			if(!ir->args){
+			if(!obj->args){
 				fprintf(stderr, "ERROR: SET expects argument!\n");
 				return 1;
 			}
 
-			err = trs_cgCompileCmd(out, ir->args);
-			fprintf(out, "\tmov dword [%s], eax\n", ir->text);
+			err = trs_cgCompileCmd(out, obj->args);
+			fprintf(out, "\tmov dword [%s], eax\n", obj->text);
 		} break;
-		case TRS_IRCMD_ADD:
-			return trs_cgCompileAdd(out, ir->args);
-		case TRS_IRCMD_MUL:
-			return trs_cgCompileMul(out, ir->args);
+		case HORN_CMD_ADD:
+			return trs_cgCompileAdd(out, obj->args);
+		case HORN_CMD_MUL:
+			return trs_cgCompileMul(out, obj->args);
 		default:
-			fprintf(stderr, "ERROR: Unexpected %s\n", trs_IRCmdToString(ir->cmd));
+			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;
 	}
 
@@ -129,7 +129,7 @@ int trs_cgCompileCmd(FILE* out, trs_IR* ir){
 }
 
 // ECX EDX
-int trs_cgCompile(FILE* out, trs_IR* ir){
+int trs_cgCompile(FILE* out, horn_Obj* obj){
 	// Runtime
 	fputs("section .data\n", out);
 	fputs("\tA dd 0\n", out);
@@ -219,11 +219,11 @@ int trs_cgCompile(FILE* out, trs_IR* ir){
 	fputs("main:\n", out);
 
 	int r = 0;
-	while(ir){
-		fprintf(stderr, "INFO: IR(%s)\n", trs_IRCmdToString(ir->cmd));
-		if((r = trs_cgCompileCmd(out, ir)))
+	while(obj){
+		fprintf(stderr, "INFO: obj(%s)\n", horn_CmdToString(obj->cmd));
+		if((r = trs_cgCompileCmd(out, obj)))
 			return r;
-		ir = ir->next;
+		obj = obj->next;
 	}
 
 	// Exit

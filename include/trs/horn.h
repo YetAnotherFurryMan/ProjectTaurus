@@ -3,10 +3,6 @@
 
 #include <toollib/assoc.h>
 
-#include "IR.h"
-
-assoc_GEN_FOR_TYPE(trs_IRCmd)
-
 #define HORN_X_enum_TokenType \
 	X(UKN)                          \
 	X(EOF)                          \
@@ -19,18 +15,42 @@ assoc_GEN_FOR_TYPE(trs_IRCmd)
 	X(LB)                           \
 	X(RB)
 
+#define HORN_X_enum_Cmd \
+	X(ERROR)  			    \
+	X(ID)   			    \
+	X(INTVAL) 			    \
+	X(SET)    			    \
+	X(ADD)    			    \
+	X(MUL)
+
 typedef enum{
-#define X(Y) TRS_TT_##Y,
+#define X(Y) HORN_TT_##Y,
 	HORN_X_enum_TokenType
 #undef X
 } horn_TokenType;
 
+typedef enum{
+#define X(Y) HORN_CMD_##Y,
+	HORN_X_enum_Cmd
+#undef X
+} horn_Cmd;
+
 typedef struct horn_Token horn_Token;
+typedef struct horn_Obj horn_Obj;
 
 struct horn_Token{
 	horn_TokenType type;
 	char* text;
 };
+
+struct horn_Obj{
+	horn_Cmd cmd;
+	char* text;
+	horn_Obj* args;
+	horn_Obj* next;
+};
+
+assoc_GEN_FOR_TYPE(horn_Cmd)
 
 extern horn_Token g_horn_lookahead;
 extern assoc g_horn_lispKW;
@@ -42,13 +62,22 @@ void horn_terminate(void);
 void horn_next(horn_Token* tok, const char* src);
 void horn_LH(horn_Token* tok, const char* src);
 
-trs_IR* horn_parseLisp(const char* src);
-trs_IR* horn_parseTaurus(const char* src);
+horn_Obj* horn_parseLisp(const char* src);
+horn_Obj* horn_parseTaurus(const char* src);
 
 static inline const char* horn_TokenTypeToString(horn_TokenType v){
-#define X(Y) case TRS_TT_##Y: return #Y;
+#define X(Y) case HORN_TT_##Y: return #Y;
 	switch(v){
 		HORN_X_enum_TokenType
+		default: return "???";
+	}
+#undef X
+}
+
+static inline const char* horn_CmdToString(horn_Cmd v){
+#define X(Y) case HORN_CMD_##Y: return #Y;
+	switch(v){
+		HORN_X_enum_Cmd
 		default: return "???";
 	}
 #undef X

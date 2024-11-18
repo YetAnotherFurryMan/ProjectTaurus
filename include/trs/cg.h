@@ -5,9 +5,9 @@
 
 #include <dlfcn.h>
 
-#include "IR.h"
+#include "horn.h"
 
-typedef int(*trs_cgCompile_t)(FILE*, trs_IR*);
+typedef int(*trs_cgCompile_t)(FILE*, horn_Obj*);
 
 typedef struct trs_CG trs_CG;
 
@@ -54,7 +54,7 @@ static inline void trs_cgUnload(trs_CG* cg){
 	cg->hnd = NULL;
 }
 
-int trs_cgCompile(FILE* out, trs_IR* ir);
-int trs_cgCompileCmd(FILE* out, trs_IR* ir);
+int trs_cgCompile(FILE* out, horn_Obj* obj);
+int trs_cgCompileCmd(FILE* out, horn_Obj* obj);
 
 #endif //_CG_H_
