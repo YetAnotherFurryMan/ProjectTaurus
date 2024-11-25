@@ -65,6 +65,8 @@ void horn_LH(horn_Token* tok, const char* src);
 horn_Obj* horn_parseLisp(const char* src);
 horn_Obj* horn_parseTaurus(const char* src);
 
+bool horn_analise(horn_Obj* ir);
+
 static inline const char* horn_TokenTypeToString(horn_TokenType v){
 #define X(Y) case HORN_TT_##Y: return #Y;
 	switch(v){

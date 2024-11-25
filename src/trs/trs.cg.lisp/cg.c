@@ -9,7 +9,6 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		} break;
 		case HORN_CMD_SET:
 		{
-			// Compile arg into eax and then save to destination
 			if(!obj->args){
 				fprintf(stderr, "ERROR: SET expects argument!\n");
 				return 1;
@@ -21,30 +20,26 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		} break;
 		case HORN_CMD_ADD:
 		{
-			// Compile 2nd arg into eax, move eax to ebx, compile 1st arg to eax, add eax and ebx
-			if(!obj->args || !obj->args->next){
-				fprintf(stderr, "ERROR: ADD expects 2 arguments!\n");
-				return 1;
-			}
+			fputs("(add", out);
 
-			fputs("(add ", out);
-			trs_cgCompileCmd(out, obj->args);
-			fputs(" ", out);
-			trs_cgCompileCmd(out, obj->args->next);
+			horn_Obj* arg = obj->args;
+			while(arg){
+				fputs(" ", out);
+				trs_cgCompileCmd(out, arg);
+				arg = arg->next;
+			}
 			fputs(")", out);
 		} break;
 		case HORN_CMD_MUL:
 		{
-			// Compile 2nd arg into eax, move eax to ebx, compile 1st arg to eax, mul by ebx
-			if(!obj->args || !obj->args->next){
-				fprintf(stderr, "ERROR: MUL expects 2 arguments!\n");
-				return 1;
-			}
+			fputs("(mul", out);
 
-			fputs("(mul ", out);
-			trs_cgCompileCmd(out, obj->args);
-			fputs(" ", out);
-			trs_cgCompileCmd(out, obj->args->next);
+			horn_Obj* arg = obj->args;
+			while(arg){
+				fputs(" ", out);
+				trs_cgCompileCmd(out, arg);
+				arg = arg->next;
+			}
 			fputs(")", out);
 		} break;
 		default:

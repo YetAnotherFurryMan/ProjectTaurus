@@ -63,7 +63,7 @@ int main(int argc, const char** argv){
 
 	free(g_src);
 
-	if(!obj){
+	if(!horn_analise(obj)){
 		fprintf(stderr, "ERROR: Failed to compile.\n");
 		return 1;
 	}
