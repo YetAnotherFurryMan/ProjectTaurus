@@ -9,13 +9,8 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		} break;
 		case HORN_CMD_SET:
 		{
-			if(!obj->args){
-				fprintf(stderr, "ERROR: SET expects argument!\n");
-				return 1;
-			}
-
-			fprintf(out, "(set %s ", obj->text);
-			trs_cgCompileCmd(out, obj->args);
+			fprintf(out, "(set %s ", obj->args->text);
+			trs_cgCompileCmd(out, obj->args->next);
 			fputs(")", out);
 		} break;
 		case HORN_CMD_ADD:

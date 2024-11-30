@@ -119,13 +119,9 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		case HORN_CMD_SET:
 		{
 			// Compile arg into eax and then save to destination
-			if(!obj->args){
-				fprintf(stderr, "ERROR: SET expects argument!\n");
-				return 1;
-			}
-
-			err = trs_cgCompileCmd(out, obj->args);
-			fprintf(out, "\tmov dword [%s], eax\n", obj->text);
+			// The first arg is always ID and the second is value
+			err = trs_cgCompileCmd(out, obj->args->next);
+			fprintf(out, "\tmov dword [%s], eax\n", obj->args->text);
 		} break;
 		case HORN_CMD_ADD:
 			return trs_cgCompileAdd(out, obj->args);

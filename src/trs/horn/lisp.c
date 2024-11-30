@@ -30,23 +30,11 @@ horn_Obj* horn_parseLispSExp(){
 		return obj;
 	}
 
-
-	if(cmd == HORN_CMD_SET){
-		horn_next(&tok, NULL);
-		if(tok.type != HORN_TT_ID){
-			fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
-			return obj;
-		}
-
-		obj->text = tok.text;
-		obj->args = horn_parseLispOrVal();
-	} else{
-		horn_Obj* args = horn_parseLispOrVal();
-		obj->args = args;
-		while(args && tok.type != HORN_TT_RP){
-			args->next = horn_parseLispOrVal();
-			args = args->next;
-		}
+	horn_Obj* args = horn_parseLispOrVal();
+	obj->args = args;
+	while(args && tok.type != HORN_TT_RP){
+		args->next = horn_parseLispOrVal();
+		args = args->next;
 	}
 
 	horn_next(&tok, NULL);
