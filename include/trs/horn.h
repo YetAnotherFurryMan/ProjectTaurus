@@ -25,7 +25,8 @@
 	X(INTVAL) 			\
 	X(SET)    			\
 	X(ADD)    			\
-	X(MUL)
+	X(MUL)              \
+	X(SCOPE)
 
 typedef enum{
 #define X(Y) HORN_TT_##Y,

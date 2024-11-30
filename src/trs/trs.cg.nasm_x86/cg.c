@@ -90,6 +90,17 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 	return err;
 }
 
+int trs_cgCompileScope(FILE* out, horn_Obj* scope){
+	int r = 0;
+	horn_Obj* obj = scope->args;
+	while(obj){
+		fprintf(stderr, "INFO: obj(%s)\n", horn_CmdToString(obj->cmd));
+		if((r = trs_cgCompileCmd(out, obj)))
+			return r;
+		obj = obj->next;
+	}
+	return 0;
+}
 
 int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 	int err = 0;
@@ -120,6 +131,8 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 			return trs_cgCompileAdd(out, obj->args);
 		case HORN_CMD_MUL:
 			return trs_cgCompileMul(out, obj->args);
+		case HORN_CMD_SCOPE:
+			return trs_cgCompileScope(out, obj);
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;

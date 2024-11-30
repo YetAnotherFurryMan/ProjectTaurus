@@ -60,7 +60,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 			break;
 		case HORN_CMD_SET:
 		{
-			// TODO: Test is 1st arg is ID and second is evaluatable
+			// TODO: Test if 1st arg is ID and second is evaluatable
 			ir = ir->args;
 			while(ir){
 				if(!horn_analiseExp(ir))
@@ -72,6 +72,9 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 			return horn_analise1(HORN_CMD_ADD, ir, "0");
 		case HORN_CMD_MUL:
 			return horn_analise1(HORN_CMD_MUL, ir, "1");
+		case HORN_CMD_SCOPE:
+			return horn_analise(ir->args);
+			break;
 		default:
 			return false;
 	}

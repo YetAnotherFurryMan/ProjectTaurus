@@ -7,11 +7,13 @@ static inline horn_Obj* horn_alloc();
 
 horn_Obj* horn_parseTaurus(const char* src){
 	horn_Token tok = {0};
-	horn_next(&tok, src);
+	horn_LH(&tok, src);
 
 	switch(tok.type){
 		case HORN_TT_ID:
 		{
+			horn_next(&tok, NULL);
+
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
 			obj->cmd = HORN_CMD_ID;
@@ -48,6 +50,8 @@ horn_Obj* horn_parseTaurus(const char* src){
 		} break;
 		case HORN_TT_INT:
 		{
+			horn_next(&tok, NULL);
+
 			horn_Obj* v = horn_alloc();
 			if(!v) return NULL;
 			v->cmd = HORN_CMD_INTVAL;
@@ -76,8 +80,35 @@ horn_Obj* horn_parseTaurus(const char* src){
 
 			return obj;
 		} break;
+		case HORN_TT_LB:
+		{
+			horn_next(&tok, NULL);
+
+			horn_Obj* scope = horn_alloc();
+			if(!scope) return NULL;
+			scope->cmd = HORN_CMD_SCOPE;
+			scope->text = tok.text;
+
+			scope->args = horn_parseTaurus(NULL);
+
+			horn_LH(&tok, NULL);
+			if(tok.type != HORN_TT_RB){
+				scope->cmd = HORN_CMD_ERROR;
+				return scope;
+			}
+
+			// Consume
+			horn_next(&tok, NULL);
+
+			scope->next = horn_parseTaurus(NULL);
+
+			return scope;
+		} break;
+		case HORN_TT_RB:
+			break;
 		case HORN_TT_EOE: 
 		case HORN_TT_EOF:
+			horn_next(&tok, NULL);
 			break;
 		default:
 		{

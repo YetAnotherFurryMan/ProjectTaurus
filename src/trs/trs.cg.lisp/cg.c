@@ -42,6 +42,18 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 			}
 			fputs(")", out);
 		} break;
+		case HORN_CMD_SCOPE:
+		{
+			fputs("(scope", out);
+
+			horn_Obj* arg = obj->args;
+			while(arg){
+				fputs(" ", out);
+				trs_cgCompileCmd(out, arg);
+				arg = arg->next;
+			}
+			fputs(")", out);
+		} break;
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;
