@@ -25,19 +25,19 @@ build $bin/lib/libap.a: lib $bin/obj/toollib/ap/ap.c.o
 build $bin/lib/ap.so: link $bin/obj/toollib/ap/ap.c.o
   flags = --shared
 
+build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
+  flags = -fPIC
 build $bin/obj/toollib/csv/parseRow.c.o: cc src/toollib/csv/parseRow.c
-  flags = -fPIC
-build $bin/obj/toollib/csv/encoding.c.o: cc src/toollib/csv/encoding.c
-  flags = -fPIC
-build $bin/obj/toollib/csv/fgetrow.c.o: cc src/toollib/csv/fgetrow.c
   flags = -fPIC
 build $bin/obj/toollib/csv/strrow.c.o: cc src/toollib/csv/strrow.c
   flags = -fPIC
-build $bin/obj/toollib/csv/freeRow.c.o: cc src/toollib/csv/freeRow.c
+build $bin/obj/toollib/csv/fgetrow.c.o: cc src/toollib/csv/fgetrow.c
   flags = -fPIC
-build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+build $bin/obj/toollib/csv/encoding.c.o: cc src/toollib/csv/encoding.c
+  flags = -fPIC
+build $bin/lib/libcsv.a: lib $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/encoding.c.o
 
-build $bin/lib/csv.so: link $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/encoding.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/freeRow.c.o
+build $bin/lib/csv.so: link $bin/obj/toollib/csv/freeRow.c.o $bin/obj/toollib/csv/parseRow.c.o $bin/obj/toollib/csv/strrow.c.o $bin/obj/toollib/csv/fgetrow.c.o $bin/obj/toollib/csv/encoding.c.o
   flags = --shared
 
 build $bin/obj/toollib/vec/vec.c.o: cc src/toollib/vec/vec.c
@@ -61,19 +61,19 @@ build $bin/lib/libpgm.a: lib $bin/obj/toollib/pgm/pgm.c.o
 build $bin/lib/pgm.so: link $bin/obj/toollib/pgm/pgm.c.o
   flags = --shared
 
-build $bin/obj/trs/horn/analise.c.o: cc src/trs/horn/analise.c
-  flags = -fPIC
 build $bin/obj/trs/horn/lisp.c.o: cc src/trs/horn/lisp.c
+  flags = -fPIC
+build $bin/obj/trs/horn/lex.c.o: cc src/trs/horn/lex.c
+  flags = -fPIC
+build $bin/obj/trs/horn/analise.c.o: cc src/trs/horn/analise.c
   flags = -fPIC
 build $bin/obj/trs/horn/init.c.o: cc src/trs/horn/init.c
   flags = -fPIC
 build $bin/obj/trs/horn/parse.c.o: cc src/trs/horn/parse.c
   flags = -fPIC
-build $bin/obj/trs/horn/lex.c.o: cc src/trs/horn/lex.c
-  flags = -fPIC
-build $bin/lib/libhorn.a: lib $bin/obj/trs/horn/analise.c.o $bin/obj/trs/horn/lisp.c.o $bin/obj/trs/horn/init.c.o $bin/obj/trs/horn/parse.c.o $bin/obj/trs/horn/lex.c.o
+build $bin/lib/libhorn.a: lib $bin/obj/trs/horn/lisp.c.o $bin/obj/trs/horn/lex.c.o $bin/obj/trs/horn/analise.c.o $bin/obj/trs/horn/init.c.o $bin/obj/trs/horn/parse.c.o
 
-build $bin/lib/horn.so: link $bin/obj/trs/horn/analise.c.o $bin/obj/trs/horn/lisp.c.o $bin/obj/trs/horn/init.c.o $bin/obj/trs/horn/parse.c.o $bin/obj/trs/horn/lex.c.o
+build $bin/lib/horn.so: link $bin/obj/trs/horn/lisp.c.o $bin/obj/trs/horn/lex.c.o $bin/obj/trs/horn/analise.c.o $bin/obj/trs/horn/init.c.o $bin/obj/trs/horn/parse.c.o
   flags = --shared
 
 build $bin/obj/trs/trs.cg.nasm_x86/cg.c.o: cc src/trs/trs.cg.nasm_x86/cg.c

@@ -12,8 +12,8 @@
 	X(OP_MUL)                       \
 	X(EOE)                          \
 	X(ID)                           \
-	X(LB)                           \
-	X(RB)
+	X(LP)                           \
+	X(RP)
 
 #define HORN_X_enum_Cmd \
 	X(ERROR)  			    \

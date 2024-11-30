@@ -52,10 +52,10 @@ void horn_next(horn_Token* tok, const char* src){
 			tt = HORN_TT_EOE;
 			break;
 		case '(':
-			tt = HORN_TT_LB;
+			tt = HORN_TT_LP;
 			break;
 		case ')':
-			tt = HORN_TT_RB;
+			tt = HORN_TT_RP;
 			break;
 		default:
 		{

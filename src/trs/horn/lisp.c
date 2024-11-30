@@ -43,7 +43,7 @@ horn_Obj* horn_parseLispSExp(){
 	} else{
 		horn_Obj* args = horn_parseLispOrVal();
 		obj->args = args;
-		while(args && tok.type != HORN_TT_RB){
+		while(args && tok.type != HORN_TT_RP){
 			args->next = horn_parseLispOrVal();
 			args = args->next;
 		}
@@ -77,10 +77,10 @@ static inline horn_Obj* horn_parseLispOrVal(){
 			v->text = tok.text;
 			return v;
 		} break;
-		case HORN_TT_LB:
+		case HORN_TT_LP:
 			horn_next(&tok, NULL);
 			return horn_parseLispSExp();
-		case HORN_TT_RB: 
+		case HORN_TT_RP: 
 		case HORN_TT_EOF:
 			break;
 		default:
@@ -98,7 +98,7 @@ horn_Obj* horn_parseLisp(const char* src){
 	horn_LH(&tok, src);
 
 	switch(tok.type){
-		case HORN_TT_LB:
+		case HORN_TT_LP:
 		{
 			horn_next(&tok, NULL);
 			horn_Obj* obj = horn_parseLispSExp();
