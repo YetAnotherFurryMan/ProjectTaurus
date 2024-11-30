@@ -38,25 +38,18 @@ void horn_next(horn_Token* tok, const char* src){
 	horn_TokenType tt = HORN_TT_UKN;
 	char* text = NULL;
 
+#define XCASE(CHR, TKN) case CHR: tt = HORN_TT_##TKN; break;
 	switch(*s){
-		case '=':
-			tt = HORN_TT_OP_EQ;
-			break;
-		case '+':
-			tt = HORN_TT_OP_PLUS;
-			break;
-		case '*':
-			tt = HORN_TT_OP_MUL;
-			break;
-		case ';':
-			tt = HORN_TT_EOE;
-			break;
-		case '(':
-			tt = HORN_TT_LP;
-			break;
-		case ')':
-			tt = HORN_TT_RP;
-			break;
+		XCASE('=', OP_EQ)
+		XCASE('+', OP_PLUS)
+		XCASE('*', OP_MUL)
+		XCASE(';', EOE)
+		XCASE('(', LP)
+		XCASE(')', RP)
+		XCASE('{', LB)
+		XCASE('}', RB)
+		XCASE('[', LSB)
+		XCASE(']', RSB)
 		default:
 		{
 			if(isdigit(*s)){
@@ -92,6 +85,7 @@ void horn_next(horn_Token* tok, const char* src){
 			}
 		} break;
 	}
+#undef XCASE
 
 	if(*s)
 		s++;

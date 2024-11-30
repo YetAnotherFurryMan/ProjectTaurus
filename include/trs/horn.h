@@ -4,23 +4,27 @@
 #include <toollib/assoc.h>
 
 #define HORN_X_enum_TokenType \
-	X(UKN)                          \
-	X(EOF)                          \
-	X(INT)                          \
-	X(OP_EQ)                        \
-	X(OP_PLUS)                      \
-	X(OP_MUL)                       \
-	X(EOE)                          \
-	X(ID)                           \
-	X(LP)                           \
-	X(RP)
+	X(UKN)                    \
+	X(EOF)                    \
+	X(INT)                    \
+	X(OP_EQ)                  \
+	X(OP_PLUS)                \
+	X(OP_MUL)                 \
+	X(EOE)                    \
+	X(ID)                     \
+	X(LP)                     \
+	X(RP)                     \
+	X(LB)                     \
+	X(RB)                     \
+	X(LSB)                    \
+	X(RSB)
 
 #define HORN_X_enum_Cmd \
-	X(ERROR)  			    \
-	X(ID)   			    \
-	X(INTVAL) 			    \
-	X(SET)    			    \
-	X(ADD)    			    \
+	X(ERROR)  			\
+	X(ID)   			\
+	X(INTVAL) 			\
+	X(SET)    			\
+	X(ADD)    			\
 	X(MUL)
 
 typedef enum{
