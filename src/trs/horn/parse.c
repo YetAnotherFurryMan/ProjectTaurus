@@ -5,6 +5,33 @@
 
 static inline horn_Obj* horn_alloc();
 
+static inline horn_Obj* horn_parseTaurusMakeBi(horn_Cmd cmd, horn_Obj* a){
+	// Consume
+	horn_Token tok = {0};
+	horn_next(&tok, NULL);
+
+	horn_Obj* b = horn_parseTaurus(NULL);
+			
+	horn_Obj* obj = horn_alloc();
+	if(!obj) return NULL;
+	obj->cmd = cmd;
+	
+	if(b && b->cmd > HORN_CMD_SET && cmd > b->cmd){
+		// (A op (B op C)) -> ((A op B) op C)
+		obj->args = a;
+		a->next = b->args;
+		obj->next = a->next->next;
+		a->next->next = NULL;
+		b->args = obj;
+		obj = b;
+	} else{
+		obj->args = a;
+		a->next = b;
+	}
+
+	return obj;
+}
+
 horn_Obj* horn_parseTaurus(const char* src){
 	horn_Token tok = {0};
 	horn_LH(&tok, src);
@@ -29,17 +56,13 @@ horn_Obj* horn_parseTaurus(const char* src){
 				case HORN_TT_EOE: horn_next(&tok, NULL); return id; // Consume
 				default: return id;
 			}
+	
+			horn_Obj* obj = horn_parseTaurusMakeBi(cmd, id);
 
-			// Consume
-			horn_next(&tok, NULL);
+			if(cmd == HORN_CMD_SET){
+				obj->next = horn_parseTaurus(NULL);
+			}
 			
-			horn_Obj* obj = horn_alloc();
-			if(!obj) return NULL;
-			obj->cmd = cmd;
-			obj->args = id;
-
-			id->next = horn_parseTaurus(NULL);
-
 			return obj;
 		} break;
 		case HORN_TT_INT:
@@ -62,17 +85,7 @@ horn_Obj* horn_parseTaurus(const char* src){
 				default: return v;
 			}
 
-			// Consume
-			horn_next(&tok, NULL);
-
-			horn_Obj* obj = horn_alloc();
-			if(!obj) return NULL;
-			obj->cmd = cmd;
-			obj->args = v;
-
-			v->next = horn_parseTaurus(NULL);
-
-			return obj;
+			return horn_parseTaurusMakeBi(cmd, v);
 		} break;
 		case HORN_TT_LB:
 		{
