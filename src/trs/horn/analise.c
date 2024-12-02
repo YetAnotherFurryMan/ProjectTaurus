@@ -6,7 +6,7 @@
 
 static inline bool horn_analiseExp(horn_Obj* ir);
 
-static inline bool horn_analise1(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr){
+static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr){
 	if(!ir->args){
 		ir->cmd = HORN_CMD_INTVAL;
 		ir->text = tl_strcpy(defaultStr);
@@ -66,9 +66,9 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 			return horn_analiseExp(ir->args->next);
 		} break;
 		case HORN_CMD_ADD:
-			return horn_analise1(HORN_CMD_ADD, ir, "0");
+			return horn_analiseBi(HORN_CMD_ADD, ir, "0");
 		case HORN_CMD_MUL:
-			return horn_analise1(HORN_CMD_MUL, ir, "1");
+			return horn_analiseBi(HORN_CMD_MUL, ir, "1");
 		case HORN_CMD_SCOPE:
 			return horn_analise(ir->args);
 			break;
