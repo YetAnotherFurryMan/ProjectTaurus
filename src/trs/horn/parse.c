@@ -3,14 +3,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static inline horn_Obj* horn_alloc();
+static inline horn_Obj* horn_alloc(void);
 
-static inline horn_Obj* horn_parseTaurusMakeBi(horn_Cmd cmd, horn_Obj* a){
+static horn_Obj* horn_parseExp(void);
+static inline horn_Obj* horn_parseBi(horn_Cmd cmd, horn_Obj* a);
+
+horn_Obj* horn_parseTaurus(const char* src){
+	horn_Token tok = {0};
+	horn_LH(&tok, src);
+
+	horn_Obj* root = horn_parseExp();
+
+	horn_Obj* obj = root;
+	while(tok.type != HORN_TT_EOF && tok.type != HORN_TT_UKN && obj){
+		obj->next = horn_parseExp();
+		obj = obj->next;
+		horn_LH(&tok, NULL);
+	}
+
+	return root;
+}
+
+static inline horn_Obj* horn_parseBi(horn_Cmd cmd, horn_Obj* a){
 	// Consume
 	horn_Token tok = {0};
 	horn_next(&tok, NULL);
 
-	horn_Obj* b = horn_parseTaurus(NULL);
+	horn_Obj* b = horn_parseExp();
 			
 	horn_Obj* obj = horn_alloc();
 	if(!obj) return NULL;
@@ -32,9 +51,9 @@ static inline horn_Obj* horn_parseTaurusMakeBi(horn_Cmd cmd, horn_Obj* a){
 	return obj;
 }
 
-horn_Obj* horn_parseTaurus(const char* src){
+static horn_Obj* horn_parseExp(void){
 	horn_Token tok = {0};
-	horn_LH(&tok, src);
+	horn_LH(&tok, NULL);
 
 	switch(tok.type){
 		case HORN_TT_ID:
@@ -57,12 +76,8 @@ horn_Obj* horn_parseTaurus(const char* src){
 				default: return id;
 			}
 	
-			horn_Obj* obj = horn_parseTaurusMakeBi(cmd, id);
+			horn_Obj* obj = horn_parseBi(cmd, id);
 
-			if(cmd == HORN_CMD_SET){
-				obj->next = horn_parseTaurus(NULL);
-			}
-			
 			return obj;
 		} break;
 		case HORN_TT_INT:
@@ -85,7 +100,7 @@ horn_Obj* horn_parseTaurus(const char* src){
 				default: return v;
 			}
 
-			return horn_parseTaurusMakeBi(cmd, v);
+			return horn_parseBi(cmd, v);
 		} break;
 		case HORN_TT_LB:
 		{
@@ -96,7 +111,7 @@ horn_Obj* horn_parseTaurus(const char* src){
 			scope->cmd = HORN_CMD_SCOPE;
 			scope->text = tok.text;
 
-			scope->args = horn_parseTaurus(NULL);
+			scope->args = horn_parseExp();
 
 			horn_LH(&tok, NULL);
 			if(tok.type != HORN_TT_RB){
@@ -107,10 +122,47 @@ horn_Obj* horn_parseTaurus(const char* src){
 			// Consume
 			horn_next(&tok, NULL);
 
-			scope->next = horn_parseTaurus(NULL);
+			scope->next = horn_parseExp();
 
 			return scope;
 		} break;
+		case HORN_TT_LP:
+		{
+			horn_next(&tok, NULL);
+
+			horn_Obj* obj = horn_parseExp();
+			if(!obj) return NULL;
+
+			horn_LH(&tok, NULL);
+			if(tok.type != HORN_TT_RP){
+				return NULL;
+			}
+
+			horn_next(&tok, NULL);
+
+			horn_LH(&tok, NULL);
+
+			horn_Cmd cmd;
+			switch(tok.type){
+				case HORN_TT_OP_PLUS: cmd = HORN_CMD_ADD; break;
+				case HORN_TT_OP_MUL: cmd = HORN_CMD_MUL; break;
+				case HORN_TT_OP_EQ: obj->cmd = HORN_CMD_ERROR; return obj; // (...) = ... is invalid
+				case HORN_TT_EOE: horn_next(&tok, NULL); return obj; // Consume
+				default: return obj;
+			}
+
+			horn_Obj* op = horn_alloc();
+			if(!op) return NULL;
+
+			horn_next(&tok, NULL);
+
+			op->cmd = cmd;
+			op->args = obj;
+			obj->next = horn_parseExp();
+
+			return op;
+		} break;
+		case HORN_TT_RP:
 		case HORN_TT_RB:
 			break;
 		case HORN_TT_EOE: 
@@ -127,7 +179,7 @@ horn_Obj* horn_parseTaurus(const char* src){
 	return NULL;
 }
 
-static inline horn_Obj* horn_alloc(){
+static inline horn_Obj* horn_alloc(void){
 	horn_Obj* obj = malloc(sizeof(horn_Obj));
 	obj->cmd = HORN_CMD_ERROR;
 	obj->text = NULL;
