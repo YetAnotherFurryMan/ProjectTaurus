@@ -60,6 +60,8 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 			return horn_analiseBi(HORN_CMD_SUB, ir, "0");
 		case HORN_CMD_MUL:
 			return horn_analiseBi(HORN_CMD_MUL, ir, "1");
+		case HORN_CMD_MINUS:
+			return horn_analiseExp(ir->args);
 		case HORN_CMD_SCOPE:
 			return horn_analise(ir->args);
 			break;

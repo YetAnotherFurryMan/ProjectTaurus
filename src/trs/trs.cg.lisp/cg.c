@@ -6,65 +6,43 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		case HORN_CMD_INTVAL:
 		{
 			fputs(obj->text, out);
+			return 0;
 		} break;
 		case HORN_CMD_SET:
 		{
-			fprintf(out, "(set %s ", obj->args->text);
-			trs_cgCompileCmd(out, obj->args->next);
-			fputs(")", out);
+			fputs("(set", out);
 		} break;
+		case HORN_CMD_MINUS:
+			fputs("(minus", out);
+			break;
 		case HORN_CMD_ADD:
 		{
 			fputs("(add", out);
-
-			horn_Obj* arg = obj->args;
-			while(arg){
-				fputs(" ", out);
-				trs_cgCompileCmd(out, arg);
-				arg = arg->next;
-			}
-			fputs(")", out);
 		} break;
 		case HORN_CMD_SUB:
 		{
 			fputs("(sub", out);
-
-			horn_Obj* arg = obj->args;
-			while(arg){
-				fputs(" ", out);
-				trs_cgCompileCmd(out, arg);
-				arg = arg->next;
-			}
-			fputs(")", out);
 		} break;
 		case HORN_CMD_MUL:
 		{
 			fputs("(mul", out);
-
-			horn_Obj* arg = obj->args;
-			while(arg){
-				fputs(" ", out);
-				trs_cgCompileCmd(out, arg);
-				arg = arg->next;
-			}
-			fputs(")", out);
 		} break;
 		case HORN_CMD_SCOPE:
 		{
 			fputs("(scope", out);
-
-			horn_Obj* arg = obj->args;
-			while(arg){
-				fputs(" ", out);
-				trs_cgCompileCmd(out, arg);
-				arg = arg->next;
-			}
-			fputs(")", out);
 		} break;
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;
 	}
+
+	horn_Obj* arg = obj->args;
+	while(arg){
+		fputs(" ", out);
+		trs_cgCompileCmd(out, arg);
+		arg = arg->next;
+	}
+	fputs(")", out);
 
 	return 0;
 }

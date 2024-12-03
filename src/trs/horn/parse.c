@@ -15,6 +15,7 @@ static inline horn_Obj* horn_parseBinary(void);
 static inline horn_Obj* horn_parseUnary(void);
 static inline horn_Obj* horn_parsePrimary(void);
 
+static inline horn_Obj* horn_makeUnary(horn_TokenType tt, horn_Obj* e);
 static inline horn_Obj* horn_makeBi(horn_TokenType tt, horn_Obj* lhs, horn_Obj* rls);
 
 horn_Obj* horn_parseTaurus(const char* src){
@@ -120,6 +121,29 @@ static inline horn_Obj* horn_parseExp(void){
 	return exp;
 }
 
+static inline horn_Obj* horn_makeUnary(horn_TokenType tt, horn_Obj* e){
+	if(!e){
+		// TODO: ERROR
+		return NULL;
+	}
+
+	horn_Obj* obj = horn_alloc();
+	if(!obj) return NULL;
+
+	switch(tt){
+		case HORN_TT_OP_MINUS:
+			obj->cmd = HORN_CMD_MINUS;
+			break;
+		default:
+			obj->cmd = HORN_CMD_ERROR;
+			break;
+	}
+
+	obj->args = e;
+
+	return obj;
+}
+
 static inline horn_Obj* horn_makeBi(horn_TokenType tt, horn_Obj* lhs, horn_Obj* rhs){
 	if(!lhs || !rhs){
 		// TODO: ERROR
@@ -222,7 +246,11 @@ static inline horn_Obj* horn_parseUnary(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	// TODO: -, !, ~
+	// TODO: !, ~
+	if(tok.type == HORN_TT_OP_MINUS){
+		horn_next(&tok, NULL);
+		return horn_makeUnary(tok.type, horn_parseUnary());
+	}
 	
 	return horn_parsePrimary();
 }
