@@ -11,42 +11,31 @@ static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaul
 		ir->cmd = HORN_CMD_INTVAL;
 		ir->text = tl_strcpy(defaultStr);
 	} else{
-		horn_Obj* prv = NULL;
-		horn_Obj* obj = ir->args;
-		while(obj){
-			if(!horn_analiseExp(obj))
+		horn_Obj** obj = &ir->args;
+		while(*obj){
+			if(!horn_analiseExp(*obj))
 				return false;
 
-			if(obj->cmd == cmd){
-				if(!prv)
-					prv = obj->args;
-				else
-					prv->next = obj->args;
-				
-				while(prv->next)
-					prv = prv->next;
+			if((*obj)->cmd == cmd){
+				horn_Obj* o = *obj;
+				if(o->args){
+					*obj = o->args;
 
-				prv->next = obj->next;
-				
-				obj->args = NULL;
-				obj->next = NULL;
-				free(obj);
-				
-				obj = prv;
+					while(o->args->next)
+						o->args = o->args->next;
+					o->args->next = o->next;
+				} else{
+					o->cmd = HORN_CMD_INTVAL;
+					o->text = tl_strcpy(defaultStr);
+				}
 			}
-
-			prv = obj;
-			obj = obj->next;
+			
+			obj = &(*obj)->next;
 		}
 
-		if(!ir->args->next){
-			horn_Obj* o = ir->args;
-			ir->cmd = o->cmd;
-			ir->text = o->text;
-			ir->args = o->args;
-
-			o->args = NULL;
-			free(o);
+		if(!ir->args){
+			ir->cmd = HORN_CMD_INTVAL;
+			ir->text = tl_strcpy(defaultStr);
 		}
 	}
 
