@@ -25,6 +25,18 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 			}
 			fputs(")", out);
 		} break;
+		case HORN_CMD_SUB:
+		{
+			fputs("(sub", out);
+
+			horn_Obj* arg = obj->args;
+			while(arg){
+				fputs(" ", out);
+				trs_cgCompileCmd(out, arg);
+				arg = arg->next;
+			}
+			fputs(")", out);
+		} break;
 		case HORN_CMD_MUL:
 		{
 			fputs("(mul", out);

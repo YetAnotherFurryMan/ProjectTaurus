@@ -9,6 +9,7 @@
 	X(INT)                    \
 	X(OP_EQ)                  \
 	X(OP_PLUS)                \
+	X(OP_MINUS)               \
 	X(OP_MUL)                 \
 	X(EOE)                    \
 	X(ID)                     \
@@ -24,7 +25,9 @@
 	X(ID)   			\
 	X(INTVAL) 			\
 	X(SET)    			\
+	X(MINUS)            \
 	X(ADD)    			\
+	X(SUB)    			\
 	X(MUL)              \
 	X(SCOPE)
 

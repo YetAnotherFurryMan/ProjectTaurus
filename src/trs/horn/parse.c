@@ -133,6 +133,9 @@ static inline horn_Obj* horn_makeBi(horn_TokenType tt, horn_Obj* lhs, horn_Obj* 
 		case HORN_TT_OP_PLUS:
 			obj->cmd = HORN_CMD_ADD;
 			break;
+		case HORN_TT_OP_MINUS:
+			obj->cmd = HORN_CMD_SUB;
+			break;
 		case HORN_TT_OP_MUL:
 			obj->cmd = HORN_CMD_MUL;
 			break;
@@ -175,7 +178,10 @@ static inline horn_Obj* horn_parseTerm(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	while(tok.type == HORN_TT_OP_PLUS){
+	while(
+			tok.type == HORN_TT_OP_PLUS  ||
+			tok.type == HORN_TT_OP_MINUS
+		 ){
 		horn_next(&tok, NULL);
 		horn_Obj* rhs = horn_parseFactor();
 		exp = horn_makeBi(tok.type, exp, rhs);

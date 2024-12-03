@@ -56,6 +56,8 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 		} break;
 		case HORN_CMD_ADD:
 			return horn_analiseBi(HORN_CMD_ADD, ir, "0");
+		case HORN_CMD_SUB:
+			return horn_analiseBi(HORN_CMD_SUB, ir, "0");
 		case HORN_CMD_MUL:
 			return horn_analiseBi(HORN_CMD_MUL, ir, "1");
 		case HORN_CMD_SCOPE:

@@ -21,6 +21,7 @@ int trs_cgCompileAdd(FILE* out, horn_Obj* args){
 				fprintf(out, "\tadd eax, %s\n", args->text);
 			} break;
 			case HORN_CMD_ADD:
+			case HORN_CMD_SUB:
 			case HORN_CMD_MUL:
 			{
 				fprintf(out, "\tpush eax\n");
@@ -31,6 +32,51 @@ int trs_cgCompileAdd(FILE* out, horn_Obj* args){
 			case HORN_CMD_SET:
 			{
 				fprintf(stderr, "ERROR: Cannot do SET operation inside of ADD.\n");
+				err = 1;
+			} break;
+			default:
+				fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(args->cmd));
+				err = 1;
+		}
+
+		args = args->next;
+	}
+
+	return err;
+}
+
+int trs_cgCompileSub(FILE* out, horn_Obj* args){
+	if(!args){
+		fprintf(stderr, "ERROR: SUB expects at least one argument!\n");
+		return 1;
+	}
+
+	// First arg to eax
+	int err = trs_cgCompileCmd(out, args);
+
+	args = args->next;
+	while(args && !err){
+		switch(args->cmd){
+			case HORN_CMD_ID:
+			{
+				fprintf(out, "\tsub eax, dword [%s]\n", args->text);
+			} break;
+			case HORN_CMD_INTVAL:
+			{
+				fprintf(out, "\tsub eax, %s\n", args->text);
+			} break;
+			case HORN_CMD_ADD:
+			case HORN_CMD_SUB:
+			case HORN_CMD_MUL:
+			{
+				fprintf(out, "\tpush eax\n");
+				err = trs_cgCompileCmd(out, args);
+				fprintf(out, "\tpop ebx\n");
+				fprintf(out, "\tsub eax, ebx\n");
+			} break;
+			case HORN_CMD_SET:
+			{
+				fprintf(stderr, "ERROR: Cannot do SET operation inside of SUB.\n");
 				err = 1;
 			} break;
 			default:
@@ -67,6 +113,7 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 				fprintf(out, "\tmul ebx\n");
 			} break;
 			case HORN_CMD_ADD:
+			case HORN_CMD_SUB:
 			case HORN_CMD_MUL:
 			{
 				fprintf(out, "\tpush eax\n");
@@ -125,6 +172,8 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		} break;
 		case HORN_CMD_ADD:
 			return trs_cgCompileAdd(out, obj->args);
+		case HORN_CMD_SUB:
+			return trs_cgCompileSub(out, obj->args);
 		case HORN_CMD_MUL:
 			return trs_cgCompileMul(out, obj->args);
 		case HORN_CMD_SCOPE:

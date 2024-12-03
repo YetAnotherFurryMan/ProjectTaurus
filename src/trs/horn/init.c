@@ -11,7 +11,9 @@ bool horn_init(void){
 	// IDK if this makes sense
 	//*assoc_set_horn_Cmd(&g_horn_lispKW, "id") = HORN_CMD_ID;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "set") = HORN_CMD_SET;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "minus") = HORN_CMD_MINUS;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "add") = HORN_CMD_ADD;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "sub") = HORN_CMD_SUB;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "mul") = HORN_CMD_MUL;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "scope") = HORN_CMD_SCOPE;
 	
