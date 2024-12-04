@@ -20,8 +20,10 @@
 	X(LSB)                    \
 	X(RSB)
 
+// NOP should not be a thing, sadly I'm too stupid to do stuff without it
 #define HORN_X_enum_Cmd \
 	X(ERROR)  			\
+	X(NOP)              \
 	X(ID)   			\
 	X(INTVAL) 			\
 	X(SET)    			\
@@ -29,7 +31,8 @@
 	X(ADD)    			\
 	X(SUB)    			\
 	X(MUL)              \
-	X(SCOPE)
+	X(SCOPE)            \
+	X(VAR)
 
 typedef enum{
 #define X(Y) HORN_TT_##Y,

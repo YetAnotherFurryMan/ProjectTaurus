@@ -25,9 +25,10 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 			case HORN_CMD_SUB:
 			case HORN_CMD_MUL:
 			{
-				fprintf(out, "\tpush eax\n");
+				fputs("\tpush eax\n", out);
 				err = trs_cgCompileCmd(out, args);
-				fprintf(out, "\tpop ebx\n");
+				fputs("\tmov eax, ebx\n", out);
+				fputs("\tpop eax\n", out);
 				fprintf(out, "\t%s eax, ebx\n", name);
 			} break;
 			case HORN_CMD_SET:
@@ -109,6 +110,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 	int err = 0;
 
 	switch(obj->cmd){
+		case HORN_CMD_NOP: break;
 		case HORN_CMD_ID:
 		{
 			// Load a value to eax
@@ -156,6 +158,19 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 	fputs("section .data\n", out);
 	fputs("\tA dd 0\n", out);
 	fputs("\tB dd 0\n", out);
+
+	// Compile VAR if exists
+	if(obj->cmd == HORN_CMD_VAR){
+		horn_Obj* var = obj->args;
+		while(var){
+			fprintf(out, "\t%s dd 0\n", var->text);
+			var = var->next;
+		}
+
+		obj = obj->next;
+	}
+	// END
+
 	fputs("\n", out);
 	fputs("section .text\n", out);
 	fputs("\tglobal _start\n", out);

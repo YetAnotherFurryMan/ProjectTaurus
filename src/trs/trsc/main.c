@@ -26,7 +26,6 @@ enum{
 	PARSE_TRS
 } g_whatToParse = PARSE_TRS;
 
-static inline void horn_free(horn_Obj* obj);
 void loadSrc(const char* path);
 
 // CodeGen: trs.cg.{TARGET}.so
@@ -70,7 +69,7 @@ int main(int argc, const char** argv){
 	
 	cg.compile(stdout, obj);
 	
-	horn_free(obj);
+	//horn_free(obj);
 
 	trs_cgUnload(&cg);
 	return 0;
@@ -109,14 +108,3 @@ void loadSrc(const char* path){
 
 	g_src = src;
 }
-
-static inline void horn_free(horn_Obj* obj){
-	while(obj){
-		horn_Obj* next = obj->next;
-		free(obj->text);
-		horn_free(obj->args);
-		free(obj);
-		obj = next;
-	}
-}
-
