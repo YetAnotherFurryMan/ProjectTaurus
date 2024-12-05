@@ -12,6 +12,7 @@
 	X(OP_MINUS)               \
 	X(OP_MUL)                 \
 	X(EOE)                    \
+	X(COLON)                  \
 	X(ID)                     \
 	X(LP)                     \
 	X(RP)                     \
@@ -32,6 +33,8 @@
 	X(SUB)    			\
 	X(MUL)              \
 	X(SCOPE)            \
+	X(LABEL)            \
+	X(GOTO)             \
 	X(VAR)
 
 typedef enum{

@@ -144,6 +144,14 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 			return trs_cgCompileMul(out, obj->args);
 		case HORN_CMD_SCOPE:
 			return trs_cgCompileScope(out, obj);
+		case HORN_CMD_LABEL:
+		{
+			fprintf(out, ".%s:\n", obj->args->text);
+		} break;
+		case HORN_CMD_GOTO:
+		{
+			fprintf(out, "\tjmp .%s\n", obj->args->text);
+		} break;
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;

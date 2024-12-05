@@ -50,8 +50,20 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 			break;
 		case HORN_CMD_SET:
 		{
-			if(!ir->args || ir->args->cmd != HORN_CMD_ID || !ir->args->next)
+			if(!ir->args){
+				// TODO: ERROR
 				return false;
+			}
+
+			if(ir->args->cmd != HORN_CMD_ID){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(!ir->args->next){
+				// TODO: ERROR
+				return false;
+			}
 
 			return horn_analiseExp(var, ir->args->next);
 		} break;
@@ -64,6 +76,40 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 			return horn_analiseExp(var, ir->args);
 		case HORN_CMD_SCOPE:
 			return horn_analise(ir->args);
+		case HORN_CMD_LABEL:
+		{
+			if(!ir->args){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->args->cmd != HORN_CMD_ID){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->args->next){
+				// TODO: ERROR
+				return false;
+			}
+		} break;
+		case HORN_CMD_GOTO:
+		{
+			if(!ir->args){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->args->cmd != HORN_CMD_ID){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->args->next){
+				// TODO: ERROR
+				return false;
+			}
+		} break;
 		case HORN_CMD_VAR:
 		{
 			if(!var->args){

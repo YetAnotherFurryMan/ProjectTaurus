@@ -78,6 +78,18 @@ static horn_Obj* horn_parseStm(void){
 
 					return stm;
 				} break;
+				case HORN_TT_COLON:
+				{
+					horn_next(&tok, NULL);
+
+					horn_Obj* stm = horn_alloc();
+					if(!stm) return NULL;
+
+					stm->cmd = HORN_CMD_LABEL;
+					stm->args = id;
+
+					return stm;
+				} break;
 				default:
 				{
 					// TODO: ERROR
@@ -179,6 +191,24 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 			}
 
 			return var;
+		} break;
+		case HORN_CMD_GOTO:
+		{
+			horn_LH(&tok, NULL);
+
+			if(tok.type != HORN_TT_ID){
+				// TODO: ERROR
+				return NULL;
+			}
+
+			horn_Obj* id = horn_parsePrimary();
+
+			horn_Obj* gt = horn_alloc();
+			if(!gt) return NULL;
+			gt->cmd = cmd;
+			gt->args = id;
+
+			return gt;
 		} break;
 		default:
 		{

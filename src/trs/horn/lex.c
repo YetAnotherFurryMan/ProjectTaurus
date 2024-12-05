@@ -45,6 +45,7 @@ void horn_next(horn_Token* tok, const char* src){
 		XCASE('-', OP_MINUS)
 		XCASE('*', OP_MUL)
 		XCASE(';', EOE)
+		XCASE(':', COLON)
 		XCASE('(', LP)
 		XCASE(')', RP)
 		XCASE('{', LB)
