@@ -124,6 +124,18 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 			ir->cmd = HORN_CMD_NOP;
 			ir->args = NULL;
 		} break;
+		case HORN_CMD_CALL:
+		{
+			if(!ir->args){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->args->cmd != HORN_CMD_ID){
+				// TODO: ERROR
+				return false;
+			}
+		} break;
 		default:
 			return false;
 	}

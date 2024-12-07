@@ -22,6 +22,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		XCASE(LABEL, label)
 		XCASE(GOTO, goto)
 		XCASE(VAR, var)
+		XCASE(CALL, call)
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;

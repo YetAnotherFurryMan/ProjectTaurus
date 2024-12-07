@@ -62,6 +62,8 @@ static horn_Obj* horn_parseStm(void){
 				return horn_parseKeyword(cmd);
 
 			horn_Obj* id = horn_parsePrimary();
+			if(id && id->cmd == HORN_CMD_CALL)
+				return id;
 
 			horn_LH(&tok, NULL);
 			switch(tok.type){
@@ -172,7 +174,7 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 			horn_LH(&tok, NULL);
 
 			if(tok.type == HORN_TT_OP_EQ){
-				// We allow that, but in reality it is s separated instruction
+				// We allow that, but in reality it is a separated instruction
 				horn_next(&tok, NULL);
 
 				horn_Obj* exp = horn_parseExp();
@@ -391,7 +393,28 @@ static inline horn_Obj* horn_parsePrimary(void){
 
 			obj->cmd = HORN_CMD_ID;
 			obj->text = tok.text;
-			tok.text = NULL;
+
+			horn_LH(&tok, NULL);
+
+			if(tok.type == HORN_TT_LP){
+				// TODO: Parse arguments as "comma seperated expressions
+				horn_next(&tok, NULL);
+
+				horn_LH(&tok, NULL);
+				if(tok.type != HORN_TT_RP){
+					// TODO: Handle args
+					return NULL;
+				}
+				horn_next(&tok, NULL);
+
+				horn_Obj* call = horn_alloc();
+				if(!call) return NULL;
+
+				call->cmd = HORN_CMD_CALL;
+				call->args = obj;
+
+				return call;
+			}
 
 			return obj;
 		} break;

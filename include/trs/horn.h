@@ -35,6 +35,7 @@
 	X(SCOPE)            \
 	X(LABEL)            \
 	X(GOTO)             \
+	X(CALL) 			\
 	X(VAR)
 
 typedef enum{

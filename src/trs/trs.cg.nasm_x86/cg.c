@@ -24,6 +24,7 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 			case HORN_CMD_ADD:
 			case HORN_CMD_SUB:
 			case HORN_CMD_MUL:
+			case HORN_CMD_CALL:
 			{
 				fputs("\tpush eax\n", out);
 				err = trs_cgCompileCmd(out, args);
@@ -69,9 +70,11 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 				fprintf(out, "\tmov ebx, %s\n", args->text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
+			case HORN_CMD_MINUS:
 			case HORN_CMD_ADD:
 			case HORN_CMD_SUB:
 			case HORN_CMD_MUL:
+			case HORN_CMD_CALL:
 			{
 				fprintf(out, "\tpush eax\n");
 				err = trs_cgCompileCmd(out, args);
@@ -152,6 +155,11 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		{
 			fprintf(out, "\tjmp .%s\n", obj->args->text);
 		} break;
+		case HORN_CMD_CALL:
+		{
+			// TODO: Compile args
+			fprintf(out, "\tcall %s\n", obj->args->text);
+		} break;
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
 			return 1;
@@ -160,6 +168,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 	return err;
 }
 
+// TODO: Revrite std to cdecl
 // ECX EDX
 int trs_cgCompile(FILE* out, horn_Obj* obj){
 	// Runtime

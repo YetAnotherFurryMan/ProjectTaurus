@@ -22,6 +22,7 @@ bool horn_init(void){
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "scope") = HORN_CMD_SCOPE;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "label") = HORN_CMD_LABEL;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "goto") = HORN_CMD_GOTO;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "call") = HORN_CMD_CALL;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "var") = HORN_CMD_VAR;
 
 	*assoc_set_horn_Cmd(&g_horn_taurusKW, "var") = HORN_CMD_VAR;
