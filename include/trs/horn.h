@@ -50,8 +50,14 @@ typedef enum{
 #undef X
 } horn_Cmd;
 
+typedef union horn_ObjAs horn_ObjAs;
 typedef struct horn_Token horn_Token;
 typedef struct horn_Obj horn_Obj;
+
+union horn_ObjAs{
+	char* text;
+	horn_Obj* args;
+};
 
 struct horn_Token{
 	horn_TokenType type;
@@ -60,8 +66,7 @@ struct horn_Token{
 
 struct horn_Obj{
 	horn_Cmd cmd;
-	char* text;
-	horn_Obj* args;
+	horn_ObjAs as;
 	horn_Obj* next;
 };
 

@@ -31,7 +31,7 @@ horn_Obj* horn_parseLispSExp(){
 	}
 
 	horn_Obj* args = horn_parseLispOrVal();
-	obj->args = args;
+	obj->as.args = args;
 	while(args && tok.type != HORN_TT_RP){
 		args->next = horn_parseLispOrVal();
 		args = args->next;
@@ -53,7 +53,7 @@ static inline horn_Obj* horn_parseLispOrVal(){
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
 			obj->cmd = HORN_CMD_ID;
-			obj->text = tok.text;
+			obj->as.text = tok.text;
 			return obj;
 		} break;
 		case HORN_TT_INT:
@@ -62,7 +62,7 @@ static inline horn_Obj* horn_parseLispOrVal(){
 			horn_Obj* v = horn_alloc();
 			if(!v) return NULL;
 			v->cmd = HORN_CMD_INTVAL;
-			v->text = tok.text;
+			v->as.text = tok.text;
 			return v;
 		} break;
 		case HORN_TT_LP:
@@ -109,8 +109,7 @@ horn_Obj* horn_parseLisp(const char* src){
 static inline horn_Obj* horn_alloc(){
 	horn_Obj* obj = malloc(sizeof(horn_Obj));
 	obj->cmd = HORN_CMD_ERROR;
-	obj->text = NULL;
-	obj->args = NULL;
+	obj->as.text = NULL;
 	obj->next = NULL;
 	return obj;
 }

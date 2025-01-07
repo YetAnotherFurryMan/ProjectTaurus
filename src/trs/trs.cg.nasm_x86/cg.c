@@ -14,11 +14,11 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 		switch(args->cmd){
 			case HORN_CMD_ID:
 			{
-				fprintf(out, "\t%s eax, dword [%s]\n", name, args->text);
+				fprintf(out, "\t%s eax, dword [%s]\n", name, args->as.text);
 			} break;
 			case HORN_CMD_INTVAL:
 			{
-				fprintf(out, "\t%s eax, %s\n", name, args->text);
+				fprintf(out, "\t%s eax, %s\n", name, args->as.text);
 			} break;
 			case HORN_CMD_MINUS:
 			case HORN_CMD_ADD:
@@ -62,12 +62,12 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 		switch(args->cmd){
 			case HORN_CMD_ID:
 			{
-				fprintf(out, "\tmov ebx, dword [%s]\n", args->text);
+				fprintf(out, "\tmov ebx, dword [%s]\n", args->as.text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
 			case HORN_CMD_INTVAL:
 			{
-				fprintf(out, "\tmov ebx, %s\n", args->text);
+				fprintf(out, "\tmov ebx, %s\n", args->as.text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
 			case HORN_CMD_MINUS:
@@ -99,7 +99,7 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 
 int trs_cgCompileScope(FILE* out, horn_Obj* scope){
 	int r = 0;
-	horn_Obj* obj = scope->args;
+	horn_Obj* obj = scope->as.args;
 	while(obj){
 		fprintf(stderr, "INFO: obj(%s)\n", horn_CmdToString(obj->cmd));
 		if((r = trs_cgCompileCmd(out, obj)))
@@ -117,48 +117,48 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		case HORN_CMD_ID:
 		{
 			// Load a value to eax
-			fprintf(out, "\tmov eax, dword [%s]\n", obj->text);
+			fprintf(out, "\tmov eax, dword [%s]\n", obj->as.text);
 		} break;
 		case HORN_CMD_INTVAL:
 		{
 			// Put the intval into eax
-			fprintf(out, "\tmov eax, %s\n", obj->text);
+			fprintf(out, "\tmov eax, %s\n", obj->as.text);
 		} break;
 		case HORN_CMD_SET:
 		{
 			// Compile arg into eax and then save to destination
 			// The first arg is always ID and the second is value
-			err = trs_cgCompileCmd(out, obj->args->next);
-			fprintf(out, "\tmov dword [%s], eax\n", obj->args->text);
+			err = trs_cgCompileCmd(out, obj->as.args->next);
+			fprintf(out, "\tmov dword [%s], eax\n", obj->as.args->as.text);
 		} break;
 		case HORN_CMD_MINUS:
 		{
 			// TODO: Solve - - and -INTVAL
 			// Compile arg into eax and change sign
-			err = trs_cgCompileCmd(out, obj->args);
+			err = trs_cgCompileCmd(out, obj->as.args);
 			fputs("\tnot eax\n", out);
 			fputs("\tinc eax\n", out);
 		} break;
 		case HORN_CMD_ADD:
-			return trs_cgCompileTerm(out, "add", obj->args);
+			return trs_cgCompileTerm(out, "add", obj->as.args);
 		case HORN_CMD_SUB:
-			return trs_cgCompileTerm(out, "sub", obj->args);
+			return trs_cgCompileTerm(out, "sub", obj->as.args);
 		case HORN_CMD_MUL:
-			return trs_cgCompileMul(out, obj->args);
+			return trs_cgCompileMul(out, obj->as.args);
 		case HORN_CMD_SCOPE:
 			return trs_cgCompileScope(out, obj);
 		case HORN_CMD_LABEL:
 		{
-			fprintf(out, ".%s:\n", obj->args->text);
+			fprintf(out, ".%s:\n", obj->as.args->as.text);
 		} break;
 		case HORN_CMD_GOTO:
 		{
-			fprintf(out, "\tjmp .%s\n", obj->args->text);
+			fprintf(out, "\tjmp .%s\n", obj->as.args->as.text);
 		} break;
 		case HORN_CMD_CALL:
 		{
 			// TODO: Compile args
-			fprintf(out, "\tcall %s\n", obj->args->text);
+			fprintf(out, "\tcall %s\n", obj->as.args->as.text);
 		} break;
 		default:
 			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
@@ -178,9 +178,9 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 
 	// Compile VAR if exists
 	if(obj->cmd == HORN_CMD_VAR){
-		horn_Obj* var = obj->args;
+		horn_Obj* var = obj->as.args;
 		while(var){
-			fprintf(out, "\t%s dd 0\n", var->text);
+			fprintf(out, "\t%s dd 0\n", var->as.text);
 			var = var->next;
 		}
 

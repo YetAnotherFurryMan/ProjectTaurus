@@ -9,8 +9,8 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		case HORN_CMD_ID:
 		case HORN_CMD_INTVAL:
 		{
-			fprintf(stderr, "INFO: %s{text: %s next: %p}\n", horn_CmdToString(obj->cmd), obj->text, (void*)obj->next);
-			fputs(obj->text, out);
+			fprintf(stderr, "INFO: %s{text: %s next: %p}\n", horn_CmdToString(obj->cmd), obj->as.text, (void*)obj->next);
+			fputs(obj->as.text, out);
 			return 0;
 		} break;
 		XCASE(SET, set)
@@ -29,7 +29,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 	}
 #undef XCASE
 
-	horn_Obj* arg = obj->args;
+	horn_Obj* arg = obj->as.args;
 	while(arg){
 		fputs(" ", out);
 		trs_cgCompileCmd(out, arg);
