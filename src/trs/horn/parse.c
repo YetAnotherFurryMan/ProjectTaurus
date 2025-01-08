@@ -66,7 +66,7 @@ static horn_Obj* horn_parseStm(void){
 
 			horn_Obj* id = horn_alloc();
 			if(!id) return NULL;
-			id->cmd = HORN_CMD_ID;
+			id->cmd = HORN_CMD_QUOTE;
 			id->as.text = tok.text;
 
 			horn_Obj* call = horn_parseCall(id);
@@ -173,7 +173,7 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 
 			horn_Obj* id = horn_alloc();
 			if(!id) return NULL;
-			id->cmd = HORN_CMD_ID;
+			id->cmd = HORN_CMD_QUOTE;
 			id->as.text = tok.text;
 
 			horn_Obj* var = horn_alloc();
@@ -207,7 +207,7 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 
 			horn_Obj* id = horn_alloc();
 			if(!id) return NULL;
-			id->cmd = HORN_CMD_ID;
+			id->cmd = HORN_CMD_QUOTE;
 			id->as.text = tok.text;
 
 			horn_Obj* gt = horn_alloc();
@@ -395,13 +395,18 @@ static inline horn_Obj* horn_parsePrimary(void){
 
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
-			obj->cmd = HORN_CMD_ID;
+			obj->cmd = HORN_CMD_QUOTE;
 			obj->as.text = tok.text;
 
 			horn_Obj* call = horn_parseCall(obj);
 			if(call) return call;
 			
-			return obj;
+			horn_Obj* get = horn_alloc();
+			if(!get) return NULL;
+			get->cmd = HORN_CMD_GET;
+			get->as.args = obj;
+
+			return get;
 		} break;
 		case HORN_TT_LP:
 		{

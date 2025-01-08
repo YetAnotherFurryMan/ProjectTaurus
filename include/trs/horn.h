@@ -23,11 +23,9 @@
 	X(LSB)                    \
 	X(RSB)
 
-// NOP should not be a thing, sadly I'm too stupid to do stuff without it
 #define HORN_X_enum_Cmd \
 	X(ERROR)  			\
-	X(NOP)              \
-	X(ID)   			\
+	X(QUOTE)   			\
 	X(INTVAL) 			\
 	X(GET)    			\
 	X(SET)    			\

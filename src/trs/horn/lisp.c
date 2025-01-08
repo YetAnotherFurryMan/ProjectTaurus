@@ -65,7 +65,7 @@ static inline horn_Obj* horn_parseLispOrVal(){
 
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
-			obj->cmd = HORN_CMD_ID;
+			obj->cmd = HORN_CMD_QUOTE;
 			obj->as.text = tok.text;
 
 			return obj;

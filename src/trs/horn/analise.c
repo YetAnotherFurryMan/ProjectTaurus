@@ -45,7 +45,7 @@ static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaul
 
 static inline bool horn_analiseExp(horn_Obj* ir){
 	switch(ir->cmd){
-		case HORN_CMD_ID:
+		case HORN_CMD_QUOTE:
 		case HORN_CMD_INTVAL:
 			break;
 		case HORN_CMD_GET:
@@ -55,7 +55,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 				return false;
 			}
 
-			if(ir->as.args->cmd != HORN_CMD_ID){
+			if(ir->as.args->cmd != HORN_CMD_QUOTE){
 				// TODO: QUOTE
 				// TODO: ERROR
 				return false;
@@ -70,7 +70,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 				return false;
 			}
 
-			if(ir->as.args->cmd != HORN_CMD_ID){
+			if(ir->as.args->cmd != HORN_CMD_QUOTE){
 				// TODO: ERROR
 				return false;
 			}
@@ -98,7 +98,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 				return false;
 			}
 
-			if(ir->as.args->cmd != HORN_CMD_ID){
+			if(ir->as.args->cmd != HORN_CMD_QUOTE){
 				// TODO: ERROR
 				return false;
 			}
@@ -115,7 +115,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 				return false;
 			}
 
-			if(ir->as.args->cmd != HORN_CMD_ID){
+			if(ir->as.args->cmd != HORN_CMD_QUOTE){
 				// TODO: ERROR
 				return false;
 			}
@@ -133,7 +133,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 				return false;
 			}
 
-			if(ir->as.args->cmd != HORN_CMD_ID){
+			if(ir->as.args->cmd != HORN_CMD_QUOTE){
 				// TODO: ERROR
 				return false;
 			}
@@ -149,7 +149,7 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 				return false;
 			}
 
-			if(ir->as.args->cmd != HORN_CMD_ID){
+			if(ir->as.args->cmd != HORN_CMD_QUOTE){
 				// TODO: ERROR
 				return false;
 			}

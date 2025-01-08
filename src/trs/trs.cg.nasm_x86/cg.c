@@ -12,9 +12,9 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 	args = args->next;
 	while(args && !err){
 		switch(args->cmd){
-			case HORN_CMD_ID:
+			case HORN_CMD_GET:
 			{
-				fprintf(out, "\t%s eax, dword [%s]\n", name, args->as.text);
+				fprintf(out, "\t%s eax, dword [%s]\n", name, args->as.args->as.text);
 			} break;
 			case HORN_CMD_INTVAL:
 			{
@@ -60,9 +60,9 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 	args = args->next;
 	while(args && !err){
 		switch(args->cmd){
-			case HORN_CMD_ID:
+			case HORN_CMD_GET:
 			{
-				fprintf(out, "\tmov ebx, dword [%s]\n", args->as.text);
+				fprintf(out, "\tmov ebx, dword [%s]\n", args->as.args->as.text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
 			case HORN_CMD_INTVAL:
@@ -113,12 +113,11 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 	int err = 0;
 
 	switch(obj->cmd){
-		case HORN_CMD_NOP: break;
 		case HORN_CMD_VAR: break;
-		case HORN_CMD_ID:
+		case HORN_CMD_GET:
 		{
 			// Load a value to eax
-			fprintf(out, "\tmov eax, dword [%s]\n", obj->as.text);
+			fprintf(out, "\tmov eax, dword [%s]\n", obj->as.args->as.text);
 		} break;
 		case HORN_CMD_INTVAL:
 		{
