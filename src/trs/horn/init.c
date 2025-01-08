@@ -12,8 +12,7 @@ bool horn_init(void){
 	if(!g_horn_taurusKW)
 		return true;
 
-	// IDK if this makes sense
-	//*assoc_set_horn_Cmd(&g_horn_lispKW, "id") = HORN_CMD_ID;
+	*assoc_set_horn_Cmd(&g_horn_lispKW, "get") = HORN_CMD_GET;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "set") = HORN_CMD_SET;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "minus") = HORN_CMD_MINUS;
 	*assoc_set_horn_Cmd(&g_horn_lispKW, "add") = HORN_CMD_ADD;

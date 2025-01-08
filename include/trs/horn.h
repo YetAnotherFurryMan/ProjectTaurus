@@ -27,6 +27,7 @@
 	X(NOP)              \
 	X(ID)   			\
 	X(INTVAL) 			\
+	X(GET)    			\
 	X(SET)    			\
 	X(MINUS)            \
 	X(ADD)    			\

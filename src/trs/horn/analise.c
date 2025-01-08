@@ -48,6 +48,21 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 		case HORN_CMD_ID:
 		case HORN_CMD_INTVAL:
 			break;
+		case HORN_CMD_GET:
+		{
+			if(!ir->as.args){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->as.args->cmd != HORN_CMD_ID){
+				// TODO: QUOTE
+				// TODO: ERROR
+				return false;
+			}
+
+			// TODO: next arg(s) with indexes
+		} break;
 		case HORN_CMD_SET:
 		{
 			if(!ir->as.args){
@@ -112,6 +127,7 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 		} break;
 		case HORN_CMD_VAR:
 		{
+			// TODO: (var 'id (type) (val)?)
 			if(!var->as.args){
 				var->as.args = ir->as.args;
 			} else{
