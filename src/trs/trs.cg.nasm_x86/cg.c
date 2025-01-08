@@ -114,6 +114,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 
 	switch(obj->cmd){
 		case HORN_CMD_NOP: break;
+		case HORN_CMD_VAR: break;
 		case HORN_CMD_ID:
 		{
 			// Load a value to eax
@@ -181,8 +182,8 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 	while(var){
 		if(var->cmd == HORN_CMD_VAR){
 			fprintf(out, "\t%s dd 0\n", var->as.args->as.text);
-			/* if(var->as.args->next) */
-				var->cmd = HORN_CMD_NOP;
+			if(var->as.args->next)
+				var->cmd = HORN_CMD_SET;
 		}
 		var = var->next;
 	}

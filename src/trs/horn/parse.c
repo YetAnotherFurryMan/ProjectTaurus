@@ -174,22 +174,10 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 			horn_LH(&tok, NULL);
 
 			if(tok.type == HORN_TT_OP_EQ){
-				// We allow that, but in reality it is a separated instruction
 				horn_next(&tok, NULL);
 
 				horn_Obj* exp = horn_parseExp();
-				
-				horn_Obj* id_cpy = horn_alloc();
-				if(!id_cpy) return NULL;
-				memcpy(id_cpy, id, sizeof(horn_Obj));
-				id_cpy->next = exp;
-
-				horn_Obj* set = horn_alloc();
-				if(!set) return NULL;
-				set->cmd = HORN_CMD_SET;
-				set->as.args = id_cpy;
-
-				var->next = set;
+				id->next = exp;
 			}
 
 			return var;

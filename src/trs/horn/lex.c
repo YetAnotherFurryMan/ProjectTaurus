@@ -54,7 +54,22 @@ void horn_next(horn_Token* tok, const char* src){
 		XCASE(']', RSB)
 		default:
 		{
-			if(isdigit(*s)){
+			if(*s == '\''){
+				tt = HORN_TT_QUOTE;
+				if(s[2] == '\'' && s[1] >= ' ' && s[1] <= '~'){
+					s++;
+					
+					tt = HORN_TT_CHAR;
+
+					text = malloc(2);
+					if(!text)
+						goto ret;
+					text[0] = *s;
+					text[1] = 0;
+					
+					s++;
+				}
+			} else if(isdigit(*s)){
 				tt = HORN_TT_INT;
 
 				size_t i = 1;

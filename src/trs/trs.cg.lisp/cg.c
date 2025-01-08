@@ -7,6 +7,10 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		case HORN_CMD_NOP: 
 			return 0;
 		case HORN_CMD_ID:
+		{
+			fprintf(out, "\'%s", obj->as.text);
+			return 0;
+		} break;
 		case HORN_CMD_INTVAL:
 		{
 			fprintf(stderr, "INFO: %s{text: %s next: %p}\n", horn_CmdToString(obj->cmd), obj->as.text, (void*)obj->next);

@@ -7,6 +7,7 @@
 	X(UKN)                    \
 	X(EOF)                    \
 	X(INT)                    \
+	X(CHAR)                   \
 	X(OP_EQ)                  \
 	X(OP_PLUS)                \
 	X(OP_MINUS)               \
@@ -14,6 +15,7 @@
 	X(EOE)                    \
 	X(COLON)                  \
 	X(ID)                     \
+	X(QUOTE)                  \
 	X(LP)                     \
 	X(RP)                     \
 	X(LB)                     \

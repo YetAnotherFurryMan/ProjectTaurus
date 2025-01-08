@@ -52,8 +52,22 @@ static inline horn_Obj* horn_parseLispOrVal(){
 			horn_next(&tok, NULL);
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
+			obj->cmd = horn_parseLispCmd(&tok);
+			return obj;
+		} break;
+		case HORN_TT_QUOTE:
+		{
+			horn_next(&tok, NULL);
+			horn_next(&tok, NULL);
+			if(tok.type != HORN_TT_ID){
+				return NULL;
+			}
+
+			horn_Obj* obj = horn_alloc();
+			if(!obj) return NULL;
 			obj->cmd = HORN_CMD_ID;
 			obj->as.text = tok.text;
+
 			return obj;
 		} break;
 		case HORN_TT_INT:
