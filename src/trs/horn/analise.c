@@ -4,17 +4,17 @@
 
 #include <stdbool.h>
 
-static inline bool horn_analiseBi(horn_Obj* var, horn_Cmd cmd, horn_Obj* ir, const char* defaultStr);
-static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir);
+static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr);
+static inline bool horn_analiseExp(horn_Obj* ir);
 
-static inline bool horn_analiseBi(horn_Obj* var, horn_Cmd cmd, horn_Obj* ir, const char* defaultStr){
+static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr){
 	if(!ir->as.args){
 		ir->cmd = HORN_CMD_INTVAL;
 		ir->as.text = tl_strcpy(defaultStr);
 	} else{
 		horn_Obj** obj = &ir->as.args;
 		while(*obj){
-			if(!horn_analiseExp(var, *obj))
+			if(!horn_analiseExp(*obj))
 				return false;
 
 			if((*obj)->cmd == cmd){
@@ -43,7 +43,7 @@ static inline bool horn_analiseBi(horn_Obj* var, horn_Cmd cmd, horn_Obj* ir, con
 	return true;
 }
 
-static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
+static inline bool horn_analiseExp(horn_Obj* ir){
 	switch(ir->cmd){
 		case HORN_CMD_ID:
 		case HORN_CMD_INTVAL:
@@ -80,15 +80,15 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 				return false;
 			}
 
-			return horn_analiseExp(var, ir->as.args->next);
+			return horn_analiseExp(ir->as.args->next);
 		} break;
 		case HORN_CMD_ADD:
 		case HORN_CMD_SUB:
-			return horn_analiseBi(var, ir->cmd, ir, "0");
+			return horn_analiseBi(ir->cmd, ir, "0");
 		case HORN_CMD_MUL:
-			return horn_analiseBi(var, HORN_CMD_MUL, ir, "1");
+			return horn_analiseBi(HORN_CMD_MUL, ir, "1");
 		case HORN_CMD_MINUS:
-			return horn_analiseExp(var, ir->as.args);
+			return horn_analiseExp(ir->as.args);
 		case HORN_CMD_SCOPE:
 			return horn_analise(ir->as.args);
 		case HORN_CMD_LABEL:
@@ -128,17 +128,19 @@ static inline bool horn_analiseExp(horn_Obj* var, horn_Obj* ir){
 		case HORN_CMD_VAR:
 		{
 			// TODO: (var 'id (type) (val)?)
-			if(!var->as.args){
-				var->as.args = ir->as.args;
-			} else{
-				horn_Obj* top = var->as.args;
-				while(top->next)
-					top = top->next;
-				top->next = ir->as.args;
+			if(!ir->as.args){
+				// TODO: ERORR
+				return false;
 			}
 
-			ir->cmd = HORN_CMD_NOP;
-			ir->as.args = NULL;
+			if(ir->as.args->cmd != HORN_CMD_ID){
+				// TODO: ERROR
+				return false;
+			}
+
+			if(ir->as.args->next){
+				return horn_analiseExp(ir->as.args->next);
+			}
 		} break;
 		case HORN_CMD_CALL:
 		{
@@ -162,28 +164,11 @@ bool horn_analise(horn_Obj* ir){
 	if(!ir)
 		return false;
 
-	// TODO: Use horn_alloc and pgm
-	horn_Obj* var = malloc(sizeof(horn_Obj));
-	var->as.args = var->next = NULL;
-
 	horn_Obj* obj = ir;
 	while(obj){
-		if(!horn_analiseExp(var, obj)) 
+		if(!horn_analiseExp(obj)) 
 			return false;
 		obj = obj->next;
-	}
-
-	if(var->as.args){
-		horn_Obj* tmp = var->as.args;
-
-		var->cmd = ir->cmd;
-		var->as.args = ir->as.args;
-		var->next = ir->next;
-		var->as.text = ir->as.text;
-
-		ir->cmd = HORN_CMD_VAR;
-		ir->as.args = tmp;
-		ir->next = var;
 	}
 
 	return true;

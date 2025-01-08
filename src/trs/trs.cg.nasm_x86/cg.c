@@ -177,14 +177,14 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 	fputs("\tB dd 0\n", out);
 
 	// Compile VAR if exists
-	if(obj->cmd == HORN_CMD_VAR){
-		horn_Obj* var = obj->as.args;
-		while(var){
-			fprintf(out, "\t%s dd 0\n", var->as.text);
-			var = var->next;
+	horn_Obj* var = obj;
+	while(var){
+		if(var->cmd == HORN_CMD_VAR){
+			fprintf(out, "\t%s dd 0\n", var->as.args->as.text);
+			/* if(var->as.args->next) */
+				var->cmd = HORN_CMD_NOP;
 		}
-
-		obj = obj->next;
+		var = var->next;
 	}
 	// END
 
