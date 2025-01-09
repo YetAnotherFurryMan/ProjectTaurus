@@ -63,10 +63,8 @@ int main(int argc, const char** argv){
 
 	free(g_src);
 
-	if(!horn_analise(obj)){
-		fprintf(stderr, "ERROR: Failed to compile.\n");
-		return 1;
-	}
+	size_t eidx = horn_analise(obj);
+	if(eidx) return eidx;
 	
 	cg.compile(stdout, obj);
 	
@@ -83,14 +81,13 @@ void loadSrc(const char* path){
 	} else if(len > 8 && strcmp(path + len - 8, ".trslisp") == 0){
 		g_whatToParse = PARSE_LISP;
 	} else{
-		fprintf(stderr, "ERROR: Unknown extension: %s\n", path);
+		LOGENL(EIDX_UNKNOWN_EXT, path);
 		exit(1);
 	} 
 
 	FILE* in = fopen(path, "r");
 	if(!in){
-		error_logError((error_Location){0}, EIDX_FAILED_TO_OPEN, path);
-		//fprintf(stderr, "ERROR: Failed to open file: %s\n", path);
+		LOGENL(EIDX_FAILED_TO_OPEN, path);
 		exit(1);
 	}
 	
@@ -100,7 +97,7 @@ void loadSrc(const char* path){
 
 	char* src = malloc(len);
 	if(!src){
-		fprintf(stderr, "ERROR: Out of memory while reading the file: %s\n", path);
+		LOGENL(EIDX_OUT_OF_MEM_FILE, path);
 		exit(1);
 	}
 

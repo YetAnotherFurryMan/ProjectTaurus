@@ -1,21 +1,26 @@
 #include <trs/horn.h>
 
+// FIXME: (add 1) => 1
+// FIXME: (add 'A) => ERROR
+// FIXME: (add (add ...) ...) => (add ... ...)
+
 #include <toollib/toollib.h>
 
-#include <stdbool.h>
+#include <trs/error.h>
 
-static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr);
-static inline bool horn_analiseExp(horn_Obj* ir);
+static inline size_t horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr);
+static inline size_t horn_analiseExp(horn_Obj* ir);
 
-static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr){
+static inline size_t horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaultStr){
 	if(!ir->as.args){
 		ir->cmd = HORN_CMD_INTVAL;
 		ir->as.text = tl_strcpy(defaultStr);
 	} else{
 		horn_Obj** obj = &ir->as.args;
+		size_t eidx = 0;
 		while(*obj){
-			if(!horn_analiseExp(*obj))
-				return false;
+			if(!(eidx = horn_analiseExp(*obj)))
+				return eidx;
 
 			if((*obj)->cmd == cmd){
 				horn_Obj* o = *obj;
@@ -40,44 +45,50 @@ static inline bool horn_analiseBi(horn_Cmd cmd, horn_Obj* ir, const char* defaul
 		}
 	}
 
-	return true;
+	return 0;
 }
 
-static inline bool horn_analiseExp(horn_Obj* ir){
+static inline size_t horn_analiseExp(horn_Obj* ir){
 	switch(ir->cmd){
 		case HORN_CMD_QUOTE:
 		case HORN_CMD_INTVAL:
 			break;
 		case HORN_CMD_GET:
 		{
+			// (get 'id [:int]*)
 			if(!ir->as.args){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED, horn_CmdToString(HORN_CMD_QUOTE));
+				return EIDX_HORN_EXPECTED;
 			}
 
 			if(ir->as.args->cmd != HORN_CMD_QUOTE){
-				// TODO: QUOTE
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED_GOT, horn_CmdToString(HORN_CMD_QUOTE), horn_CmdToString(ir->as.args->cmd));
+				return EIDX_HORN_EXPECTED_GOT;
 			}
 
 			// TODO: next arg(s) with indexes
 		} break;
 		case HORN_CMD_SET:
 		{
+			// (set 'id [value])
 			if(!ir->as.args){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED, horn_CmdToString(HORN_CMD_QUOTE));
+				return EIDX_HORN_EXPECTED;
 			}
 
 			if(ir->as.args->cmd != HORN_CMD_QUOTE){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED_GOT, horn_CmdToString(HORN_CMD_QUOTE), horn_CmdToString(ir->as.args->cmd));
+				return EIDX_HORN_EXPECTED_GOT;
 			}
 
 			if(!ir->as.args->next){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED, "expression");
+				return EIDX_HORN_EXPECTED;
+			}
+
+			if(ir->as.args->next->next){
+				LOGENL(EIDX_HORN_UNEXPECTED_EXP, horn_CmdToString(ir->as.args->next->next->cmd));
+				return EIDX_HORN_UNEXPECTED_EXP;
 			}
 
 			return horn_analiseExp(ir->as.args->next);
@@ -92,84 +103,79 @@ static inline bool horn_analiseExp(horn_Obj* ir){
 		case HORN_CMD_SCOPE:
 			return horn_analise(ir->as.args);
 		case HORN_CMD_LABEL:
-		{
-			if(!ir->as.args){
-				// TODO: ERROR
-				return false;
-			}
-
-			if(ir->as.args->cmd != HORN_CMD_QUOTE){
-				// TODO: ERROR
-				return false;
-			}
-
-			if(ir->as.args->next){
-				// TODO: ERROR
-				return false;
-			}
-		} break;
 		case HORN_CMD_GOTO:
 		{
+			// (label/goto 'id)
 			if(!ir->as.args){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED, horn_CmdToString(HORN_CMD_QUOTE));
+				return EIDX_HORN_EXPECTED;
 			}
 
 			if(ir->as.args->cmd != HORN_CMD_QUOTE){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED_GOT, horn_CmdToString(HORN_CMD_QUOTE), horn_CmdToString(ir->as.args->cmd));
+				return EIDX_HORN_EXPECTED_GOT;
 			}
 
 			if(ir->as.args->next){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_UNEXPECTED_EXP, horn_CmdToString(ir->as.args->next->cmd));
+				return EIDX_HORN_UNEXPECTED_EXP;
 			}
 		} break;
 		case HORN_CMD_VAR:
 		{
 			// TODO: (var 'id (type) (val)?)
 			if(!ir->as.args){
-				// TODO: ERORR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED, horn_CmdToString(HORN_CMD_QUOTE));
+				return EIDX_HORN_EXPECTED;
 			}
 
 			if(ir->as.args->cmd != HORN_CMD_QUOTE){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED_GOT, horn_CmdToString(HORN_CMD_QUOTE), horn_CmdToString(ir->as.args->cmd));
+				return EIDX_HORN_EXPECTED_GOT;
 			}
 
 			if(ir->as.args->next){
+				if(ir->as.args->next->next){
+					LOGENL(EIDX_HORN_UNEXPECTED_EXP, horn_CmdToString(ir->as.args->next->next->cmd));
+					return EIDX_HORN_UNEXPECTED_EXP;
+				}
+
 				return horn_analiseExp(ir->as.args->next);
 			}
 		} break;
 		case HORN_CMD_CALL:
 		{
 			if(!ir->as.args){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED, horn_CmdToString(HORN_CMD_QUOTE));
+				return EIDX_HORN_EXPECTED;
 			}
 
 			if(ir->as.args->cmd != HORN_CMD_QUOTE){
-				// TODO: ERROR
-				return false;
+				LOGENL(EIDX_HORN_EXPECTED_GOT, horn_CmdToString(HORN_CMD_QUOTE), horn_CmdToString(ir->as.args->cmd));
+				return EIDX_HORN_EXPECTED_GOT;
 			}
+
+			// TODO: Arguments will come
 		} break;
 		default:
-			return false;
+		{
+			LOGENL(EIDX_HORN_UNKNOWN_CMD, horn_CmdToString(ir->cmd));
+			return EIDX_HORN_UNKNOWN_CMD;
+		}
 	}
-	return true;
+	return 0;
 }
 
-bool horn_analise(horn_Obj* ir){
+size_t horn_analise(horn_Obj* ir){
 	if(!ir)
-		return false;
+		return 1;
 
+	size_t eidx = 0;
 	horn_Obj* obj = ir;
-	while(obj){
-		if(!horn_analiseExp(obj)) 
-			return false;
+	while(!eidx && obj){
+		eidx = horn_analiseExp(obj);
 		obj = obj->next;
 	}
 
-	return true;
+	return eidx;
 }
