@@ -1,7 +1,6 @@
 #include <trs/cg.h>
 
 int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
-	fprintf(stderr, "INFO: obj(%s)\n", horn_CmdToString(obj->cmd));
 #define XCASE(CMD, TXT) case HORN_CMD_##CMD: fputs("("#TXT, out); break; 
 	switch(obj->cmd){
 		case HORN_CMD_QUOTE:
@@ -11,7 +10,6 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		} break;
 		case HORN_CMD_INTVAL:
 		{
-			fprintf(stderr, "INFO: %s{text: %s next: %p}\n", horn_CmdToString(obj->cmd), obj->as.text, (void*)obj->next);
 			fputs(obj->as.text, out);
 			return 0;
 		} break;

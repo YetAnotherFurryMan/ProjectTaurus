@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <trs/error.h>
 #include <trs/cg.h>
 #include <trs/horn.h>
 
@@ -88,7 +89,8 @@ void loadSrc(const char* path){
 
 	FILE* in = fopen(path, "r");
 	if(!in){
-		fprintf(stderr, "ERROR: Failed to open file: %s\n", path);
+		error_logError((error_Location){0}, EIDX_FAILED_TO_OPEN, path);
+		//fprintf(stderr, "ERROR: Failed to open file: %s\n", path);
 		exit(1);
 	}
 	

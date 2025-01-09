@@ -17,7 +17,6 @@ void horn_next(horn_Token* tok, const char* src){
 	if(g_horn_lookahead.type != HORN_TT_UKN){
 		*tok = g_horn_lookahead;
 		g_horn_lookahead = (horn_Token){0};
-		fprintf(stderr, "INFO: Lookahead(%s): %s\n", horn_TokenTypeToString(tok->type), tok->text);
 		return;
 	}
 
@@ -110,7 +109,6 @@ void horn_next(horn_Token* tok, const char* src){
 		s = NULL;
 
 ret:
-	fprintf(stderr, "INFO: Token(%s): %s\n", horn_TokenTypeToString(tt), text);
 	tok->type = tt;
 	tok->text = text;
 }

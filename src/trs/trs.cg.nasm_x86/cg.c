@@ -101,7 +101,6 @@ int trs_cgCompileScope(FILE* out, horn_Obj* scope){
 	int r = 0;
 	horn_Obj* obj = scope->as.args;
 	while(obj){
-		fprintf(stderr, "INFO: obj(%s)\n", horn_CmdToString(obj->cmd));
 		if((r = trs_cgCompileCmd(out, obj)))
 			return r;
 		obj = obj->next;
@@ -274,7 +273,6 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 
 	int r = 0;
 	while(obj){
-		fprintf(stderr, "INFO: obj(%s)\n", horn_CmdToString(obj->cmd));
 		if((r = trs_cgCompileCmd(out, obj)))
 			return r;
 		obj = obj->next;
