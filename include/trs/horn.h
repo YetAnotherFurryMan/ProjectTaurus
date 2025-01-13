@@ -21,7 +21,8 @@
 	X(LB)                     \
 	X(RB)                     \
 	X(LSB)                    \
-	X(RSB)
+	X(RSB)                    \
+	X(COMMA)
 
 #define HORN_X_enum_Cmd \
 	X(ERROR)  			\

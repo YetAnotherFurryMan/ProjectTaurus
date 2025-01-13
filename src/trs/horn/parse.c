@@ -441,9 +441,20 @@ static inline horn_Obj* horn_parseCall(horn_Obj* id){
 
 	horn_next(&tok, NULL);
 
+	horn_Obj* args = id;
+
 	// TODO: Parse args
-	
-	horn_next(&tok, NULL);
+	horn_LH(&tok, NULL);
+	if(tok.type != HORN_TT_RP){
+		do{
+			args->next = horn_parseExp();
+			args = args->next;
+
+			horn_next(&tok, NULL);
+		} while(tok.type == HORN_TT_COMMA);
+	} else{
+		horn_next(&tok, NULL);
+	}
 
 	if(tok.type != HORN_TT_RP){
 		// TODO: ERROR

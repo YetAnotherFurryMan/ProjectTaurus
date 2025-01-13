@@ -1,11 +1,8 @@
 #include <trs/cg.h>
 
-int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
-	if(!args){
-		fprintf(stderr, "ERROR: ADD expects at least one argument!\n");
-		return 1;
-	}
+#include <trs/error.h>
 
+int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 	// First arg to eax
 	int err = trs_cgCompileCmd(out, args);
 
@@ -20,6 +17,7 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 			{
 				fprintf(out, "\t%s eax, %s\n", name, args->as.text);
 			} break;
+			case HORN_CMD_SET:
 			case HORN_CMD_MINUS:
 			case HORN_CMD_ADD:
 			case HORN_CMD_SUB:
@@ -32,13 +30,8 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 				fputs("\tpop eax\n", out);
 				fprintf(out, "\t%s eax, ebx\n", name);
 			} break;
-			case HORN_CMD_SET:
-			{
-				fprintf(stderr, "ERROR: Cannot do SET operation inside of TERM.\n");
-				err = 1;
-			} break;
 			default:
-				fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(args->cmd));
+				LOGENL(EIDX_CG_UNEXPECTED, horn_CmdToString(args->cmd));
 				err = 1;
 		}
 
@@ -49,11 +42,6 @@ int trs_cgCompileTerm(FILE* out, const char* name, horn_Obj* args){
 }
 
 int trs_cgCompileMul(FILE* out, horn_Obj* args){
-	if(!args){
-		fprintf(stderr, "ERROR: MUL expects at least one argument!\n");
-		return 1;
-	}
-
 	// First arg to eax
 	int err = trs_cgCompileCmd(out, args);
 
@@ -70,6 +58,7 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 				fprintf(out, "\tmov ebx, %s\n", args->as.text);
 				fprintf(out, "\tmul ebx\n");
 			} break;
+			case HORN_CMD_SET:
 			case HORN_CMD_MINUS:
 			case HORN_CMD_ADD:
 			case HORN_CMD_SUB:
@@ -81,13 +70,8 @@ int trs_cgCompileMul(FILE* out, horn_Obj* args){
 				fprintf(out, "\tpop ebx\n");
 				fprintf(out, "\tmul ebx\n");
 			} break;
-			case HORN_CMD_SET:
-			{
-				fprintf(stderr, "ERROR: Cannot do SET operation inside of MUL.\n");
-				err = 1;
-			} break;
 			default:
-				fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(args->cmd));
+				LOGENL(EIDX_CG_UNEXPECTED, horn_CmdToString(args->cmd));
 				err = 1;
 		}
 
@@ -156,11 +140,22 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		} break;
 		case HORN_CMD_CALL:
 		{
-			// TODO: Compile args
-			fprintf(out, "\tcall %s\n", obj->as.args->as.text);
+			horn_Obj* id = obj->as.args;
+			horn_Obj* args = obj->as.args->next;
+			size_t clean = 0;
+			while(args){
+				clean++;
+				trs_cgCompileCmd(out, args);
+				fputs("\tpush eax\n", out);
+				args = args->next;
+			}
+			fprintf(out, "\tcall %s\n", id->as.text);
+			if(clean){
+				fprintf(out, "\tadd esp, %ld\n", clean * 4);
+			}
 		} break;
 		default:
-			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
+			LOGENL(EIDX_CG_UNEXPECTED, horn_CmdToString(obj->cmd));
 			return 1;
 	}
 
@@ -175,7 +170,7 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 	fputs("\tA dd 0\n", out);
 	fputs("\tB dd 0\n", out);
 
-	// Compile VAR if exists
+	// Compile VARs
 	horn_Obj* var = obj;
 	while(var){
 		if(var->cmd == HORN_CMD_VAR){
@@ -211,6 +206,36 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 	fputs("\tmov ebx, 0\n", out);
 	fputs("\tint 80h\n", out);
 	fputs("\n", out);
+	
+	// CDCL std lib
+	
+	// exit(status)
+	fputs("\tglobal exit\n", out);
+	fputs("exit:\n", out);
+	fputs("\tmov eax, 1\n", out);
+	fputs("\tmov ebx, dword [ebp +8]\n", out);
+	fputs("\tint 80h\n", out);
+	fputs("\tret\n", out);
+
+	// putc(c)
+	fputs("\tglobal putc\n", out);
+	fputs("putc:\n", out);
+	fputs("\tmov eax, 4\n", out);
+	fputs("\tmov ebx, 1\n", out);
+	fputs("\tlea ecx, [esp + 4]\n", out);
+	fputs("\tmov edx, 1\n", out);
+	fputs("\tint 80h\n", out);
+	fputs("\tret\n", out);
+
+	// ln()
+	fputs("\tglobal ln\n", out);
+	fputs("ln:\n", out);
+	fputs("\tpush byte 10\n", out);
+	fputs("\tcall putc\n", out);
+	fputs("\tadd esp, 4\n", out);
+	fputs("\tret\n", out);
+
+	
 	fputs("put_hex:\n", out);
 	fputs("\tpush ebp\n", out);
 	fputs("\tmov ebp, esp\n", out);
@@ -251,19 +276,6 @@ int trs_cgCompile(FILE* out, horn_Obj* obj){
 	fputs("\tmov byte [ecx + eax], bl\n", out);
 	fputs("\tcmp eax, 0\n", out);
 	fputs("\tjne .L3\n", out);
-	fputs("\tmov esp, ebp\n", out);
-	fputs("\tpop ebp\n", out);
-	fputs("\tret\n", out);
-	fputs("ln:\n", out);
-	fputs("\tpush ebp\n", out);
-	fputs("\tmov ebp, esp\n", out);
-	fputs("\tsub esp, 16\n", out);
-	fputs("\tmov byte [ebp - 1], 10\n", out);
-	fputs("\tmov eax, 4\n", out);
-	fputs("\tmov ebx, 1\n", out);
-	fputs("\tlea ecx, [ebp - 1]\n", out);
-	fputs("\tmov edx, 1\n", out);
-	fputs("\tint 80h\n", out);
 	fputs("\tmov esp, ebp\n", out);
 	fputs("\tpop ebp\n", out);
 	fputs("\tret\n", out);

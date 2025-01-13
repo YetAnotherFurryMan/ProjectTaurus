@@ -17,7 +17,8 @@ extern const char* g_errorStrings[];
 	X(HORN_UNKNOWN_CMD, "Unknown command: %s")                   \
 	X(HORN_UNEXPECTED_EXP, "Unexpected expression %s")           \
 	X(HORN_EXPECTED, "Expected %s")                              \
-	X(HORN_EXPECTED_GOT, "Expected %s but got %s")
+	X(HORN_EXPECTED_GOT, "Expected %s but got %s")               \
+	X(CG_UNEXPECTED, "Unexpected %s")
 
 typedef enum {
 	EIDX_UNKNOWN = 0,

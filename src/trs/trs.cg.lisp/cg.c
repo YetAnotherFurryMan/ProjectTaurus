@@ -1,5 +1,7 @@
 #include <trs/cg.h>
 
+#include <trs/error.h>
+
 int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 #define XCASE(CMD, TXT) case HORN_CMD_##CMD: fputs("("#TXT, out); break; 
 	switch(obj->cmd){
@@ -25,7 +27,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		XCASE(VAR, var)
 		XCASE(CALL, call)
 		default:
-			fprintf(stderr, "ERROR: Unexpected %s\n", horn_CmdToString(obj->cmd));
+			LOGENL(EIDX_CG_UNEXPECTED, horn_CmdToString(obj->cmd));
 			return 1;
 	}
 #undef XCASE

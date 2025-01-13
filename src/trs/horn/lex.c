@@ -51,6 +51,7 @@ void horn_next(horn_Token* tok, const char* src){
 		XCASE('}', RB)
 		XCASE('[', LSB)
 		XCASE(']', RSB)
+		XCASE(',', COMMA)
 		default:
 		{
 			if(*s == '\''){
