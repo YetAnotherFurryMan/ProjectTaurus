@@ -155,7 +155,13 @@ static inline size_t horn_analiseExp(horn_Obj* ir){
 				return EIDX_HORN_EXPECTED_GOT;
 			}
 
-			// TODO: Arguments will come
+			size_t err = 0;
+			horn_Obj* args = ir->as.args->next;
+			while(args){
+				if((err = horn_analiseExp(args)))
+					return err;
+				args = args->next;
+			}
 		} break;
 		default:
 		{
