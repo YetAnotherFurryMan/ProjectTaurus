@@ -3,3 +3,4 @@ compile_commands.json
 buildsystem
 bs
 .ninja_log
+.cache
