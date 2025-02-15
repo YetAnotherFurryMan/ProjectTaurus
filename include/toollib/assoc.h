@@ -60,6 +60,13 @@ static inline void* assoc_valueAt(assoc a, size_t index){
 	return head->keys[index].data;
 }
 
+static inline size_t assoc_len(assoc a){
+	if(!a)
+		return 0;
+
+	return ((assoc_Header*)a)->count;
+}
+
 #define assoc_GEN_FOR_TYPE(T)                                                                                                                  \
 	typedef struct assoc_Key_##T assoc_Key_##T;                                                                                                \
 	struct assoc_Key_##T                                                                  { uint64_t hash; char* key; T* data;};               \
