@@ -117,6 +117,7 @@ Mod mods[] = {
 	{ModType::LIB, "trs", "error", { Lang::C }, {}},
 	{ModType::LIB, "trs", "horn", { Lang::C }, {}},
 	{ModType::LIB, "trs", "trs.cg.nasm_x86", { Lang::C }, {}},
+	{ModType::LIB, "trs", "trs.cg.llvm", { Lang::CXX }, {}},
 	{ModType::LIB, "trs", "trs.cg.lisp", { Lang::C }, {}},
 	{ModType::EXE, "trs", "trsc", { Lang::C }, { 
 		Dep::edep("", "-ldl"),

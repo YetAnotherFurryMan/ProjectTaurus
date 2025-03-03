@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static inline horn_Obj* horn_parseLispOrVal();
-static inline horn_Obj* horn_alloc();
+static inline horn_Obj* horn_parseLispOrVal(void);
+static inline horn_Obj* horn_alloc(void);
 
 static inline horn_Cmd horn_parseLispCmd(const horn_Token* tok){
 	if(tok->type != HORN_TT_ID)
@@ -13,7 +13,7 @@ static inline horn_Cmd horn_parseLispCmd(const horn_Token* tok){
 	return assoc_getOrDefault_horn_Cmd(g_horn_lispKW, tok->text, HORN_CMD_ERROR);
 }
 
-horn_Obj* horn_parseLispSExp(){
+horn_Obj* horn_parseLispSExp(void){
 	horn_Token tok;
 
 	horn_Obj* obj = horn_alloc();
@@ -43,7 +43,7 @@ horn_Obj* horn_parseLispSExp(){
 	return obj;
 }
 
-static inline horn_Obj* horn_parseLispOrVal(){
+static inline horn_Obj* horn_parseLispOrVal(void){
 	horn_Token tok;
 	horn_LH(&tok, NULL);
 	switch(tok.type){
@@ -55,7 +55,7 @@ static inline horn_Obj* horn_parseLispOrVal(){
 			obj->cmd = horn_parseLispCmd(&tok);
 			return obj;
 		} break;
-		case HORN_TT_QUOTE:
+		case HORN_TT_OP_EQ:
 		{
 			horn_next(&tok, NULL);
 			horn_next(&tok, NULL);
@@ -65,7 +65,7 @@ static inline horn_Obj* horn_parseLispOrVal(){
 
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
-			obj->cmd = HORN_CMD_QUOTE;
+			obj->cmd = HORN_CMD_ID;
 			obj->as.text = tok.text;
 
 			return obj;
@@ -120,7 +120,7 @@ horn_Obj* horn_parseLisp(const char* src){
 	return NULL;
 }
 
-static inline horn_Obj* horn_alloc(){
+static inline horn_Obj* horn_alloc(void){
 	horn_Obj* obj = malloc(sizeof(horn_Obj));
 	obj->cmd = HORN_CMD_ERROR;
 	obj->as.text = NULL;

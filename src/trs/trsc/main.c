@@ -63,9 +63,6 @@ int main(int argc, const char** argv){
 
 	free(g_src);
 
-	size_t eidx = horn_analise(obj);
-	if(eidx) return eidx;
-	
 	cg.compile(stdout, obj);
 	
 	//horn_free(obj);

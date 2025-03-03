@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl03.html
+
 static inline horn_Obj* horn_alloc(void);
 
 static horn_Obj* horn_parseStm(void);
@@ -66,7 +68,7 @@ static horn_Obj* horn_parseStm(void){
 
 			horn_Obj* id = horn_alloc();
 			if(!id) return NULL;
-			id->cmd = HORN_CMD_QUOTE;
+			id->cmd = HORN_CMD_ID;
 			id->as.text = tok.text;
 
 			horn_Obj* call = horn_parseCall(id);
@@ -173,7 +175,7 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 
 			horn_Obj* id = horn_alloc();
 			if(!id) return NULL;
-			id->cmd = HORN_CMD_QUOTE;
+			id->cmd = HORN_CMD_ID;
 			id->as.text = tok.text;
 
 			horn_Obj* var = horn_alloc();
@@ -207,7 +209,7 @@ static inline horn_Obj* horn_parseKeyword(horn_Cmd cmd){
 
 			horn_Obj* id = horn_alloc();
 			if(!id) return NULL;
-			id->cmd = HORN_CMD_QUOTE;
+			id->cmd = HORN_CMD_ID;
 			id->as.text = tok.text;
 
 			horn_Obj* gt = horn_alloc();
@@ -245,6 +247,12 @@ static inline horn_Obj* horn_makeUnary(horn_TokenType tt, horn_Obj* e){
 		case HORN_TT_OP_MINUS:
 			obj->cmd = HORN_CMD_MINUS;
 			break;
+		case HORN_TT_OP_LOGICAL_NOT:
+			obj->cmd = HORN_CMD_LNOT;
+			break;
+		case HORN_TT_OP_BINARY_NOT:
+			obj->cmd = HORN_CMD_BNOT;
+			break;
 		default:
 			obj->cmd = HORN_CMD_ERROR;
 			break;
@@ -265,15 +273,24 @@ static inline horn_Obj* horn_makeBi(horn_TokenType tt, horn_Obj* lhs, horn_Obj* 
 	if(!obj) return NULL;
 
 	switch(tt){
-		case HORN_TT_OP_PLUS:
-			obj->cmd = HORN_CMD_ADD;
-			break;
-		case HORN_TT_OP_MINUS:
-			obj->cmd = HORN_CMD_SUB;
-			break;
-		case HORN_TT_OP_MUL:
-			obj->cmd = HORN_CMD_MUL;
-			break;
+#define XCASE(OP, CMD) case HORN_TT_OP_##OP: obj->cmd = HORN_CMD_##CMD; break;
+		XCASE(PLUS, ADD)
+		XCASE(MINUS, SUB)
+		XCASE(MUL, MUL)
+		XCASE(DIV, DIV)
+		XCASE(MOD, MOD)
+		XCASE(LOGICAL_EQ, LEQ)
+		XCASE(LOGICAL_NEQ, LNEQ)
+		XCASE(LOGICAL_GT, LGT)
+		XCASE(LOGICAL_LT, LLT)
+		XCASE(LOGICAL_GTQ, LGTQ)
+		XCASE(LOGICAL_LTQ, LLTQ)
+		XCASE(LOGICAL_AND, LAND)
+		XCASE(LOGICAL_OR, LOR)
+		XCASE(BINARY_AND, BAND)
+		XCASE(BINARY_XOR, BXOR)
+		XCASE(BINARY_OR, BOR)
+#undef XCASE
 		default:
 			obj->cmd = HORN_CMD_ERROR;
 			break;
@@ -291,7 +308,12 @@ static inline horn_Obj* horn_parseLogicTerm(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	// TODO: &&, ||
+	while(tok.type == HORN_TT_OP_LOGICAL_AND || tok.type == HORN_TT_OP_LOGICAL_OR){
+		horn_next(&tok, NULL);
+		horn_Obj* rhs = horn_parseCmp();
+		exp = horn_makeBi(tok.type, exp, rhs);
+		horn_LH(&tok, NULL);
+	}
 	
 	return exp;
 }
@@ -302,7 +324,14 @@ static inline horn_Obj* horn_parseCmp(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	// TODO: ==, !=, >, <, >=, <=
+	while(
+			tok.type == HORN_TT_OP_LOGICAL_EQ || tok.type == HORN_TT_OP_LOGICAL_NEQ || tok.type == HORN_TT_OP_LOGICAL_GT ||
+			tok.type == HORN_TT_OP_LOGICAL_LT || tok.type == HORN_TT_OP_LOGICAL_GTQ || tok.type == HORN_TT_OP_LOGICAL_LTQ){
+		horn_next(&tok, NULL);
+		horn_Obj* rhs = horn_parseTerm();
+		exp = horn_makeBi(tok.type, exp, rhs);
+		horn_LH(&tok, NULL);
+	}
 	
 	return exp;
 }
@@ -313,10 +342,7 @@ static inline horn_Obj* horn_parseTerm(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	while(
-			tok.type == HORN_TT_OP_PLUS  ||
-			tok.type == HORN_TT_OP_MINUS
-		 ){
+	while(tok.type == HORN_TT_OP_PLUS || tok.type == HORN_TT_OP_MINUS){
 		horn_next(&tok, NULL);
 		horn_Obj* rhs = horn_parseFactor();
 		exp = horn_makeBi(tok.type, exp, rhs);
@@ -332,7 +358,7 @@ static inline horn_Obj* horn_parseFactor(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	while(tok.type == HORN_TT_OP_MUL){
+	while(tok.type == HORN_TT_OP_MUL || tok.type == HORN_TT_OP_DIV || tok.type == HORN_TT_OP_MOD){
 		horn_next(&tok, NULL);
 		horn_Obj* rhs = horn_parseBinary();
 		exp = horn_makeBi(tok.type, exp, rhs);
@@ -348,7 +374,12 @@ static inline horn_Obj* horn_parseBinary(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	// TODO: &, |, ^
+	while(tok.type == HORN_TT_OP_BINARY_AND || tok.type == HORN_TT_OP_BINARY_XOR || tok.type == HORN_TT_OP_BINARY_OR){
+		horn_next(&tok, NULL);
+		horn_Obj* rhs = horn_parseUnary();
+		exp = horn_makeBi(tok.type, exp, rhs);
+		horn_LH(&tok, NULL);
+	}
 	
 	return exp;
 }
@@ -357,8 +388,7 @@ static inline horn_Obj* horn_parseUnary(void){
 	horn_Token tok = {0};
 	horn_LH(&tok, NULL);
 
-	// TODO: !, ~
-	if(tok.type == HORN_TT_OP_MINUS){
+	if(tok.type == HORN_TT_OP_MINUS || tok.type == HORN_TT_OP_LOGICAL_NOT || tok.type == HORN_TT_OP_BINARY_NOT){
 		horn_next(&tok, NULL);
 		return horn_makeUnary(tok.type, horn_parseUnary());
 	}
@@ -395,7 +425,7 @@ static inline horn_Obj* horn_parsePrimary(void){
 
 			horn_Obj* obj = horn_alloc();
 			if(!obj) return NULL;
-			obj->cmd = HORN_CMD_QUOTE;
+			obj->cmd = HORN_CMD_ID;
 			obj->as.text = tok.text;
 
 			horn_Obj* call = horn_parseCall(obj);

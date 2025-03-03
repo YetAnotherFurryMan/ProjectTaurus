@@ -5,9 +5,9 @@
 int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 #define XCASE(CMD, TXT) case HORN_CMD_##CMD: fputs("("#TXT, out); break; 
 	switch(obj->cmd){
-		case HORN_CMD_QUOTE:
+		case HORN_CMD_ID:
 		{
-			fprintf(out, "\'%s", obj->as.text);
+			fprintf(out, "%%%s", obj->as.text);
 			return 0;
 		} break;
 		case HORN_CMD_INTVAL:

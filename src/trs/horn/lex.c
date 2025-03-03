@@ -7,6 +7,76 @@
 
 horn_Token g_horn_lookahead = {0};
 
+static int horn_nextChar(const char** str, char q){
+	const char* s = *str;
+	int ret = -1;
+
+	if(*s == '\\'){
+		if(!*(++s)) goto ret;
+		switch(*s){
+			case 't':
+			{
+				ret = 9;
+			} break;
+			case 'n':
+			{
+				ret = 10;
+			} break;
+			case 'r':
+			{
+				ret = 13;
+			} break;
+			case '\'':
+			case '\"':
+			{
+				ret = *s;
+			} break;
+			case 'x':
+			{
+				if(!*(++s)) goto ret;
+				if(isdigit(*(++s))) ret = *s - '0';
+				else if(*s >= 'A' && *s <= 'F') ret = *s - 'A' + 10;
+				else if(*s >= 'a' && *s <= 'f') ret = *s - 'a' + 10;
+				else goto ret;
+
+				if(!*(++s)){
+					ret = -1;
+					goto ret;
+				}
+
+				ret *= 16;
+				if(isdigit(*(++s))) ret += *s - '0';
+				else if(*s >= 'A' && *s <= 'F') ret += *s - 'A' + 10;
+				else if(*s >= 'a' && *s <= 'f') ret += *s - 'a' + 10;
+				else{
+					ret = -1;
+					goto ret;
+				}
+			} break;
+			default:
+			{
+				if(isdigit(*s)){
+					ret = *s - '0';
+
+					if(!isdigit(*(++s))) goto ret;
+					ret *= 8;
+					ret += *s - '0';
+
+					if(!isdigit(*(++s))) goto ret;
+					ret *= 8;
+					ret += *s - '0';
+				}
+			}
+		}
+	} else if(*s != q){
+		ret = *(s++);
+	}
+
+ret:
+	if(ret)	*str = s;
+	return ret;
+}
+
 void horn_next(horn_Token* tok, const char* src){
 	static const char* s = NULL;
 	if(src){
@@ -37,12 +107,22 @@ void horn_next(horn_Token* tok, const char* src){
 	horn_TokenType tt = HORN_TT_UKN;
 	char* text = NULL;
 
+	// TODO: ==, !=, >=, <=, &&, ||
 #define XCASE(CHR, TKN) case CHR: tt = HORN_TT_##TKN; break;
 	switch(*s){
 		XCASE('=', OP_EQ)
 		XCASE('+', OP_PLUS)
 		XCASE('-', OP_MINUS)
 		XCASE('*', OP_MUL)
+		XCASE('/', OP_DIV)
+		XCASE('%', OP_MOD)
+		XCASE('!', OP_LOGICAL_NOT)
+		XCASE('>', OP_LOGICAL_GT)
+		XCASE('<', OP_LOGICAL_LT)
+		XCASE('~', OP_BINARY_NOT)
+		XCASE('&', OP_BINARY_AND)
+		XCASE('^', OP_BINARY_XOR)
+		XCASE('|', OP_BINARY_OR)
 		XCASE(';', EOE)
 		XCASE(':', COLON)
 		XCASE('(', LP)
@@ -55,20 +135,13 @@ void horn_next(horn_Token* tok, const char* src){
 		default:
 		{
 			if(*s == '\''){
-				tt = HORN_TT_QUOTE;
-				if(s[2] == '\'' && s[1] >= ' ' && s[1] <= '~'){
-					s++;
-					
-					tt = HORN_TT_CHAR;
-
-					text = malloc(2);
-					if(!text)
-						goto ret;
-					text[0] = *s;
-					text[1] = 0;
-					
-					s++;
-				}
+				s++;
+				int v = horn_nextChar(&s, '\'');
+				if(v < 0 || *s != '\'') goto ret;
+				text = malloc(2);
+				text[0] = (char)v;
+				text[1] = 0;
+				tt = HORN_TT_CHAR;
 			} else if(isdigit(*s)){
 				tt = HORN_TT_INT;
 

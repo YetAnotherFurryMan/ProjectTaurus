@@ -12,10 +12,24 @@
 	X(OP_PLUS)                \
 	X(OP_MINUS)               \
 	X(OP_MUL)                 \
+	X(OP_DIV)                 \
+	X(OP_MOD)                 \
+	X(OP_LOGICAL_NOT)         \
+	X(OP_LOGICAL_EQ)          \
+	X(OP_LOGICAL_NEQ)         \
+	X(OP_LOGICAL_GT)          \
+	X(OP_LOGICAL_LT)          \
+	X(OP_LOGICAL_GTQ)         \
+	X(OP_LOGICAL_LTQ)         \
+	X(OP_LOGICAL_AND)         \
+	X(OP_LOGICAL_OR)          \
+	X(OP_BINARY_NOT)          \
+	X(OP_BINARY_AND)          \
+	X(OP_BINARY_XOR)          \
+	X(OP_BINARY_OR)           \
 	X(EOE)                    \
 	X(COLON)                  \
 	X(ID)                     \
-	X(QUOTE)                  \
 	X(LP)                     \
 	X(RP)                     \
 	X(LB)                     \
@@ -26,7 +40,7 @@
 
 #define HORN_X_enum_Cmd \
 	X(ERROR)  			\
-	X(QUOTE)   			\
+	X(ID)               \
 	X(INTVAL) 			\
 	X(GET)    			\
 	X(SET)    			\
@@ -34,6 +48,21 @@
 	X(ADD)    			\
 	X(SUB)    			\
 	X(MUL)              \
+	X(DIV)              \
+	X(MOD)              \
+	X(LNOT)             \
+	X(LEQ)              \
+	X(LNEQ)             \
+	X(LGT)              \
+	X(LLT)              \
+	X(LGTQ)             \
+	X(LLTQ)             \
+	X(LAND)             \
+	X(LOR)              \
+	X(BNOT)             \
+	X(BAND)             \
+	X(BXOR)             \
+	X(BOR)              \
 	X(SCOPE)            \
 	X(LABEL)            \
 	X(GOTO)             \
@@ -86,8 +115,6 @@ void horn_LH(horn_Token* tok, const char* src);
 
 horn_Obj* horn_parseLisp(const char* src);
 horn_Obj* horn_parseTaurus(const char* src);
-
-size_t horn_analise(horn_Obj* ir);
 
 static inline const char* horn_TokenTypeToString(horn_TokenType v){
 #define X(Y) case HORN_TT_##Y: return #Y;
