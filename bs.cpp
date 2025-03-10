@@ -93,7 +93,6 @@ private:
 };
 
 struct Test{
-	std::string_view project;
 	std::string_view name;
 	Lang lang;
 	std::vector<Dep> deps;
@@ -101,63 +100,49 @@ struct Test{
 
 struct Mod{
 	ModType type;
-	std::string_view project;
 	std::string_view name;
 	std::set<Lang> langs;
 	std::vector<Dep> deps;
 };
 
 Mod mods[] = {
-	{ModType::LIB, "toollib", "ap", { Lang::C }, {}},
-	{ModType::LIB, "toollib", "csv", { Lang::C }, {}},
-	{ModType::LIB, "toollib", "vec", { Lang::C }, {}},
-	{ModType::LIB, "toollib", "assoc", { Lang::C }, {}},
-	{ModType::LIB, "toollib", "pgm", { Lang::C }, {}},
+	{ModType::LIB, "ap", { Lang::C }, {}},
+	{ModType::LIB, "vec", { Lang::C }, {}},
+	{ModType::LIB, "assoc", { Lang::C }, {}},
+	{ModType::LIB, "pgm", { Lang::C }, {}},
 
-	{ModType::LIB, "trs", "error", { Lang::C }, {}},
-	{ModType::LIB, "trs", "horn", { Lang::C }, {}},
-	{ModType::LIB, "trs", "trs.cg.nasm_x86", { Lang::C }, {}},
-	{ModType::LIB, "trs", "trs.cg.llvm", { Lang::CXX }, {}},
-	{ModType::LIB, "trs", "trs.cg.lisp", { Lang::C }, {}},
-	{ModType::EXE, "trs", "trsc", { Lang::C }, { 
+	{ModType::LIB, "error", { Lang::C }, {}},
+	{ModType::LIB, "horn", { Lang::C }, {}},
+	{ModType::LIB, "trs.cg.nasm_x86", { Lang::C }, {}},
+	{ModType::LIB, "trs.cg.lisp", { Lang::C }, {}},
+	{ModType::EXE, "trsc", { Lang::C }, { 
 		Dep::edep("", "-ldl"),
 		Dep::idep("trs", "error"),
 		Dep::idep("trs", "horn"),
 		Dep::idep("toollib", "assoc"),
 	}},
-
-	//{"trs", ModuleType::EXE, {"libap.a", "libcvec.a", "libcarea.a"}}
 };
 
 Test tests[] = {
-	{"toollib", "ap", Lang::C, {
+	{"ap", Lang::C, {
 		Dep::idep("toollib", "ap")
 	}},
-	{"toollib", "ap++", Lang::CXX, {
-		Dep::idep("toollib", "ap")
-	}},
-	{"toollib", "ap++getAll", Lang::CXX, {
-		Dep::idep("toollib", "ap")
-	}},
-	{"toollib", "csv", Lang::C, {
+	{"csv", Lang::C, {
 		Dep::idep("toollib", "csv")
 	}},
-	{"toollib", "csv++", Lang::CXX, {
-		Dep::idep("toollib", "csv")
-	}},
-	{"toollib", "vec", Lang::C, {
+	{"vec", Lang::C, {
 		Dep::idep("toollib", "vec")
 	}},
-	{"toollib", "vec_int", Lang::C, {
+	{"vec_int", Lang::C, {
 		Dep::idep("toollib", "vec")
 	}},
-	{"toollib", "assoc", Lang::C, {
+	{"assoc", Lang::C, {
 		Dep::idep("toollib", "assoc")
 	}},
-	{"toollib", "assoc_int", Lang::C, {
+	{"assoc_int", Lang::C, {
 		Dep::idep("toollib", "assoc")
 	}},
-	{"toollib", "pgm", Lang::C, {
+	{"pgm", Lang::C, {
 		Dep::idep("toollib", "pgm")
 	}},
 };
@@ -261,11 +246,10 @@ void genMake(){
 
 	out << "dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test";
 	for(const auto& mod: mods){
-		std::string pr_mod = (!mod.project.empty()?(mod.project + "/"):"") + mod.name;
-		out << " $(BUILD)/obj/" << pr_mod;
-		for(const auto& dir: fs::recursive_directory_iterator("src/" + pr_mod)){
+		out << " $(BUILD)/obj/" << mod.name;
+		for(const auto& dir: fs::recursive_directory_iterator("src/" + mod.name)){
 			if(dir.is_directory()){
-				out << " $(BUILD)/obj/" << pr_mod << "/" << dir.path().string();
+				out << " $(BUILD)/obj/" << mod.name << "/" << dir.path().string();
 			}
 		}
 	}
@@ -303,8 +287,7 @@ void genMake(){
 
 	// modules
 	for(const auto& mod: mods){
-		std::string pr_mod = (!mod.project.empty()?mod.project + "/":"") + mod.name;
-	 	out << "bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/" << pr_mod << ",";
+	 	out << "bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/" << mod.name << ",";
 		for(const auto& lang: mod.langs)
 			out << " *." << langExt(lang);
 		out << "))" << std::endl;
@@ -384,7 +367,7 @@ void genMake(){
 
 	// Test src
 	for(const auto& test: tests){
-		out << "$(BUILD)/test/" << test.name << ": test/" << (!test.project.empty()?test.project + "/":"") << test.name << "." << langExt(test.lang);
+		out << "$(BUILD)/test/" << test.name << ": test/" << test.name << "." << langExt(test.lang);
 		std::string flags = "";
 		for(const auto& dep: test.deps){
 			if(dep.type == DepType::INTERNAL){
@@ -447,20 +430,19 @@ void genNinja(){
 	for(const auto& mod: mods){
 		std::stringstream bin;
 
-		std::string p = (!mod.project.empty()?mod.project + "/":"") + mod.name;
-		for(const auto& e: fs::recursive_directory_iterator("src/" + p)){
+		for(const auto& e: fs::recursive_directory_iterator("src/" + mod.name)){
 			if(!e.is_regular_file())
 				continue;
 
 			// TODO: Ignore nonenabled language extensions
 
-			auto erel = e.path().lexically_relative("src/" + p);
+			auto erel = e.path().lexically_relative("src/" + mod.name);
 			if(e.path().extension() == ".c"){
-				bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
-				out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cc src/" << p << "/" << erel.c_str() << std::endl;
+				bin << " $bin/obj/" << mod.name << "/" << erel.c_str() << ".o"; 
+				out << "build $bin/obj/" << mod.name << "/" << erel.c_str() << ".o: cc src/" << mod.name << "/" << erel.c_str() << std::endl;
 			} else if(e.path().extension() == ".cpp"){
-				bin << " $bin/obj/" << p << "/" << erel.c_str() << ".o"; 
-				out << "build $bin/obj/" << p << "/" << erel.c_str() << ".o: cxx src/" << p << "/" << erel.c_str() << std::endl;
+				bin << " $bin/obj/" << mod.name << "/" << erel.c_str() << ".o"; 
+				out << "build $bin/obj/" << mod.name << "/" << erel.c_str() << ".o: cxx src/" << mod.name << "/" << erel.c_str() << std::endl;
 			}
 
 			switch(mod.type){
@@ -533,7 +515,7 @@ void genNinja(){
 				out << "cxx";
 			} break;
 		}
-		out << " test/" << test.project << "/" << test.name << "." << langExt(test.lang);
+		out << " test/" << test.name << "." << langExt(test.lang);
 		std::string flags = "";
 		for(const auto& dep: test.deps){
 			if(dep.type == DepType::INTERNAL)
