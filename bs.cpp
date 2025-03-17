@@ -127,9 +127,6 @@ Test tests[] = {
 	{"ap", Lang::C, {
 		Dep::idep("toollib", "ap")
 	}},
-	{"csv", Lang::C, {
-		Dep::idep("toollib", "csv")
-	}},
 	{"vec", Lang::C, {
 		Dep::idep("toollib", "vec")
 	}},
@@ -144,6 +141,10 @@ Test tests[] = {
 	}},
 	{"pgm", Lang::C, {
 		Dep::idep("toollib", "pgm")
+	}},
+	{"horn_lex", Lang::C, {
+		Dep::idep("trs", "horn"),
+		Dep::idep("toollib", "assoc")
 	}},
 };
 
@@ -305,7 +306,7 @@ void genMake(){
 					}
 				}
 				out << std::endl;
-				out << "\t$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,)" << lflags << std::endl;
+				out << "\t$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,)" << lflags << std::endl;
 				out << std::endl;
 			} break;
 			case ModType::LIB:
@@ -329,7 +330,7 @@ void genMake(){
 				
 				// XYZ.so
 				out << "$(BUILD)/lib/" << mod.name << ".so: $(bin)" << deps << std::endl;
-				out << "\t$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)" << lflags << std::endl;
+				out << "\t$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname," << mod.name << ".so --shared $(if $(DEBUG),-ggdb,)" << lflags << std::endl;
 				out << std::endl;
 
 				// TODO: If you want to have .dll, you are welcome to write your code here :-)
@@ -415,7 +416,7 @@ void genNinja(){
 	out << "  command = g++ -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu++17 -Iinclude" << std::endl;
 	out << std::endl;
 	out << "rule link" << std::endl;
-	out << "  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu++17 -L$bin" << std::endl;
+	out << "  command = g++ $in -o $out -Wall -Wextra -Wpedantic -Wl,-rpath,../lib $flags -std=gnu++17 -L$bin" << std::endl;
 	out << std::endl;
 	out << "rule lib" << std::endl;
 	out << "  command = ar qc $out $in" << std::endl;

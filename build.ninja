@@ -7,7 +7,7 @@ rule cxx
   command = g++ -c $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu++17 -Iinclude
 
 rule link
-  command = g++ $in -o $out -Wall -Wextra -Wpedantic $flags -std=gnu++17 -L$bin
+  command = g++ $in -o $out -Wall -Wextra -Wpedantic -Wl,-rpath,../lib $flags -std=gnu++17 -L$bin
 
 rule lib
   command = ar qc $out $in
@@ -87,11 +87,11 @@ build $bin/obj/trsc/main.c.o: cc src/trsc/main.c
 build $bin/bin/trsc: link $bin/obj/trsc/main.c.o $bin/lib/liberror.a $bin/lib/libhorn.a $bin/lib/libassoc.a
   flags = -ldl
 
-build test: phony $bin/test/ap $bin/test/csv $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm
+build test: phony $bin/test/ap $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm $bin/test/horn_lex
 build $bin/test/ap: testc test/ap.c $bin/lib/libap.a
-build $bin/test/csv: testc test/csv.c $bin/lib/libcsv.a
 build $bin/test/vec: testc test/vec.c $bin/lib/libvec.a
 build $bin/test/vec_int: testc test/vec_int.c $bin/lib/libvec.a
 build $bin/test/assoc: testc test/assoc.c $bin/lib/libassoc.a
 build $bin/test/assoc_int: testc test/assoc_int.c $bin/lib/libassoc.a
 build $bin/test/pgm: testc test/pgm.c $bin/lib/libpgm.a
+build $bin/test/horn_lex: testc test/horn_lex.c $bin/lib/libhorn.a $bin/lib/libassoc.a

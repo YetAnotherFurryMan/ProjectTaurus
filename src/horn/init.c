@@ -45,6 +45,16 @@ bool horn_init(void){
 	return false;
 }
 
+void horn_resetState(horn_State* state, const char* src){
+	state->lookahead.type = HORN_TT_UKN;
+	state->lookahead.begin = NULL;
+	state->lookahead.end = NULL;
+	state->src = src;
+	state->cursor = src;
+	state->row = 0;
+	state->column = 0;
+}
+
 void horn_terminate(void){
 	assoc_free(g_horn_lispKW);
 	assoc_free(g_horn_taurusKW);

@@ -1,6 +1,9 @@
 #ifndef _HORN_H_
 #define _HORN_H_
 
+#include <stdlib.h>
+#include <string.h>
+
 #include <toollib/assoc.h>
 
 #define HORN_X_enum_TokenType \
@@ -8,6 +11,7 @@
 	X(EOF)                    \
 	X(INT)                    \
 	X(CHAR)                   \
+	X(STR)                    \
 	X(OP_EQ)                  \
 	X(OP_PLUS)                \
 	X(OP_MINUS)               \
@@ -82,6 +86,7 @@ typedef enum{
 } horn_Cmd;
 
 typedef union horn_ObjAs horn_ObjAs;
+typedef struct horn_State horn_State;
 typedef struct horn_Token horn_Token;
 typedef struct horn_Obj horn_Obj;
 
@@ -92,7 +97,8 @@ union horn_ObjAs{
 
 struct horn_Token{
 	horn_TokenType type;
-	char* text;
+	const char* begin;
+	const char* end;
 };
 
 struct horn_Obj{
@@ -101,20 +107,28 @@ struct horn_Obj{
 	horn_Obj* next;
 };
 
+struct horn_State{
+	horn_Token lookahead;
+	const char* src;
+	const char* cursor;
+	size_t row;
+	size_t column;
+};
+
 assoc_GEN_FOR_TYPE(horn_Cmd)
 
-extern horn_Token g_horn_lookahead;
 extern assoc g_horn_lispKW;
 extern assoc g_horn_taurusKW;
 
 bool horn_init(void);
+void horn_resetState(horn_State* state, const char* src);
 void horn_terminate(void);
 
-void horn_next(horn_Token* tok, const char* src);
-void horn_LH(horn_Token* tok, const char* src);
+void horn_next(horn_State* state, horn_Token* token);
+void horn_LH(horn_State* state, horn_Token* token);
 
-horn_Obj* horn_parseLisp(const char* src);
-horn_Obj* horn_parseTaurus(const char* src);
+horn_Obj* horn_parseLisp(horn_State* state);
+horn_Obj* horn_parseTaurus(horn_State* state);
 
 static inline const char* horn_TokenTypeToString(horn_TokenType v){
 #define X(Y) case HORN_TT_##Y: return #Y;
@@ -132,6 +146,31 @@ static inline const char* horn_CmdToString(horn_Cmd v){
 		default: return "???";
 	}
 #undef X
+}
+
+static inline char* horn_getTokenText(const horn_Token* tok){
+	size_t len = tok->end - tok->begin;
+	char* text = (char*) malloc(len + 1);
+	
+	if(!text)
+		return NULL;
+
+	memcpy(text, tok->begin, len);
+	text[len] = 0;
+	return text;
+}
+
+static inline horn_Obj* horn_newObj(void){
+	horn_Obj* obj = (horn_Obj*) malloc(sizeof(horn_Obj));
+
+	if(!obj)
+		return NULL;
+
+	obj->cmd = HORN_CMD_ERROR;
+	obj->as.text = NULL;
+	obj->next = NULL;
+
+	return obj;
 }
 
 #endif // _HORN_H_

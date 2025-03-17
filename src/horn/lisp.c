@@ -4,108 +4,115 @@
 #include <stdlib.h>
 #include <string.h>
 
-static inline horn_Obj* horn_parseLispOrVal(void);
-static inline horn_Obj* horn_alloc(void);
+static horn_Obj* horn_parseLispSExp(horn_State* state);
+static inline horn_Obj* horn_parseLispOrVal(horn_State* state);
 
 static inline horn_Cmd horn_parseLispCmd(const horn_Token* tok){
 	if(tok->type != HORN_TT_ID)
 		return HORN_CMD_ERROR;
-	return assoc_getOrDefault_horn_Cmd(g_horn_lispKW, tok->text, HORN_CMD_ERROR);
+
+	char* text = horn_getTokenText(tok);
+	horn_Cmd cmd = assoc_getOrDefault_horn_Cmd(g_horn_lispKW, text, HORN_CMD_ERROR);
+	free(text);
+	return cmd;
 }
 
-horn_Obj* horn_parseLispSExp(void){
+static horn_Obj* horn_parseLispSExp(horn_State* state){
 	horn_Token tok;
-
-	horn_Obj* obj = horn_alloc();
+	
+	horn_Obj* obj = horn_newObj();
 	if(!obj) return NULL;
 
-	horn_next(&tok, NULL);
+	horn_next(state, &tok);
 
-	horn_Cmd cmd = horn_parseLispCmd(&tok);
-	if(cmd == HORN_CMD_ERROR){
-		if(tok.type != HORN_TT_ID)
-			fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
-		else
-			fprintf(stderr, "ERROR: Unknown command: %s\n", tok.text);
+	if(tok.type != HORN_TT_ID){
+		fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
 		return obj;
 	}
 
-	horn_Obj* args = horn_parseLispOrVal();
+	horn_Cmd cmd = horn_parseLispCmd(&tok);
+	if(cmd == HORN_CMD_ERROR){
+		int len = tok.end - tok.begin;
+		fprintf(stderr, "ERROR: Unknown command: %*s\n", len, tok.begin);
+		return obj;
+	}
+
+	horn_Obj* args = horn_parseLispOrVal(state);
 	obj->as.args = args;
 	while(args && tok.type != HORN_TT_RP){
-		args->next = horn_parseLispOrVal();
+		args->next = horn_parseLispOrVal(state);
 		args = args->next;
 	}
 
-	horn_next(&tok, NULL);
+	horn_next(state, NULL);
 
 	obj->cmd = cmd;
 	return obj;
 }
 
-static inline horn_Obj* horn_parseLispOrVal(void){
+static inline horn_Obj* horn_parseLispOrVal(horn_State* state){
 	horn_Token tok;
-	horn_LH(&tok, NULL);
+	horn_LH(state, &tok);
 	switch(tok.type){
 		case HORN_TT_ID:
 		{
-			horn_next(&tok, NULL);
-			horn_Obj* obj = horn_alloc();
+			horn_next(state, NULL);
+			horn_Obj* obj = horn_newObj();
 			if(!obj) return NULL;
-			obj->cmd = horn_parseLispCmd(&tok);
+			obj->cmd = HORN_CMD_ID;
+			obj->as.text = horn_getTokenText(&tok); // TODO: PMA
 			return obj;
 		} break;
 		case HORN_TT_OP_EQ:
 		{
-			horn_next(&tok, NULL);
-			horn_next(&tok, NULL);
+			horn_next(state, NULL);
+			horn_next(state, &tok);
 			if(tok.type != HORN_TT_ID){
 				return NULL;
 			}
 
-			horn_Obj* obj = horn_alloc();
+			horn_Obj* obj = horn_newObj();
 			if(!obj) return NULL;
 			obj->cmd = HORN_CMD_ID;
-			obj->as.text = tok.text;
+			obj->as.text = horn_getTokenText(&tok); // TODO: PMA
 
 			return obj;
 		} break;
 		case HORN_TT_INT:
 		{
-			horn_next(&tok, NULL);
-			horn_Obj* v = horn_alloc();
+			horn_next(state, NULL);
+			horn_Obj* v = horn_newObj();
 			if(!v) return NULL;
 			v->cmd = HORN_CMD_INTVAL;
-			v->as.text = tok.text;
+			v->as.text = horn_getTokenText(&tok); // TODO: PMA
 			return v;
 		} break;
 		case HORN_TT_LP:
-			horn_next(&tok, NULL);
-			return horn_parseLispSExp();
+			horn_next(state, NULL);
+			return horn_parseLispSExp(state);
 		case HORN_TT_RP: 
 		case HORN_TT_EOF:
 			break;
 		default:
 		{
 			fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
-			free(tok.text);
 		}
 	}
 
 	return NULL;
 }
 
-horn_Obj* horn_parseLisp(const char* src){
+horn_Obj* horn_parseLisp(horn_State* state){
 	horn_Token tok = {0};
-	horn_LH(&tok, src);
+	horn_LH(state, &tok);
 
 	switch(tok.type){
 		case HORN_TT_LP:
 		{
-			horn_next(&tok, NULL);
-			horn_Obj* obj = horn_parseLispSExp();
+			horn_next(state, NULL);
+			horn_Obj* obj = horn_parseLispSExp(state);
 			if(obj)
-				obj->next = horn_parseLisp(NULL);
+				obj->next = horn_parseLisp(state);
 			return obj;
 		} break;
 		case HORN_TT_EOF:
@@ -113,17 +120,8 @@ horn_Obj* horn_parseLisp(const char* src){
 		default:
 		{
 			fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
-			free(tok.text);
 		}
 	}
 
 	return NULL;
-}
-
-static inline horn_Obj* horn_alloc(void){
-	horn_Obj* obj = malloc(sizeof(horn_Obj));
-	obj->cmd = HORN_CMD_ERROR;
-	obj->as.text = NULL;
-	obj->next = NULL;
-	return obj;
 }

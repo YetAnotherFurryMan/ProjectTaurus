@@ -5,111 +5,117 @@
 #include <stdio.h>
 #include <ctype.h>
 
-horn_Token g_horn_lookahead = {0};
+static int horn_nextChar(horn_State* state, char q){
+	size_t col = state->column;
 
-static int horn_nextChar(const char** str, char q){
-	const char* s = *str;
-	int ret = -1;
+	if(*state->cursor == '\\'){
+		state->cursor++;
+		state->column++;
+		
+		if(!*state->cursor)
+			return -1;
 
-	if(*s == '\\'){
-		if(!*(++s)) goto ret;
-		switch(*s){
+		
+		switch(*state->cursor){
 			case 't':
-			{
-				ret = 9;
-			} break;
 			case 'n':
-			{
-				ret = 10;
-			} break;
 			case 'r':
-			{
-				ret = 13;
-			} break;
 			case '\'':
 			case '\"':
 			{
-				ret = *s;
+				state->cursor++;
+				state->column++;
 			} break;
 			case 'x':
 			{
-				if(!*(++s)) goto ret;
-				if(isdigit(*(++s))) ret = *s - '0';
-				else if(*s >= 'A' && *s <= 'F') ret = *s - 'A' + 10;
-				else if(*s >= 'a' && *s <= 'f') ret = *s - 'a' + 10;
-				else goto ret;
+				state->cursor++;
+				state->column++;
 
-				if(!*(++s)){
-					ret = -1;
-					goto ret;
-				}
+				if(!*state->cursor ||
+				   !(isdigit(*state->cursor) ||
+					(*state->cursor >= 'A' && *state->cursor <= 'F') ||
+					(*state->cursor >= 'a' && *state->cursor <= 'f'))) return -1;
 
-				ret *= 16;
-				if(isdigit(*(++s))) ret += *s - '0';
-				else if(*s >= 'A' && *s <= 'F') ret += *s - 'A' + 10;
-				else if(*s >= 'a' && *s <= 'f') ret += *s - 'a' + 10;
-				else{
-					ret = -1;
-					goto ret;
-				}
+				state->cursor++;
+				state->column++;
+
+				if(!*state->cursor ||
+				   !(isdigit(*state->cursor) ||
+					(*state->cursor >= 'A' && *state->cursor <= 'F') ||
+					(*state->cursor >= 'a' && *state->cursor <= 'f'))) return -1;
+
+				state->cursor++;
+				state->column++;
 			} break;
 			default:
 			{
-				if(isdigit(*s)){
-					ret = *s - '0';
+				if(isdigit(*state->cursor)){
+					state->cursor++;
+					state->column++;
 
-					if(!isdigit(*(++s))) goto ret;
-					ret *= 8;
-					ret += *s - '0';
+					if(isdigit(*state->cursor)){
+						state->cursor++;
+						state->column++;
+					}
 
-					if(!isdigit(*(++s))) goto ret;
-					ret *= 8;
-					ret += *s - '0';
+					if(isdigit(*state->cursor)){
+						state->cursor++;
+						state->column++;
+					}
+				} else{
+					return -1;
 				}
 			}
 		}
-	} else if(*s != q){
-		ret = *(s++);
+	} else if(*state->cursor != q){
+		state->cursor++;
+		state->column++;
+	} else{
+		return -2;
 	}
 
-ret:
-	if(ret)	*str = s;
-	return ret;
+	return state->column - col;
 }
 
-void horn_next(horn_Token* tok, const char* src){
-	static const char* s = NULL;
-	if(src){
-		s = src;
-		g_horn_lookahead = (horn_Token){0};
+void horn_next(horn_State* state, horn_Token* token){
+	horn_Token tok = (horn_Token){0};
+
+	if(!state)
+		goto ret;
+
+	if(state->lookahead.type != HORN_TT_UKN){
+		tok = state->lookahead;
+		state->lookahead = (horn_Token){0};
+		goto ret;
 	}
 
-	if(g_horn_lookahead.type != HORN_TT_UKN){
-		*tok = g_horn_lookahead;
-		g_horn_lookahead = (horn_Token){0};
-		return;
+	if(!state->cursor || !*state->cursor){
+		tok.type = HORN_TT_EOF;
+		goto ret;
 	}
 
-	if(!s || !*s){
-		*tok = (horn_Token){HORN_TT_EOF, NULL};
-		return;
+	while(*state->cursor && isspace(*state->cursor)){
+		if(*state->cursor == '\n'){
+			state->row = 0;
+			state->column = 0;
+		}
+		state->cursor++;
+		state->column++;
 	}
 
-	while(*s && isspace(*s))
-		s++;
-
-	if(!*s){
-		s = NULL;
-		*tok = (horn_Token){HORN_TT_EOF, NULL};
-		return;
+	if(!*state->cursor){
+		tok.type = HORN_TT_EOF;
+		goto ret;
 	}
-
-	horn_TokenType tt = HORN_TT_UKN;
-	char* text = NULL;
 
 	// TODO: ==, !=, >=, <=, &&, ||
-#define XCASE(CHR, TKN) case CHR: tt = HORN_TT_##TKN; break;
-	switch(*s){
+#define XCASE(CHR, TKN) case CHR: { \
+	tok.type = HORN_TT_##TKN;       \
+	tok.begin = state->cursor;      \
+	tok.end = ++state->cursor;      \
+	state->column++;                \
+} break;
+	switch(*state->cursor){
 		XCASE('=', OP_EQ)
 		XCASE('+', OP_PLUS)
 		XCASE('-', OP_MINUS)
@@ -132,63 +138,77 @@ void horn_next(horn_Token* tok, const char* src){
 		XCASE('[', LSB)
 		XCASE(']', RSB)
 		XCASE(',', COMMA)
+		case '\'':
+		{
+			tok.begin = state->cursor;
+			state->cursor++;
+			state->column++;
+				
+			if(horn_nextChar(state, '\'') < 0 || *state->cursor != '\'')
+				goto ret;
+
+			tok.type = HORN_TT_CHAR;
+			tok.end = ++state->cursor;
+			state->column++;
+		} break;
+		case '\"':
+		{
+			tok.begin = state->cursor;
+			state->cursor++;
+			state->column++;
+
+			int v = 0;
+			while(v >= 0){
+				v = horn_nextChar(state, '\"');
+			}
+
+			if(v != -2)
+				goto ret;
+
+			tok.type = HORN_TT_STR;
+			tok.end = ++state->cursor;
+			state->column++;
+		} break;
 		default:
 		{
-			if(*s == '\''){
-				s++;
-				int v = horn_nextChar(&s, '\'');
-				if(v < 0 || *s != '\'') goto ret;
-				text = malloc(2);
-				text[0] = (char)v;
-				text[1] = 0;
-				tt = HORN_TT_CHAR;
-			} else if(isdigit(*s)){
-				tt = HORN_TT_INT;
+			if(isdigit(*state->cursor)){
+				tok.type = HORN_TT_INT;
+				tok.begin = state->cursor;
 
-				size_t i = 1;
-				while(s[i] && isdigit(s[i]))
-					i++;
+				while(*state->cursor && isdigit(*state->cursor)){
+					state->cursor++;
+					state->column++;
+				}
 
-				text = malloc((i + 1) * sizeof(char));
-				if(!text)
-					goto ret;
+				tok.end = state->cursor;
+			} else if(*state->cursor == '_' || isalpha(*state->cursor)){
+				tok.type = HORN_TT_ID;
+				tok.begin = state->cursor;
 
-				memcpy(text, s, i);
-				text[i] = 0;
-				
-				s += i - 1;
-			} else if(*s == '_' || isalpha(*s)){
-				tt = HORN_TT_ID;
+				while(*state->cursor == '_' || isalnum(*state->cursor)){
+					state->cursor++;
+					state->column++;
+				}
 
-				size_t i = 1;
-				while(s[i] == '_' || isalnum(s[i]))
-					i++;
-				
-				text = malloc((i + 1) * sizeof(char));
-				if(!text)
-					goto ret;
-				
-				memcpy(text, s, i);
-				text[i] = 0;
-				
-				s += i - 1;
+				tok.end = state->cursor;
+			} else {
+				tok.begin = state->cursor;
+				tok.end = ++state->cursor;
+				state->cursor++;
 			}
 		} break;
 	}
 #undef XCASE
 
-	if(*s)
-		s++;
-	else 
-		s = NULL;
-
 ret:
-	tok->type = tt;
-	tok->text = text;
+	if(token)
+		*token = tok;
 }
 
-void horn_LH(horn_Token* tok, const char* src){
-	if(g_horn_lookahead.type == HORN_TT_UKN)
-		horn_next(&g_horn_lookahead, src);
-	*tok = g_horn_lookahead;
+void horn_LH(horn_State* state, horn_Token* tok){
+	if(state->lookahead.type == HORN_TT_UKN)
+		horn_next(state, &state->lookahead);
+	
+	if(tok)
+		*tok = state->lookahead;
 }

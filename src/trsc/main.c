@@ -48,14 +48,17 @@ int main(int argc, const char** argv){
 		src = g_src1;
 
 	horn_init();
+
+	horn_State state = {0};
+	horn_resetState(&state, src);
 	
 	horn_Obj* obj = NULL;
 	switch(g_whatToParse){
 		case PARSE_LISP:
-			obj = horn_parseLisp(src);
+			obj = horn_parseLisp(&state);
 			break;
 		case PARSE_TRS:
-			obj = horn_parseTaurus(src);
+			obj = horn_parseTaurus(&state);
 			break;
 	}
 

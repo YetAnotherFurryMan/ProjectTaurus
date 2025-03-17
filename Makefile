@@ -24,7 +24,7 @@ $(BUILD)/lib/libap.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/ap.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,ap.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/vec, *.c))
 libbin += $(bin)
@@ -32,7 +32,7 @@ $(BUILD)/lib/libvec.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/vec.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,vec.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/assoc, *.c))
 libbin += $(bin)
@@ -40,7 +40,7 @@ $(BUILD)/lib/libassoc.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/assoc.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,assoc.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/pgm, *.c))
 libbin += $(bin)
@@ -48,7 +48,7 @@ $(BUILD)/lib/libpgm.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/pgm.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,pgm.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/error, *.c))
 libbin += $(bin)
@@ -56,7 +56,7 @@ $(BUILD)/lib/liberror.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/error.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,error.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/horn, *.c))
 libbin += $(bin)
@@ -64,7 +64,7 @@ $(BUILD)/lib/libhorn.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/horn.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,horn.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs.cg.nasm_x86, *.c))
 libbin += $(bin)
@@ -72,7 +72,7 @@ $(BUILD)/lib/libtrs.cg.nasm_x86.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/trs.cg.nasm_x86.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,trs.cg.nasm_x86.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trs.cg.lisp, *.c))
 libbin += $(bin)
@@ -80,14 +80,14 @@ $(BUILD)/lib/libtrs.cg.lisp.a: $(bin)
 	$(AR) qc $@ $^
 
 $(BUILD)/lib/trs.cg.lisp.so: $(bin)
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic --shared $(if $(DEBUG),-ggdb,)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,trs.cg.lisp.so --shared $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trsc, *.c))
 exebin += $(bin)
 $(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/liberror.a $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
 
-test: all $(BUILD)/test/ap $(BUILD)/test/csv $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm
+test: all $(BUILD)/test/ap $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm $(BUILD)/test/horn_lex
 
 .SECONDEXPANSION:
 
@@ -106,9 +106,6 @@ $(filter %.cpp.o, $(exebin)): %: $$(call getsrc,%)
 $(BUILD)/test/ap: test/ap.c $(BUILD)/lib/libap.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
-$(BUILD)/test/csv: test/csv.c $(BUILD)/lib/libcsv.a
-	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
 $(BUILD)/test/vec: test/vec.c $(BUILD)/lib/libvec.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
@@ -122,5 +119,8 @@ $(BUILD)/test/assoc_int: test/assoc_int.c $(BUILD)/lib/libassoc.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/test/pgm: test/pgm.c $(BUILD)/lib/libpgm.a
+	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
+
+$(BUILD)/test/horn_lex: test/horn_lex.c $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
