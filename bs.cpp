@@ -1,5 +1,5 @@
 /*
- * Project Taurus build system generator
+ * Project Taurus build system and generator
  * Compile with folowing command:
  *
  * g++ bs.cpp -o bs
@@ -33,6 +33,8 @@
  * 	a namespace, so a module's name must be unique in entire project to avoid 
  * 	conflicts.
  */
+
+#include "bro.hpp"
 
 #include <string_view>
 #include <filesystem>
@@ -167,64 +169,131 @@ void genMake();
 void genNinja();
 
 int main(int argc, const char** argv){
-	if(argc > 1){
-		const char* arg = argv[1];
-		if(strcmp(arg, "make") == 0){
-			genMake();
-		} else if(strcmp(arg, "ninja") == 0){
-			genNinja();
-		} else if(strcmp(arg, "test") == 0){
-			if(argc > 2){
-				int make = 1;
-				bool gen = true;
-				bool build = true;
-				for(size_t i = 2; argv[i]; i++){
-					arg = argv[i];
-					if(strcmp(arg, "nogen") == 0)
-						gen = false;
-					else if(strcmp(arg, "make") == 0)
-						make = 1;
-					else if(strcmp(arg, "ninja") == 0)
-						make = -1;
-					else if(strcmp(arg, "nobuild") == 0)
-						build = false;
-				}
+	bro::Bro bro(argc, argv);
+	bro.fresh();
 
-				if(!build) gen = false;
+	bro.log.info("\n CC={}\n CXX={}", bro.flags["cc"], bro.flags["cxx"]);
 
-				if(make == 1){
-					if(gen) genMake();
-					if(build) if(system("make DEBUG=1 -B test")) return 1;
-				} else if(make == -1){
-					if(gen) genNinja();
-					if(build){
-						if(system("ninja -t clean")) return 1; 
-						if(system("ninja")) return 1; 
-					}
-				}
-			} else{
-				genNinja();
-				if(system("ninja -t clean")) return 1;
-				if(system("ninja test")) return 1;
-			}
+	bool makeFlag = false;
+	bool ninjaFlag = false;
+	bool testFlag = false;
+	bool genFlag = true;
+	bool buildFlag = true;
 
-			size_t all = 0;
-			size_t fail = 0;
-			for(const auto& test: tests){
-				std::string p = "build/test/" + test.name;
-				std::cout << p << ": " << std::flush;
-				if(system(p.c_str())) fail++;
-				all++;
-			}
-			std::cout << (all - fail) << "/" << all << std::endl;
-		} else{
-			std::cerr << "Error: Unknown argument: " << arg << std::endl;
+	for(size_t i = 0; i < bro.args.size(); i++){
+		auto& arg = bro.args[i];
+
+		bool value = true;
+
+		if(arg[0] == '-'){
+			value = false;
+			arg = arg.substr(1);
+		}
+
+		if(arg == "make") makeFlag = value;
+		else if(arg == "ninja") ninjaFlag = value;
+		else if(arg == "test") testFlag = value;
+		else if(arg == "build") buildFlag = value;
+		else if(arg == "gen" || arg == "generate") genFlag = value;
+		else{
+			bro.log.error("Unknown argument {}", arg);
 			return 1;
 		}
-	} else{
-		genMake();
-		genNinja();
 	}
+
+	if(!makeFlag && !ninjaFlag && genFlag && !testFlag)
+		makeFlag = ninjaFlag = true;
+
+	if(genFlag){
+		if(makeFlag)
+			genMake();
+
+		if(ninjaFlag)
+			genNinja();
+	}
+
+	if(buildFlag){
+		if(makeFlag){
+			std::string makeCmd[] = {"make", "DEBUG=1", "-B", "test"};
+			bro::Cmd make(makeCmd, 4);
+			make.sync(bro.log);
+		} else if(ninjaFlag){
+			std::string ninjaCmd[] = {"ninja"};
+			bro::Cmd ninja(ninjaCmd, 1);
+			ninja.sync(bro.log);
+		} else{
+			// TODO: Use bro
+			bro.log.error("Cannot use Bro to build this project now...");
+			return 1;
+			bro.build();
+		}
+	}
+
+	if(testFlag){
+		// TODO: move to Bro
+		size_t all = 0;
+		size_t fail = 0;
+		for(const auto& test: tests){
+			std::string p = "build/test/" + test.name;
+			std::cout << p << ": " << std::flush;
+			if(system(p.c_str())) fail++;
+			all++;
+		}
+		std::cout << (all - fail) << "/" << all << std::endl;
+	}
+
+		// {
+		// 	if(argc > 2){
+		// 		int make = 1;
+		// 		bool gen = true;
+		// 		bool build = true;
+		// 		for(size_t i = 2; argv[i]; i++){
+		// 			arg = argv[i];
+		// 			if(strcmp(arg, "nogen") == 0)
+		// 				gen = false;
+		// 			else if(strcmp(arg, "make") == 0)
+		// 				make = 1;
+		// 			else if(strcmp(arg, "ninja") == 0)
+		// 				make = -1;
+		// 			else if(strcmp(arg, "nobuild") == 0)
+		// 				build = false;
+		// 		}
+
+		// 		if(!build) gen = false;
+
+		// 		if(make == 1){
+		// 			if(gen) genMake();
+		// 			if(build) if(system("make DEBUG=1 -B test")) return 1;
+		// 		} else if(make == -1){
+		// 			if(gen) genNinja();
+		// 			if(build){
+		// 				if(system("ninja -t clean")) return 1; 
+		// 				if(system("ninja")) return 1; 
+		// 			}
+		// 		}
+		// 	} else{
+		// 		genNinja();
+		// 		if(system("ninja -t clean")) return 1;
+		// 		if(system("ninja test")) return 1;
+		// 	}
+
+		// 	size_t all = 0;
+		// 	size_t fail = 0;
+		// 	for(const auto& test: tests){
+		// 		std::string p = "build/test/" + test.name;
+		// 		std::cout << p << ": " << std::flush;
+		// 		if(system(p.c_str())) fail++;
+		// 		all++;
+		// 	}
+		// 	std::cout << (all - fail) << "/" << all << std::endl;
+		// } else{
+		// 	std::cerr << "Error: Unknown argument: " << arg << std::endl;
+		// 	return 1;
+		// }
+	// } else{
+		// genMake();
+		// genNinja();
+	// }
 
 	return 0;
 }
