@@ -4,3 +4,4 @@ buildsystem
 bs
 .ninja_log
 .cache
+*.old
