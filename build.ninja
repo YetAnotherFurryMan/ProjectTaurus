@@ -57,15 +57,15 @@ build $bin/lib/error.so: link $bin/obj/error/strings.c.o $bin/obj/error/error.c.
 
 build $bin/obj/horn/lisp.c.o: cc src/horn/lisp.c
   flags = -fPIC
+build $bin/obj/horn/lex.c.o: cc src/horn/lex.c
+  flags = -fPIC
 build $bin/obj/horn/init.c.o: cc src/horn/init.c
   flags = -fPIC
 build $bin/obj/horn/parse.c.o: cc src/horn/parse.c
   flags = -fPIC
-build $bin/obj/horn/lex.c.o: cc src/horn/lex.c
-  flags = -fPIC
-build $bin/lib/libhorn.a: lib $bin/obj/horn/lisp.c.o $bin/obj/horn/init.c.o $bin/obj/horn/parse.c.o $bin/obj/horn/lex.c.o
+build $bin/lib/libhorn.a: lib $bin/obj/horn/lisp.c.o $bin/obj/horn/lex.c.o $bin/obj/horn/init.c.o $bin/obj/horn/parse.c.o
 
-build $bin/lib/horn.so: link $bin/obj/horn/lisp.c.o $bin/obj/horn/init.c.o $bin/obj/horn/parse.c.o $bin/obj/horn/lex.c.o
+build $bin/lib/horn.so: link $bin/obj/horn/lisp.c.o $bin/obj/horn/lex.c.o $bin/obj/horn/init.c.o $bin/obj/horn/parse.c.o
   flags = --shared
 
 build $bin/obj/trs.cg.nasm_x86/cg.c.o: cc src/trs.cg.nasm_x86/cg.c

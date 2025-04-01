@@ -3,23 +3,30 @@
 #include <stdlib.h>
 
 #ifndef PGM_PAGE_SIZE
-#	define PGM_PAGE_SIZE 1024
+#	define PGM_PAGE_SIZE (1024*4)
 #endif
 
-pgm pgm_new(void){
-	pgm_Header* head = malloc(PGM_PAGE_SIZE);
-	if(!head)
+pgm_Header* pgm_page(size_t size){
+	// We need fit this header into memory
+	if(size < sizeof(pgm_Header))
+		size += sizeof(pgm_Header);
+
+	// We need to presume memory aligment
+	size += size % sizeof(uintptr_t);
+
+	pgm_Header* page = malloc(size + sizeof(pgm_Header));
+	if(!page)
 		return NULL;
 	
-	head->size = 0;
-	head->cap = PGM_PAGE_SIZE - sizeof(pgm_Header);
-	head->next = NULL;
-
-	return head;
+	page->size = (sizeof(pgm_Header) + sizeof(pgm_Header) % sizeof(uintptr_t)) / sizeof(uintptr_t);
+	page->cap = size / sizeof(uintptr_t);
+	page->next = NULL;
+	page->data = (uintptr_t*)page;
+	return page;
 }
 
-void pgm_clean(pgm p){
-	pgm_Header* head = p;
+void pgm_clean(pgm* p){
+	pgm_Header* head = p->begin;
 
 	while(head){
 		head->size = 0;
@@ -27,44 +34,41 @@ void pgm_clean(pgm p){
 	}
 }
 
-void* pgm_alloc(pgm p, size_t size){
-	pgm_Header* head = p;
+void* pgm_alloc(pgm* p, size_t size){
+	pgm_Header* head = p->begin;
 
-	if(!head)
-		return NULL;
-
-	while(1){
+	while(head){
 		if(head->cap - head->size >= size){
 			void* data = head->data + head->size;
-			head->size += size;
+			head->size += (size + size % sizeof(uintptr_t)) / sizeof(uintptr_t);
 			return data;
 		}
 
-		if(head->next)
-			head = head->next;
-		else
-			break;
+		head = head->next;
 	}
 
 	size_t page_cap = size + sizeof(pgm_Header);
 	if(page_cap < PGM_PAGE_SIZE)
 		page_cap = PGM_PAGE_SIZE;
 
-	pgm_Header* next = malloc(page_cap);
+	pgm_Header* next = pgm_page(page_cap);
 	if(!next)
 		return NULL;
 
-	next->size = size;
-	next->cap = page_cap - sizeof(pgm_Header);
-	next->next = NULL;
+	if(!p->begin){
+		p->begin = p->end = next;
+	} else{
+		p->end->next = next;
+		p->end = next;
+	}
 
-	head->next = next;
-
-	return next->data;
+	void* data = next->data + next->size;
+	next->size += (size + size % sizeof(uintptr_t)) / sizeof(uintptr_t);
+	return data;
 }
 
-void pgm_free(pgm p){
-	pgm_Header* head = p;
+void pgm_free(pgm* p){
+	pgm_Header* head = p->begin;
 
 	while(head){
 		pgm_Header* next = head->next;
