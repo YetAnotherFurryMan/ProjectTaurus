@@ -29,7 +29,7 @@ void pgm_clean(pgm* p){
 	pgm_Header* head = p->begin;
 
 	while(head){
-		head->size = 0;
+		head->size = sizeof(pgm_Header) + (sizeof(pgm_Header) % sizeof(uintptr_t));
 		head = head->next;
 	}
 }
