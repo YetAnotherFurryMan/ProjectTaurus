@@ -1,6 +1,7 @@
 #ifndef _HORN_H_
 #define _HORN_H_
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -127,8 +128,17 @@ void horn_terminate(void);
 void horn_next(horn_State* state, horn_Token* token);
 void horn_LH(horn_State* state, horn_Token* token);
 
+/* TODO: DELETE */
 horn_Obj* horn_parseLisp(horn_State* state);
 horn_Obj* horn_parseTaurus(horn_State* state);
+/* END DELETE */
+
+horn_Obj* horn_load(const char* src);
+bool horn_emit(FILE* out, horn_Obj* src);
+
+// TODO: horn_Program* horn_makeProgram(horn_Obj* src);
+// TODO: horn_freeObj
+// TODO: horn_freeProgram
 
 static inline const char* horn_TokenTypeToString(horn_TokenType v){
 #define X(Y) case HORN_TT_##Y: return #Y;

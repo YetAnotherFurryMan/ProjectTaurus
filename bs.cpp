@@ -117,6 +117,11 @@ Mod mods[] = {
 	{ModType::LIB, "horn", { Lang::C }, {}},
 	{ModType::LIB, "trs.cg.nasm_x86", { Lang::C }, {}},
 	{ModType::LIB, "trs.cg.lisp", { Lang::C }, {}},
+	{ModType::EXE, "horn_tool", { Lang::C }, {
+		Dep::idep("trs", "error"),
+		Dep::idep("trs", "horn"),
+		Dep::idep("toollib", "assoc"),
+	}},
 	{ModType::EXE, "trsc", { Lang::C }, { 
 		Dep::edep("", "-ldl"),
 		Dep::idep("trs", "error"),
