@@ -84,15 +84,15 @@ $(BUILD)/lib/trs.cg.lisp.so: $(bin)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/horn_tool, *.c))
 exebin += $(bin)
-$(BUILD)/bin/horn_tool: $(bin) $(BUILD)/lib/liberror.a $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a
+$(BUILD)/bin/horn_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(BUILD)/lib/libassoc.a $(BUILD)/lib/libpgm.a
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,)
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trsc, *.c))
 exebin += $(bin)
-$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/liberror.a $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a
+$(BUILD)/bin/trsc: $(bin) $(BUILD)/lib/liberror.a $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a $(BUILD)/lib/libpgm.a
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
 
-test: all $(BUILD)/test/ap $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm $(BUILD)/test/horn_lex
+test: all $(BUILD)/test/ap $(BUILD)/test/vec $(BUILD)/test/vec_int $(BUILD)/test/assoc $(BUILD)/test/assoc_int $(BUILD)/test/pgm
 
 .SECONDEXPANSION:
 
@@ -124,8 +124,5 @@ $(BUILD)/test/assoc_int: test/assoc_int.c $(BUILD)/lib/libassoc.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 
 $(BUILD)/test/pgm: test/pgm.c $(BUILD)/lib/libpgm.a
-	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
-
-$(BUILD)/test/horn_lex: test/horn_lex.c $(BUILD)/lib/libhorn.a $(BUILD)/lib/libassoc.a
 	$(CC) -o $@ $^ -std=gnu17 -Iinclude -Wall -Wextra -Wpedantic -L$(BUILD) -ggdb 
 

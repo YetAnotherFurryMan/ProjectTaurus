@@ -28,15 +28,16 @@ int main(int argc, const char** argv){
 
 	fclose(in);
 
-	if(horn_init()){
+	horn_Instance instance = {0};
+
+	if(horn_init(&instance)){
 		fprintf(stderr, "ERROR: Failed to initialize horn.\n");
 		return 1;
 	}
 
-	horn_Obj* hobj = horn_load(src);
-	if(!hobj){
+	if(!horn_load(&instance, src)){
 		fprintf(stderr, "ERROR: Failed to load the input.\n");
-		horn_terminate();
+		horn_freeInstance(&instance);
 		free(src);
 		return 1;
 	}
@@ -44,24 +45,22 @@ int main(int argc, const char** argv){
 	FILE* out = fopen(argv[2], "w");
 	if(!out){
 		fprintf(stderr, "ERROR: Failed to open output file %s\n", argv[2]);
-		horn_terminate();
+		horn_freeInstance(&instance);
 		free(src);
 		return 1;
 	}
 
-	if(horn_emit(out, hobj)){
+	if(horn_emit(out, &instance)){
 		fprintf(stderr, "ERROR: Failed to emit.\n");
 		fclose(out);
-		horn_terminate();
+		horn_freeInstance(&instance);
 		free(src);
 		return 1;
 	}
 
 	fclose(out);
 
-	// horn_free(hobj);
-
-	horn_terminate();
+	horn_freeInstance(&instance);
 	free(src);
 
 	return 0;

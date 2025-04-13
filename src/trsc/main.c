@@ -30,7 +30,7 @@ enum{
 void loadSrc(const char* path);
 
 // CodeGen: trs.cg.{TARGET}.so
-//     TARGET: x86, x86-64, arm, aarch64, nasm_x86, nasm_x86-64, nasm_arm, nasm_aarch64, LLVM, QBE, lisp
+//     TARGET: LLVM, QBE, lisp, C
 int main(int argc, const char** argv){
 	const char* target = "nasm_x86";
 
@@ -47,28 +47,26 @@ int main(int argc, const char** argv){
 	if(!src)
 		src = g_src1;
 
-	horn_init();
+	horn_Instance instance = {0};
+	if(horn_init(&instance)){
+		// TODO: ERROR
+		return 1;
+	}
 
-	horn_State state = {0};
-	horn_resetState(&state, src);
-	
-	horn_Obj* obj = NULL;
 	switch(g_whatToParse){
 		case PARSE_LISP:
-			obj = horn_parseLisp(&state);
+			horn_load(&instance, src);
 			break;
 		case PARSE_TRS:
-			obj = horn_parseTaurus(&state);
+			// obj = horn_parseTaurus(&state);
 			break;
 	}
 
-	horn_terminate();
-
 	free(g_src);
 
-	cg.compile(stdout, obj);
+	cg.compile(stdout, instance.src);
 	
-	//horn_free(obj);
+	horn_freeInstance(&instance);
 
 	trs_cgUnload(&cg);
 	return 0;

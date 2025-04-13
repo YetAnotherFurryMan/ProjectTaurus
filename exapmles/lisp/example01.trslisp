@@ -1,0 +1,4 @@
+(fn 'main (nil) (gettype 'i32) 
+	(scope
+		(print "Hello World\n")
+		(ret 0)))

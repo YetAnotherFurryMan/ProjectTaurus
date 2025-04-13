@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <toollib/pgm.h>
 #include <toollib/assoc.h>
 
 #define HORN_X_enum_TokenType \
@@ -48,7 +49,9 @@
 	X(ID)               \
 	X(INTVAL) 			\
 	X(GET)    			\
+	X(GETTYPE)          \
 	X(SET)    			\
+	X(LIST)             \
 	X(MINUS)            \
 	X(ADD)    			\
 	X(SUB)    			\
@@ -72,7 +75,8 @@
 	X(LABEL)            \
 	X(GOTO)             \
 	X(CALL) 			\
-	X(VAR)
+	X(VAR)              \
+	X(FN)
 
 typedef enum{
 #define X(Y) HORN_TT_##Y,
@@ -87,6 +91,7 @@ typedef enum{
 } horn_Cmd;
 
 typedef union horn_ObjAs horn_ObjAs;
+typedef struct horn_Instance horn_Instance;
 typedef struct horn_State horn_State;
 typedef struct horn_Token horn_Token;
 typedef struct horn_Obj horn_Obj;
@@ -94,6 +99,13 @@ typedef struct horn_Obj horn_Obj;
 union horn_ObjAs{
 	char* text;
 	horn_Obj* args;
+};
+
+struct horn_Instance{
+	assoc kw_map;
+	pgm alloc;
+	horn_Obj* src;
+	horn_Obj* src_end;
 };
 
 struct horn_Token{
@@ -118,27 +130,18 @@ struct horn_State{
 
 assoc_GEN_FOR_TYPE(horn_Cmd)
 
-extern assoc g_horn_lispKW;
-extern assoc g_horn_taurusKW;
-
-bool horn_init(void);
-void horn_resetState(horn_State* state, const char* src);
-void horn_terminate(void);
-
 void horn_next(horn_State* state, horn_Token* token);
 void horn_LH(horn_State* state, horn_Token* token);
 
-/* TODO: DELETE */
-horn_Obj* horn_parseLisp(horn_State* state);
-horn_Obj* horn_parseTaurus(horn_State* state);
-/* END DELETE */
+bool horn_init(horn_Instance* inst);
+bool horn_freeInstance(horn_Instance* inst);
 
-horn_Obj* horn_load(const char* src);
-bool horn_emit(FILE* out, horn_Obj* src);
+void horn_resetState(horn_State* state, const char* src);
+
+bool horn_load(horn_Instance* inst, const char* src);
+bool horn_emit(FILE* out, horn_Instance* inst);
 
 // TODO: horn_Program* horn_makeProgram(horn_Obj* src);
-// TODO: horn_freeObj
-// TODO: horn_freeProgram
 
 static inline const char* horn_TokenTypeToString(horn_TokenType v){
 #define X(Y) case HORN_TT_##Y: return #Y;
@@ -158,7 +161,19 @@ static inline const char* horn_CmdToString(horn_Cmd v){
 #undef X
 }
 
-static inline char* horn_getTokenText(const horn_Token* tok){
+static inline char* horn_getTokenText(pgm* pgm, const horn_Token* tok){
+	size_t len = tok->end - tok->begin;
+	char* text = pgm_allocTN(pgm, char, len + 1);
+	
+	if(!text)
+		return NULL;
+
+	memcpy(text, tok->begin, len);
+	text[len] = 0;
+	return text;
+}
+
+static inline char* horn_getTokenTextTmp(const horn_Token* tok){
 	size_t len = tok->end - tok->begin;
 	char* text = (char*) malloc(len + 1);
 	
@@ -170,8 +185,8 @@ static inline char* horn_getTokenText(const horn_Token* tok){
 	return text;
 }
 
-static inline horn_Obj* horn_newObj(void){
-	horn_Obj* obj = (horn_Obj*) malloc(sizeof(horn_Obj));
+static inline horn_Obj* horn_newObj(pgm* pgm){
+	horn_Obj* obj = pgm_allocT(pgm, horn_Obj);
 
 	if(!obj)
 		return NULL;

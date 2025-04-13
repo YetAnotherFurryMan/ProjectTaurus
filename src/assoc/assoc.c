@@ -67,7 +67,7 @@ void* assoc_set(assoc* a, const char* key, size_t size){
 }
 
 assoc_Key* assoc_find(assoc a, const char* key){
-	if(!a)
+	if(!a || !key)
 		return NULL;
 
 	assoc_Header* head = a;

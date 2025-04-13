@@ -5,9 +5,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef void* assoc;
 typedef struct assoc_Key assoc_Key;
 typedef struct assoc_Header assoc_Header;
+typedef assoc_Header* assoc;
 
 struct assoc_Key{
 	uint64_t hash;

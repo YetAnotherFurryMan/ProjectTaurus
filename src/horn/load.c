@@ -1,60 +1,62 @@
 #include <trs/horn.h>
 
-#include <stdio.h>
+#include <trs/error.h>
 
-static horn_Obj* s_parseExpr(horn_State* state);
+static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state);
 
-static horn_Cmd s_cmd(const horn_Token* tok){
+static horn_Cmd s_cmd(horn_Instance* inst, const horn_Token* tok){
 	if(tok->type != HORN_TT_ID)
 		return HORN_CMD_ERROR;
 
-	char* text = horn_getTokenText(tok);
-	horn_Cmd cmd = assoc_getOrDefault_horn_Cmd(g_horn_lispKW, text, HORN_CMD_ERROR);
+	char* text = horn_getTokenTextTmp(tok);
+	horn_Cmd cmd = assoc_getOrDefault_horn_Cmd(inst->kw_map, text, HORN_CMD_ERROR);
 	free(text);
 	return cmd;
 }
 
-static horn_Obj* s_parseSExpr(horn_State* state){
+static horn_Obj* s_parseSExpr(horn_Instance* inst, horn_State* state){
 	horn_Token tok;
+
+	pgm* pgm = &inst->alloc;
 	
-	horn_Obj* obj = horn_newObj();
+	horn_Obj* obj = horn_newObj(pgm);
 	if(!obj) return NULL;
 
 	horn_next(state, &tok);
 
 	if(tok.type != HORN_TT_LP){
-		// TODO: ERROR: Expected (
+		LOGENL(EIDX_HORN_EXPECTED_GOT, "(", horn_TokenTypeToString(tok.type));
 		return NULL;
 	}
 
 	horn_next(state, &tok);
 
 	if(tok.type != HORN_TT_ID){
-		fprintf(stderr, "ERROR: Unexpected token: %s\n", horn_TokenTypeToString(tok.type));
-		return obj;
+		LOGENL(EIDX_HORN_EXPECTED_GOT, "identifier", horn_TokenTypeToString(tok.type));
+		return NULL;
 	}
 
-	horn_Cmd cmd = s_cmd(&tok);
+	horn_Cmd cmd = s_cmd(inst, &tok);
 	if(cmd == HORN_CMD_ERROR){
 		int len = tok.end - tok.begin;
-		fprintf(stderr, "ERROR: Unknown command: %*s\n", len, tok.begin);
-		return obj;
+		LOGENL(EIDX_HORN_UNKNOWN_CMD_LEN, len, tok.begin);
+		return NULL;
 	}
 
 	horn_LH(state, &tok);
 	if(tok.type != HORN_TT_RP){
-		horn_Obj* args = s_parseExpr(state);
+		horn_Obj* args = s_parseExpr(inst, state);
 		obj->as.args = args;
 		horn_LH(state, &tok);
 		while(args && tok.type != HORN_TT_RP){
-			args->next = s_parseExpr(state);
+			args->next = s_parseExpr(inst, state);
 			args = args->next;
 			horn_LH(state, &tok);
 		}
 	}
 
 	if(tok.type != HORN_TT_RP){
-		// TODO: ERROR: Exceped ')'
+		LOGENL(EIDX_HORN_EXPECTED_GOT, ")", horn_TokenTypeToString(tok.type));
 		return NULL;
 	}
 
@@ -65,20 +67,22 @@ static horn_Obj* s_parseSExpr(horn_State* state){
 }
 
 
-static horn_Obj* s_parseExpr(horn_State* state){
+static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state){
 	horn_Token tok = {0};
 	horn_LH(state, &tok);
 
+	pgm* pgm = &inst->alloc;
+
 	switch(tok.type){
 		case HORN_TT_LP:
-			return s_parseSExpr(state);
+			return s_parseSExpr(inst, state);
 		case HORN_TT_INT:
 		{
 			horn_next(state, NULL);
-			horn_Obj* v = horn_newObj();
+			horn_Obj* v = horn_newObj(pgm);
 			if(!v) return NULL; // TODO: ERROR
 			v->cmd = HORN_CMD_INTVAL;
-			v->as.text = horn_getTokenText(&tok); // TODO: PMA
+			v->as.text = horn_getTokenText(pgm, &tok);
 			return v;
 		} break;
 		case HORN_TT_EOF:
@@ -92,17 +96,30 @@ static horn_Obj* s_parseExpr(horn_State* state){
 	return NULL;
 }
 
-horn_Obj* horn_load(const char* src){
+bool horn_load(horn_Instance* inst, const char* src){
+	if(!inst){
+		LOGENL(EIDX_HORN_BAD_INSTANCE, NULL);
+		return true;
+	}
+
 	horn_State state = {0};
 	horn_resetState(&state, src);
 
-	horn_Obj* ret = s_parseSExpr(&state);
+	horn_Obj* ret = s_parseSExpr(inst, &state);
 
 	horn_Obj* head = ret;
 	while(head){
-		head->next = s_parseSExpr(&state);
+		head->next = s_parseSExpr(inst, &state);
 		head = head->next;
 	}
 
-	return ret;
+	if(inst->src){
+		inst->src_end->next = ret;
+		inst->src_end = ret;
+	} else{
+		inst->src = ret;
+		inst->src_end = ret;
+	}
+
+	return false;
 }

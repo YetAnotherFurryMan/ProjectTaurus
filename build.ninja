@@ -55,8 +55,6 @@ build $bin/lib/liberror.a: lib $bin/obj/error/strings.c.o $bin/obj/error/error.c
 build $bin/lib/error.so: link $bin/obj/error/strings.c.o $bin/obj/error/error.c.o
   flags = --shared
 
-build $bin/obj/horn/lisp.c.o: cc src/horn/lisp.c
-  flags = -fPIC
 build $bin/obj/horn/load.c.o: cc src/horn/load.c
   flags = -fPIC
 build $bin/obj/horn/lex.c.o: cc src/horn/lex.c
@@ -65,11 +63,9 @@ build $bin/obj/horn/init.c.o: cc src/horn/init.c
   flags = -fPIC
 build $bin/obj/horn/emit.c.o: cc src/horn/emit.c
   flags = -fPIC
-build $bin/obj/horn/parse.c.o: cc src/horn/parse.c
-  flags = -fPIC
-build $bin/lib/libhorn.a: lib $bin/obj/horn/lisp.c.o $bin/obj/horn/load.c.o $bin/obj/horn/lex.c.o $bin/obj/horn/init.c.o $bin/obj/horn/emit.c.o $bin/obj/horn/parse.c.o
+build $bin/lib/libhorn.a: lib $bin/obj/horn/load.c.o $bin/obj/horn/lex.c.o $bin/obj/horn/init.c.o $bin/obj/horn/emit.c.o
 
-build $bin/lib/horn.so: link $bin/obj/horn/lisp.c.o $bin/obj/horn/load.c.o $bin/obj/horn/lex.c.o $bin/obj/horn/init.c.o $bin/obj/horn/emit.c.o $bin/obj/horn/parse.c.o
+build $bin/lib/horn.so: link $bin/obj/horn/load.c.o $bin/obj/horn/lex.c.o $bin/obj/horn/init.c.o $bin/obj/horn/emit.c.o
   flags = --shared
 
 build $bin/obj/trs.cg.nasm_x86/cg.c.o: cc src/trs.cg.nasm_x86/cg.c
@@ -88,19 +84,18 @@ build $bin/lib/trs.cg.lisp.so: link $bin/obj/trs.cg.lisp/cg.c.o
 
 build $bin/obj/horn_tool/main.c.o: cc src/horn_tool/main.c
   flags = -fPIE
-build $bin/bin/horn_tool: link $bin/obj/horn_tool/main.c.o $bin/lib/liberror.a $bin/lib/libhorn.a $bin/lib/libassoc.a
+build $bin/bin/horn_tool: link $bin/obj/horn_tool/main.c.o $bin/lib/libhorn.a $bin/lib/liberror.a $bin/lib/libassoc.a $bin/lib/libpgm.a
   flags =
 
 build $bin/obj/trsc/main.c.o: cc src/trsc/main.c
   flags = -fPIE 
-build $bin/bin/trsc: link $bin/obj/trsc/main.c.o $bin/lib/liberror.a $bin/lib/libhorn.a $bin/lib/libassoc.a
+build $bin/bin/trsc: link $bin/obj/trsc/main.c.o $bin/lib/liberror.a $bin/lib/libhorn.a $bin/lib/libassoc.a $bin/lib/libpgm.a
   flags = -ldl
 
-build test: phony $bin/test/ap $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm $bin/test/horn_lex
+build test: phony $bin/test/ap $bin/test/vec $bin/test/vec_int $bin/test/assoc $bin/test/assoc_int $bin/test/pgm
 build $bin/test/ap: testc test/ap.c $bin/lib/libap.a
 build $bin/test/vec: testc test/vec.c $bin/lib/libvec.a
 build $bin/test/vec_int: testc test/vec_int.c $bin/lib/libvec.a
 build $bin/test/assoc: testc test/assoc.c $bin/lib/libassoc.a
 build $bin/test/assoc_int: testc test/assoc_int.c $bin/lib/libassoc.a
 build $bin/test/pgm: testc test/pgm.c $bin/lib/libpgm.a
-build $bin/test/horn_lex: testc test/horn_lex.c $bin/lib/libhorn.a $bin/lib/libassoc.a

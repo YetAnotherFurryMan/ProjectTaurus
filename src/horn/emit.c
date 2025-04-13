@@ -27,8 +27,7 @@ static bool s_emit(FILE* out, horn_Obj* obj){
 		XCASE(VAR, var)
 		XCASE(CALL, call)
 		default:
-			// TODO: It is not CG anymore!
-			// LOGENL(EIDX_CG_UNEXPECTED, horn_CmdToString(obj->cmd));
+			LOGENL(EIDX_HORN_UNEXPECTED, horn_CmdToString(obj->cmd));
 			return true;
 	}
 #undef XCASE
@@ -46,7 +45,8 @@ static bool s_emit(FILE* out, horn_Obj* obj){
 }
 
 
-bool horn_emit(FILE* out, horn_Obj* src){
+bool horn_emit(FILE* out, horn_Instance* inst){
+	horn_Obj* src = inst->src;
 	while(src){
 		if(s_emit(out, src))
 			return true;

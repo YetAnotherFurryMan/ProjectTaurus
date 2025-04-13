@@ -1,46 +1,51 @@
 #include <trs/horn.h>
 
-assoc g_horn_lispKW = NULL;
-assoc g_horn_taurusKW = NULL;
+#include <trs/error.h>
 
-bool horn_init(void){
-	g_horn_lispKW = assoc_new(7);
-	if(!g_horn_lispKW)
+bool horn_init(horn_Instance* inst){
+	if(!inst){
+		LOGENL(EIDX_HORN_BAD_INSTANCE, NULL);
 		return true;
+	}
 
-	g_horn_taurusKW = assoc_new(1);
-	if(!g_horn_taurusKW)
+	inst->kw_map = assoc_new(7);
+	if(!inst->kw_map){
+		LOGENL(EIDX_OUT_OF_MEM, NULL);
 		return true;
+	}
 
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "get") = HORN_CMD_GET;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "set") = HORN_CMD_SET;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "minus") = HORN_CMD_MINUS;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "add") = HORN_CMD_ADD;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "sub") = HORN_CMD_SUB;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "mul") = HORN_CMD_MUL;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "div") = HORN_CMD_DIV;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "mod") = HORN_CMD_MOD;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "lnot") = HORN_CMD_LNOT;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "leq") = HORN_CMD_LEQ;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "lneq") = HORN_CMD_LNEQ;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "lgt") = HORN_CMD_LGT;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "llt") = HORN_CMD_LLT;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "lgtq") = HORN_CMD_LGTQ;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "lltq") = HORN_CMD_LLTQ;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "land") = HORN_CMD_LAND;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "lor") = HORN_CMD_LOR;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "bnot") = HORN_CMD_BNOT;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "band") = HORN_CMD_BAND;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "bxor") = HORN_CMD_BXOR;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "bor") = HORN_CMD_BOR;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "scope") = HORN_CMD_SCOPE;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "label") = HORN_CMD_LABEL;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "goto") = HORN_CMD_GOTO;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "call") = HORN_CMD_CALL;
-	*assoc_set_horn_Cmd(&g_horn_lispKW, "var") = HORN_CMD_VAR;
+	*assoc_set_horn_Cmd(&inst->kw_map, "get") = HORN_CMD_GET;
+	*assoc_set_horn_Cmd(&inst->kw_map, "gettype") = HORN_CMD_GETTYPE;
+	*assoc_set_horn_Cmd(&inst->kw_map, "set") = HORN_CMD_SET;
+	*assoc_set_horn_Cmd(&inst->kw_map, "list") = HORN_CMD_LIST;
+	*assoc_set_horn_Cmd(&inst->kw_map, "minus") = HORN_CMD_MINUS;
+	*assoc_set_horn_Cmd(&inst->kw_map, "add") = HORN_CMD_ADD;
+	*assoc_set_horn_Cmd(&inst->kw_map, "sub") = HORN_CMD_SUB;
+	*assoc_set_horn_Cmd(&inst->kw_map, "mul") = HORN_CMD_MUL;
+	*assoc_set_horn_Cmd(&inst->kw_map, "div") = HORN_CMD_DIV;
+	*assoc_set_horn_Cmd(&inst->kw_map, "mod") = HORN_CMD_MOD;
+	*assoc_set_horn_Cmd(&inst->kw_map, "lnot") = HORN_CMD_LNOT;
+	*assoc_set_horn_Cmd(&inst->kw_map, "leq") = HORN_CMD_LEQ;
+	*assoc_set_horn_Cmd(&inst->kw_map, "lneq") = HORN_CMD_LNEQ;
+	*assoc_set_horn_Cmd(&inst->kw_map, "lgt") = HORN_CMD_LGT;
+	*assoc_set_horn_Cmd(&inst->kw_map, "llt") = HORN_CMD_LLT;
+	*assoc_set_horn_Cmd(&inst->kw_map, "lgtq") = HORN_CMD_LGTQ;
+	*assoc_set_horn_Cmd(&inst->kw_map, "lltq") = HORN_CMD_LLTQ;
+	*assoc_set_horn_Cmd(&inst->kw_map, "land") = HORN_CMD_LAND;
+	*assoc_set_horn_Cmd(&inst->kw_map, "lor") = HORN_CMD_LOR;
+	*assoc_set_horn_Cmd(&inst->kw_map, "bnot") = HORN_CMD_BNOT;
+	*assoc_set_horn_Cmd(&inst->kw_map, "band") = HORN_CMD_BAND;
+	*assoc_set_horn_Cmd(&inst->kw_map, "bxor") = HORN_CMD_BXOR;
+	*assoc_set_horn_Cmd(&inst->kw_map, "bor") = HORN_CMD_BOR;
+	*assoc_set_horn_Cmd(&inst->kw_map, "scope") = HORN_CMD_SCOPE;
+	*assoc_set_horn_Cmd(&inst->kw_map, "label") = HORN_CMD_LABEL;
+	*assoc_set_horn_Cmd(&inst->kw_map, "goto") = HORN_CMD_GOTO;
+	*assoc_set_horn_Cmd(&inst->kw_map, "call") = HORN_CMD_CALL;
+	*assoc_set_horn_Cmd(&inst->kw_map, "var") = HORN_CMD_VAR;
+	*assoc_set_horn_Cmd(&inst->kw_map, "fn") = HORN_CMD_FN;
 
-	*assoc_set_horn_Cmd(&g_horn_taurusKW, "var") = HORN_CMD_VAR;
-	*assoc_set_horn_Cmd(&g_horn_taurusKW, "goto") = HORN_CMD_GOTO;
+	// *assoc_set_horn_Cmd(&g_horn_taurusKW, "var") = HORN_CMD_VAR;
+	// *assoc_set_horn_Cmd(&g_horn_taurusKW, "goto") = HORN_CMD_GOTO;
 	
 	return false;
 }
@@ -55,9 +60,11 @@ void horn_resetState(horn_State* state, const char* src){
 	state->column = 0;
 }
 
-void horn_terminate(void){
-	assoc_free(g_horn_lispKW);
-	assoc_free(g_horn_taurusKW);
+bool horn_freeInstance(horn_Instance* inst){
+	assoc_free(inst->kw_map);
+	pgm_free(&inst->alloc);
 
-	g_horn_lispKW = NULL;
+	*inst = (horn_Instance){0};
+
+	return false;
 }
