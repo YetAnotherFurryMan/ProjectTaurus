@@ -18,6 +18,7 @@ bool horn_init(horn_Instance* inst){
 	*assoc_set_horn_Cmd(&inst->kw_map, "gettype") = HORN_CMD_GETTYPE;
 	*assoc_set_horn_Cmd(&inst->kw_map, "set") = HORN_CMD_SET;
 	*assoc_set_horn_Cmd(&inst->kw_map, "list") = HORN_CMD_LIST;
+	*assoc_set_horn_Cmd(&inst->kw_map, "nil") = HORN_CMD_NIL;
 	*assoc_set_horn_Cmd(&inst->kw_map, "minus") = HORN_CMD_MINUS;
 	*assoc_set_horn_Cmd(&inst->kw_map, "add") = HORN_CMD_ADD;
 	*assoc_set_horn_Cmd(&inst->kw_map, "sub") = HORN_CMD_SUB;
@@ -41,8 +42,10 @@ bool horn_init(horn_Instance* inst){
 	*assoc_set_horn_Cmd(&inst->kw_map, "label") = HORN_CMD_LABEL;
 	*assoc_set_horn_Cmd(&inst->kw_map, "goto") = HORN_CMD_GOTO;
 	*assoc_set_horn_Cmd(&inst->kw_map, "call") = HORN_CMD_CALL;
+	*assoc_set_horn_Cmd(&inst->kw_map, "ret") = HORN_CMD_RET;
 	*assoc_set_horn_Cmd(&inst->kw_map, "var") = HORN_CMD_VAR;
 	*assoc_set_horn_Cmd(&inst->kw_map, "fn") = HORN_CMD_FN;
+	*assoc_set_horn_Cmd(&inst->kw_map, "print") = HORN_CMD_PRINT;
 
 	// *assoc_set_horn_Cmd(&g_horn_taurusKW, "var") = HORN_CMD_VAR;
 	// *assoc_set_horn_Cmd(&g_horn_taurusKW, "goto") = HORN_CMD_GOTO;

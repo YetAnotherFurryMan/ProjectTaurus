@@ -48,10 +48,13 @@
 	X(ERROR)  			\
 	X(ID)               \
 	X(INTVAL) 			\
+	X(CHRVAL) 			\
+	X(STRVAL) 			\
 	X(GET)    			\
 	X(GETTYPE)          \
 	X(SET)    			\
 	X(LIST)             \
+	X(NIL)              \
 	X(MINUS)            \
 	X(ADD)    			\
 	X(SUB)    			\
@@ -75,13 +78,16 @@
 	X(LABEL)            \
 	X(GOTO)             \
 	X(CALL) 			\
+	X(RET)              \
 	X(VAR)              \
-	X(FN)
+	X(FN)               \
+	X(PRINT)
 
 typedef enum{
 #define X(Y) HORN_TT_##Y,
 	HORN_X_enum_TokenType
 #undef X
+	HORN_TT_ENUM_END
 } horn_TokenType;
 
 typedef enum{

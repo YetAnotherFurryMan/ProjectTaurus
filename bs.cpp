@@ -117,7 +117,15 @@ Mod mods[] = {
 	{ModType::LIB, "horn", { Lang::C }, {}},
 	{ModType::LIB, "trs.cg.nasm_x86", { Lang::C }, {}},
 	{ModType::LIB, "trs.cg.lisp", { Lang::C }, {}},
+	{ModType::LIB, "trsiron.trs", { Lang::C }, {}},
 	{ModType::EXE, "horn_tool", { Lang::C }, {
+		Dep::idep("trs", "horn"),
+		Dep::idep("trs", "error"),
+		Dep::idep("toollib", "assoc"),
+		Dep::idep("toollib", "pgm"),
+	}},
+	{ModType::EXE, "iron_tool", { Lang::C }, {
+		Dep::edep("", "-ldl"),
 		Dep::idep("trs", "horn"),
 		Dep::idep("trs", "error"),
 		Dep::idep("toollib", "assoc"),
@@ -286,7 +294,8 @@ void genMake(){
 		if(mod.type == ModType::EXE)
 			out << "bin/" << mod.name;
 		else if(mod.type == ModType::LIB)
-			out << "lib/lib" << mod.name << ".a $(if $(RELEASE),$(BUILD)/lib/" << mod.name << ".so,)";
+			// out << "lib/lib" << mod.name << ".a $(if $(RELEASE),$(BUILD)/lib/" << mod.name << ".so,)";
+			out << "lib/lib" << mod.name << ".a $(BUILD)/lib/" << mod.name << ".so";
 	}
 	out << std::endl << std::endl;
 

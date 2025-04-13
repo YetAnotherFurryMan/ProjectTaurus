@@ -85,6 +85,40 @@ static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state){
 			v->as.text = horn_getTokenText(pgm, &tok);
 			return v;
 		} break;
+		case HORN_TT_CHAR:
+		{
+			horn_next(state, NULL);
+			horn_Obj* v = horn_newObj(pgm);
+			if(!v) return NULL; // TODO: ERROR
+			v->cmd = HORN_CMD_CHRVAL;
+			v->as.text = horn_getTokenText(pgm, &tok);
+			return v;
+		} break;
+		case HORN_TT_STR:
+		{
+			horn_next(state, NULL);
+			horn_Obj* v = horn_newObj(pgm);
+			if(!v) return NULL; // TODO: ERROR
+			v->cmd = HORN_CMD_STRVAL;
+			v->as.text = horn_getTokenText(pgm, &tok);
+			return v;
+		} break;
+		case HORN_TT_OP_MOD:
+		{
+			horn_next(state, NULL);
+			
+			horn_next(state, &tok);
+			if(tok.type != HORN_TT_ID){
+				LOGENL(EIDX_HORN_EXPECTED_GOT, "ID", horn_TokenTypeToString(tok.type));
+				return NULL;
+			}
+
+			horn_Obj* id = horn_newObj(pgm);
+			if(!id) return NULL; // TODO: ERROR
+			id->cmd = HORN_CMD_ID;
+			id->as.text = horn_getTokenText(pgm, &tok);
+			return id;
+		} break;
 		case HORN_TT_EOF:
 			break;
 		default:
@@ -107,10 +141,14 @@ bool horn_load(horn_Instance* inst, const char* src){
 
 	horn_Obj* ret = s_parseSExpr(inst, &state);
 
+	horn_Token tok = {0};
+	horn_LH(&state, &tok);
+
 	horn_Obj* head = ret;
-	while(head){
+	while(head && tok.type != HORN_TT_EOF){
 		head->next = s_parseSExpr(inst, &state);
 		head = head->next;
+		horn_LH(&state, &tok);
 	}
 
 	if(inst->src){

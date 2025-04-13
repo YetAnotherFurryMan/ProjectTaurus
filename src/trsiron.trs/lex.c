@@ -1,8 +1,6 @@
-#include <trs/horn.h>
+#define IRON_LEX
+#include <trs/iron.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include <ctype.h>
 
 static int s_nextChar(horn_State* state, char q){
@@ -77,7 +75,7 @@ static int s_nextChar(horn_State* state, char q){
 	return state->column - col;
 }
 
-void horn_next(horn_State* state, horn_Token* token){
+void iron_next(horn_State* state, horn_Token* token){
 	horn_Token tok = (horn_Token){0};
 
 	if(!state)
@@ -205,9 +203,9 @@ ret:
 		*token = tok;
 }
 
-void horn_LH(horn_State* state, horn_Token* tok){
+void iron_LH(horn_State* state, horn_Token* tok){
 	if(state->lookahead.type == HORN_TT_UKN)
-		horn_next(state, &state->lookahead);
+		iron_next(state, &state->lookahead);
 	
 	if(tok)
 		*tok = state->lookahead;
