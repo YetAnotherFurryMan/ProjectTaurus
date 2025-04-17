@@ -125,6 +125,7 @@ Mod mods[] = {
 		Dep::idep("toollib", "pgm"),
 	}},
 	{ModType::EXE, "iron_tool", { Lang::C }, {
+		Dep::edep("", "-Wl,--export-dynamic"),
 		Dep::edep("", "-ldl"),
 		Dep::idep("trs", "horn"),
 		Dep::idep("trs", "error"),

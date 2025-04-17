@@ -98,7 +98,7 @@ $(BUILD)/bin/horn_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/iron_tool, *.c))
 exebin += $(bin)
 $(BUILD)/bin/iron_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(BUILD)/lib/libassoc.a $(BUILD)/lib/libpgm.a
-	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,) -ldl
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,) -Wl,--export-dynamic -ldl
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trsc, *.c))
 exebin += $(bin)

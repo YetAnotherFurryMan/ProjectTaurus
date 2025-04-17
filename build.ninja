@@ -97,9 +97,9 @@ build $bin/bin/horn_tool: link $bin/obj/horn_tool/main.c.o $bin/lib/libhorn.a $b
   flags =
 
 build $bin/obj/iron_tool/main.c.o: cc src/iron_tool/main.c
-  flags = -fPIE 
+  flags = -fPIE  
 build $bin/bin/iron_tool: link $bin/obj/iron_tool/main.c.o $bin/lib/libhorn.a $bin/lib/liberror.a $bin/lib/libassoc.a $bin/lib/libpgm.a
-  flags = -ldl
+  flags = -Wl,--export-dynamic -ldl
 
 build $bin/obj/trsc/main.c.o: cc src/trsc/main.c
   flags = -fPIE 

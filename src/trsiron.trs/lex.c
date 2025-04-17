@@ -6,6 +6,17 @@
 
 #include <ctype.h>
 
+static inline trs_TokenType s_getIdType(utils_Token* tok){
+	size_t len = tok->end - tok->begin;
+	if(strncmp("fn", tok->begin, len) == 0)
+		return TRS_TT_KW_FN;
+	else if(strncmp("i32", tok->begin, len) == 0)
+		return TRS_TT_KW_I32;
+	else if(strncmp("return", tok->begin, len) == 0)
+		return TRS_TT_KW_RETURN;
+	return TRS_TT_ID;
+}
+
 void iron_next(utils_State* state, utils_Token* token){
 	utils_Token tok = (utils_Token){0};
 
@@ -111,7 +122,6 @@ void iron_next(utils_State* state, utils_Token* token){
 
 				tok.end = state->cursor;
 			} else if(*state->cursor == '_' || isalpha(*state->cursor)){
-				tok.type = TRS_TT_ID;
 				tok.begin = state->cursor;
 
 				while(*state->cursor == '_' || isalnum(*state->cursor)){
@@ -120,6 +130,7 @@ void iron_next(utils_State* state, utils_Token* token){
 				}
 
 				tok.end = state->cursor;
+				tok.type = s_getIdType(&tok);
 			} else {
 				tok.begin = state->cursor;
 				tok.end = ++state->cursor;

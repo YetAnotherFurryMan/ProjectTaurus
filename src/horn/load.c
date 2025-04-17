@@ -121,6 +121,11 @@ bool horn_load(horn_Instance* inst, const char* src){
 		return true;
 	}
 
+	if(!src){
+		LOGENL(EIDX_INTERNAL_BAD_DATA_SRC, "src");
+		return true;
+	}
+
 	utils_State state = {0};
 	utils_resetState(&state, src);
 
