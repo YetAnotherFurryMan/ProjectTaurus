@@ -8,47 +8,26 @@
 #include <toollib/pgm.h>
 #include <toollib/assoc.h>
 
+#include <trs/utils/lex_state.h>
+
 #define HORN_X_enum_TokenType \
 	X(UKN)                    \
 	X(EOF)                    \
 	X(INT)                    \
-	X(CHAR)                   \
 	X(STR)                    \
-	X(OP_EQ)                  \
-	X(OP_PLUS)                \
-	X(OP_MINUS)               \
-	X(OP_MUL)                 \
-	X(OP_DIV)                 \
-	X(OP_MOD)                 \
-	X(OP_LOGICAL_NOT)         \
-	X(OP_LOGICAL_EQ)          \
-	X(OP_LOGICAL_NEQ)         \
-	X(OP_LOGICAL_GT)          \
-	X(OP_LOGICAL_LT)          \
-	X(OP_LOGICAL_GTQ)         \
-	X(OP_LOGICAL_LTQ)         \
-	X(OP_LOGICAL_AND)         \
-	X(OP_LOGICAL_OR)          \
-	X(OP_BINARY_NOT)          \
-	X(OP_BINARY_AND)          \
-	X(OP_BINARY_XOR)          \
-	X(OP_BINARY_OR)           \
-	X(EOE)                    \
-	X(COLON)                  \
 	X(ID)                     \
+	X(OBJ)                    \
 	X(LP)                     \
 	X(RP)                     \
 	X(LB)                     \
 	X(RB)                     \
 	X(LSB)                    \
-	X(RSB)                    \
-	X(COMMA)
+	X(RSB)
 
 #define HORN_X_enum_Cmd \
 	X(ERROR)  			\
 	X(ID)               \
 	X(INTVAL) 			\
-	X(CHRVAL) 			\
 	X(STRVAL) 			\
 	X(GET)    			\
 	X(GETTYPE)          \
@@ -78,9 +57,10 @@
 	X(LABEL)            \
 	X(GOTO)             \
 	X(CALL) 			\
-	X(RET)              \
-	X(VAR)              \
-	X(FN)               \
+	X(RETURN)           \
+	X(VARIABLE)         \
+	X(FUNCTION)         \
+	X(PROCEDURE)        \
 	X(PRINT)
 
 typedef enum{
@@ -98,8 +78,6 @@ typedef enum{
 
 typedef union horn_ObjAs horn_ObjAs;
 typedef struct horn_Instance horn_Instance;
-typedef struct horn_State horn_State;
-typedef struct horn_Token horn_Token;
 typedef struct horn_Obj horn_Obj;
 
 union horn_ObjAs{
@@ -114,35 +92,19 @@ struct horn_Instance{
 	horn_Obj* src_end;
 };
 
-struct horn_Token{
-	horn_TokenType type;
-	const char* begin;
-	const char* end;
-};
-
 struct horn_Obj{
 	horn_Cmd cmd;
 	horn_ObjAs as;
 	horn_Obj* next;
 };
 
-struct horn_State{
-	horn_Token lookahead;
-	const char* src;
-	const char* cursor;
-	size_t row;
-	size_t column;
-};
-
 assoc_GEN_FOR_TYPE(horn_Cmd)
 
-void horn_next(horn_State* state, horn_Token* token);
-void horn_LH(horn_State* state, horn_Token* token);
+void horn_next(utils_State* state, utils_Token* token);
+void horn_LH(utils_State* state, utils_Token* token);
 
 bool horn_init(horn_Instance* inst);
 bool horn_freeInstance(horn_Instance* inst);
-
-void horn_resetState(horn_State* state, const char* src);
 
 bool horn_load(horn_Instance* inst, const char* src);
 bool horn_emit(FILE* out, horn_Instance* inst);
@@ -167,7 +129,7 @@ static inline const char* horn_CmdToString(horn_Cmd v){
 #undef X
 }
 
-static inline char* horn_getTokenText(pgm* pgm, const horn_Token* tok){
+static inline char* horn_getTokenText(pgm* pgm, const utils_Token* tok){
 	size_t len = tok->end - tok->begin;
 	char* text = pgm_allocTN(pgm, char, len + 1);
 	
@@ -179,7 +141,7 @@ static inline char* horn_getTokenText(pgm* pgm, const horn_Token* tok){
 	return text;
 }
 
-static inline char* horn_getTokenTextTmp(const horn_Token* tok){
+static inline char* horn_getTokenTextTmp(const utils_Token* tok){
 	size_t len = tok->end - tok->begin;
 	char* text = (char*) malloc(len + 1);
 	

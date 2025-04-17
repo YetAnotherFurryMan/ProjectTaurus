@@ -7,11 +7,10 @@ static bool s_emit(FILE* out, horn_Obj* obj){
 	switch(obj->cmd){
 		case HORN_CMD_ID:
 		{
-			fprintf(out, "%%%s", obj->as.text);
+			fprintf(out, "'%s", obj->as.text);
 			return false;
 		} break;
 		case HORN_CMD_INTVAL:
-		case HORN_CMD_CHRVAL:
 		case HORN_CMD_STRVAL:
 		{
 			fputs(obj->as.text, out);
@@ -45,9 +44,10 @@ static bool s_emit(FILE* out, horn_Obj* obj){
 		XCASE(LABEL, label)
 		XCASE(GOTO, goto)
 		XCASE(CALL, call)
-		XCASE(RET, ret)
-		XCASE(VAR, var)
-		XCASE(FN, fn)
+		XCASE(RETURN, return)
+		XCASE(VARIABLE, variable)
+		XCASE(FUNCTION, function)
+		XCASE(PROCEDURE, procedure)
 		XCASE(PRINT, print)  
 		default:
 			LOGENL(EIDX_HORN_UNEXPECTED, horn_CmdToString(obj->cmd));

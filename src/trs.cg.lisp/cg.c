@@ -24,7 +24,7 @@ int trs_cgCompileCmd(FILE* out, horn_Obj* obj){
 		XCASE(SCOPE, scope)
 		XCASE(LABEL, label)
 		XCASE(GOTO, goto)
-		XCASE(VAR, var)
+		XCASE(VARIABLE, variable)
 		XCASE(CALL, call)
 		default:
 			LOGENL(EIDX_CG_UNEXPECTED, horn_CmdToString(obj->cmd));

@@ -42,25 +42,13 @@ bool horn_init(horn_Instance* inst){
 	*assoc_set_horn_Cmd(&inst->kw_map, "label") = HORN_CMD_LABEL;
 	*assoc_set_horn_Cmd(&inst->kw_map, "goto") = HORN_CMD_GOTO;
 	*assoc_set_horn_Cmd(&inst->kw_map, "call") = HORN_CMD_CALL;
-	*assoc_set_horn_Cmd(&inst->kw_map, "ret") = HORN_CMD_RET;
-	*assoc_set_horn_Cmd(&inst->kw_map, "var") = HORN_CMD_VAR;
-	*assoc_set_horn_Cmd(&inst->kw_map, "fn") = HORN_CMD_FN;
+	*assoc_set_horn_Cmd(&inst->kw_map, "return") = HORN_CMD_RETURN;
+	*assoc_set_horn_Cmd(&inst->kw_map, "variable") = HORN_CMD_VARIABLE;
+	*assoc_set_horn_Cmd(&inst->kw_map, "function") = HORN_CMD_FUNCTION;
+	*assoc_set_horn_Cmd(&inst->kw_map, "procedure") = HORN_CMD_PROCEDURE;
 	*assoc_set_horn_Cmd(&inst->kw_map, "print") = HORN_CMD_PRINT;
 
-	// *assoc_set_horn_Cmd(&g_horn_taurusKW, "var") = HORN_CMD_VAR;
-	// *assoc_set_horn_Cmd(&g_horn_taurusKW, "goto") = HORN_CMD_GOTO;
-	
 	return false;
-}
-
-void horn_resetState(horn_State* state, const char* src){
-	state->lookahead.type = HORN_TT_UKN;
-	state->lookahead.begin = NULL;
-	state->lookahead.end = NULL;
-	state->src = src;
-	state->cursor = src;
-	state->row = 0;
-	state->column = 0;
 }
 
 bool horn_freeInstance(horn_Instance* inst){

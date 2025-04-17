@@ -9,11 +9,13 @@ bool iron_load(horn_Instance* inst, const char* src);
 
 #ifdef IRON_LEX
 
-typedef void(*iron_LH_t)(horn_State*, const char*);
-typedef bool(*iron_next_t)(horn_State*, const char*);
+#include <trs/utils/lex_state.h>
 
-void iron_LH(horn_State* state, horn_Token* tok);
-void iron_next(horn_State* state, horn_Token* tok);
+typedef void(*iron_LH_t)(utils_State*, const char*);
+typedef bool(*iron_next_t)(utils_State*, const char*);
+
+void iron_LH(utils_State* state, utils_Token* tok);
+void iron_next(utils_State* state, utils_Token* tok);
 
 #endif // IRON_LEX
 

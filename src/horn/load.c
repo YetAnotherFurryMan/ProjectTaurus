@@ -2,9 +2,9 @@
 
 #include <trs/error.h>
 
-static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state);
+static horn_Obj* s_parseExpr(horn_Instance* inst, utils_State* state);
 
-static horn_Cmd s_cmd(horn_Instance* inst, const horn_Token* tok){
+static horn_Cmd s_cmd(horn_Instance* inst, const utils_Token* tok){
 	if(tok->type != HORN_TT_ID)
 		return HORN_CMD_ERROR;
 
@@ -14,8 +14,8 @@ static horn_Cmd s_cmd(horn_Instance* inst, const horn_Token* tok){
 	return cmd;
 }
 
-static horn_Obj* s_parseSExpr(horn_Instance* inst, horn_State* state){
-	horn_Token tok;
+static horn_Obj* s_parseSExpr(horn_Instance* inst, utils_State* state){
+	utils_Token tok;
 
 	pgm* pgm = &inst->alloc;
 	
@@ -67,8 +67,8 @@ static horn_Obj* s_parseSExpr(horn_Instance* inst, horn_State* state){
 }
 
 
-static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state){
-	horn_Token tok = {0};
+static horn_Obj* s_parseExpr(horn_Instance* inst, utils_State* state){
+	utils_Token tok = {0};
 	horn_LH(state, &tok);
 
 	pgm* pgm = &inst->alloc;
@@ -85,15 +85,6 @@ static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state){
 			v->as.text = horn_getTokenText(pgm, &tok);
 			return v;
 		} break;
-		case HORN_TT_CHAR:
-		{
-			horn_next(state, NULL);
-			horn_Obj* v = horn_newObj(pgm);
-			if(!v) return NULL; // TODO: ERROR
-			v->cmd = HORN_CMD_CHRVAL;
-			v->as.text = horn_getTokenText(pgm, &tok);
-			return v;
-		} break;
 		case HORN_TT_STR:
 		{
 			horn_next(state, NULL);
@@ -103,15 +94,9 @@ static horn_Obj* s_parseExpr(horn_Instance* inst, horn_State* state){
 			v->as.text = horn_getTokenText(pgm, &tok);
 			return v;
 		} break;
-		case HORN_TT_OP_MOD:
+		case HORN_TT_OBJ:
 		{
 			horn_next(state, NULL);
-			
-			horn_next(state, &tok);
-			if(tok.type != HORN_TT_ID){
-				LOGENL(EIDX_HORN_EXPECTED_GOT, "ID", horn_TokenTypeToString(tok.type));
-				return NULL;
-			}
 
 			horn_Obj* id = horn_newObj(pgm);
 			if(!id) return NULL; // TODO: ERROR
@@ -136,12 +121,12 @@ bool horn_load(horn_Instance* inst, const char* src){
 		return true;
 	}
 
-	horn_State state = {0};
-	horn_resetState(&state, src);
+	utils_State state = {0};
+	utils_resetState(&state, src);
 
 	horn_Obj* ret = s_parseSExpr(inst, &state);
 
-	horn_Token tok = {0};
+	utils_Token tok = {0};
 	horn_LH(&state, &tok);
 
 	horn_Obj* head = ret;
