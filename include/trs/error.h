@@ -15,14 +15,14 @@ extern const char* g_errorStrings[];
 	X(UNKNOWN_EXT, "Unknown extension: %s")                         \
 	X(OUT_OF_MEM_FILE, "Out of memory while reading file: %s")      \
 	X(OUT_OF_MEM, "Out of memory.")                                 \
+	X(UNEXPECTED, "Unexpected %s")                                  \
+	X(EXPECTED_GOT, "Expected %s but got %s")                       \
+	X(EXPECTED_GOT_LEN, "Expected %s but got %*s")                  \
 	X(HORN_UNKNOWN_CMD, "Unknown command: %s")                      \
 	X(HORN_UNKNOWN_CMD_LEN, "Unknown command: %*s\n")               \
 	X(HORN_UNEXPECTED_EXP, "Unexpected expression %s")              \
 	X(HORN_EXPECTED, "Expected %s")                                 \
-	X(HORN_EXPECTED_GOT, "Expected %s but got %s")                  \
-	X(HORN_EXPECTED_GOT_LEN, "Expected %s but got %*s")             \
 	X(HORN_BAD_INSTANCE, "Internal Error: Bad horn instance.")      \
-	X(HORN_UNEXPECTED, "Unexpected %s")                             \
 	X(CG_UNEXPECTED, "Unexpected %s")
 
 typedef enum {

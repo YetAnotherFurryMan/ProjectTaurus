@@ -71,6 +71,7 @@ void iron_next(utils_State* state, utils_Token* token){
 		XCASE('|', OP_BINARY_OR)
 		XCASE(';', EOE)
 		XCASE(':', COLON)
+		XCASE('@', AT)
 		XCASE('(', LP)
 		XCASE(')', RP)
 		XCASE('{', LB)
@@ -132,6 +133,7 @@ void iron_next(utils_State* state, utils_Token* token){
 				tok.end = state->cursor;
 				tok.type = s_getIdType(&tok);
 			} else {
+				// TODO: Isn't it a ERROR?
 				tok.begin = state->cursor;
 				tok.end = ++state->cursor;
 				state->cursor++;

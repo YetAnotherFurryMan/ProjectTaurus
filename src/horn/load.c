@@ -25,14 +25,14 @@ static horn_Obj* s_parseSExpr(horn_Instance* inst, utils_State* state){
 	horn_next(state, &tok);
 
 	if(tok.type != HORN_TT_LP){
-		LOGENL(EIDX_HORN_EXPECTED_GOT, "(", horn_TokenTypeToString(tok.type));
+		LOGENL(EIDX_EXPECTED_GOT, "(", horn_TokenTypeToString(tok.type));
 		return NULL;
 	}
 
 	horn_next(state, &tok);
 
 	if(tok.type != HORN_TT_ID){
-		LOGENL(EIDX_HORN_EXPECTED_GOT, "identifier", horn_TokenTypeToString(tok.type));
+		LOGENL(EIDX_EXPECTED_GOT, "identifier", horn_TokenTypeToString(tok.type));
 		return NULL;
 	}
 
@@ -56,7 +56,7 @@ static horn_Obj* s_parseSExpr(horn_Instance* inst, utils_State* state){
 	}
 
 	if(tok.type != HORN_TT_RP){
-		LOGENL(EIDX_HORN_EXPECTED_GOT, ")", horn_TokenTypeToString(tok.type));
+		LOGENL(EIDX_EXPECTED_GOT, ")", horn_TokenTypeToString(tok.type));
 		return NULL;
 	}
 

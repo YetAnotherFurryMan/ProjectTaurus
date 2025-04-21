@@ -50,7 +50,7 @@ static bool s_emit(FILE* out, horn_Obj* obj){
 		XCASE(PROCEDURE, procedure)
 		XCASE(PRINT, print)  
 		default:
-			LOGENL(EIDX_HORN_UNEXPECTED, horn_CmdToString(obj->cmd));
+			LOGENL(EIDX_UNEXPECTED, horn_CmdToString(obj->cmd));
 			return true;
 	}
 #undef XCASE
