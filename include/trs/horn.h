@@ -129,30 +129,6 @@ static inline const char* horn_CmdToString(horn_Cmd v){
 #undef X
 }
 
-static inline char* horn_getTokenText(pgm* pgm, const utils_Token* tok){
-	size_t len = tok->end - tok->begin;
-	char* text = pgm_allocTN(pgm, char, len + 1);
-	
-	if(!text)
-		return NULL;
-
-	memcpy(text, tok->begin, len);
-	text[len] = 0;
-	return text;
-}
-
-static inline char* horn_getTokenTextTmp(const utils_Token* tok){
-	size_t len = tok->end - tok->begin;
-	char* text = (char*) malloc(len + 1);
-	
-	if(!text)
-		return NULL;
-
-	memcpy(text, tok->begin, len);
-	text[len] = 0;
-	return text;
-}
-
 static inline horn_Obj* horn_newObj(pgm* pgm){
 	horn_Obj* obj = pgm_allocT(pgm, horn_Obj);
 

@@ -8,7 +8,7 @@ static horn_Cmd s_cmd(horn_Instance* inst, const utils_Token* tok){
 	if(tok->type != HORN_TT_ID)
 		return HORN_CMD_ERROR;
 
-	char* text = horn_getTokenTextTmp(tok);
+	char* text = utils_strtok(NULL, tok);
 	horn_Cmd cmd = assoc_getOrDefault_horn_Cmd(inst->kw_map, text, HORN_CMD_ERROR);
 	free(text);
 	return cmd;
@@ -82,7 +82,7 @@ static horn_Obj* s_parseExpr(horn_Instance* inst, utils_State* state){
 			horn_Obj* v = horn_newObj(pgm);
 			if(!v) return NULL; // TODO: ERROR
 			v->cmd = HORN_CMD_INTVAL;
-			v->as.text = horn_getTokenText(pgm, &tok);
+			v->as.text = utils_strtok(pgm, &tok);
 			return v;
 		} break;
 		case HORN_TT_STR:
@@ -91,17 +91,18 @@ static horn_Obj* s_parseExpr(horn_Instance* inst, utils_State* state){
 			horn_Obj* v = horn_newObj(pgm);
 			if(!v) return NULL; // TODO: ERROR
 			v->cmd = HORN_CMD_STRVAL;
-			v->as.text = horn_getTokenText(pgm, &tok);
+			v->as.text = utils_strtok(pgm, &tok);
 			return v;
 		} break;
 		case HORN_TT_OBJ:
 		{
 			horn_next(state, NULL);
+			tok.begin++; // We do not need the quote here
 
 			horn_Obj* id = horn_newObj(pgm);
 			if(!id) return NULL; // TODO: ERROR
 			id->cmd = HORN_CMD_ID;
-			id->as.text = horn_getTokenText(pgm, &tok);
+			id->as.text = utils_strtok(pgm, &tok);
 			return id;
 		} break;
 		case HORN_TT_EOF:

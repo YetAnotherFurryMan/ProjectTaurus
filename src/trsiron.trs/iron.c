@@ -82,7 +82,7 @@ static horn_Obj* s_primary(pgm* pgm, utils_State* state){
 
 	horn_Obj* obj = horn_newObj(pgm);
 	if(!obj) return NULL; // TODO: ERROR
-	obj->as.text = horn_getTokenText(pgm, &tok); // TODO: Move to utils
+	obj->as.text = utils_strtok(pgm, &tok);
 
 	switch(tok.type){
 		case TRS_TT_INT:
@@ -194,7 +194,7 @@ static horn_Obj* s_fn(pgm* pgm, utils_State* state){
 	horn_Obj* id = horn_newObj(pgm);
 	if(!id) return NULL;
 	id->cmd = HORN_CMD_ID;
-	id->as.text = horn_getTokenText(pgm, &tok); // TODO: Move to utils
+	id->as.text = utils_strtok(pgm, &tok);
 	fn->as.args = id;
 
 	// TODO: Parse args
