@@ -4,6 +4,8 @@
 #include <trs/error.h>
 #include <trs/taurus.h>
 
+static horn_Obj* s_exp(pgm* pgm, utils_State* state);
+
 static inline bool s_expect(utils_State* state, utils_Token* tok, size_t type){
 	iron_next(state, tok);
 	if(tok->type != type){
@@ -64,18 +66,7 @@ static horn_Obj* s_metaExpr(pgm* pgm, utils_State* state){
 		// TODO: Parse args list
 		iron_LH(state, &tok);
 		if(tok.type != TRS_TT_RP){
-			horn_Obj* arg = horn_newObj(pgm);
-			if(!arg) return NULL; // TODO: ERROR
-			iron_next(state, NULL);
-			switch(tok.type){
-				case TRS_TT_STR:
-				{
-					arg->cmd = HORN_CMD_STRVAL;
-					arg->as.text = horn_getTokenText(pgm, &tok); // TODO: Move to utils 
-				} break;
-				default: return NULL;
-			}
-			meta->as.args = arg;
+			meta->as.args = s_exp(pgm, state);
 		}
 
 		if(s_expect(state, &tok, TRS_TT_RP))
@@ -83,6 +74,39 @@ static horn_Obj* s_metaExpr(pgm* pgm, utils_State* state){
 	}
 
 	return meta;
+}
+
+static horn_Obj* s_primary(pgm* pgm, utils_State* state){
+	utils_Token tok = {0};
+	iron_LH(state, &tok);
+
+	horn_Obj* obj = horn_newObj(pgm);
+	if(!obj) return NULL; // TODO: ERROR
+	obj->as.text = horn_getTokenText(pgm, &tok); // TODO: Move to utils
+
+	switch(tok.type){
+		case TRS_TT_INT:
+		{
+			iron_next(state, NULL);
+			obj->cmd = HORN_CMD_INTVAL;
+		} break;
+		case TRS_TT_CHAR:
+		case TRS_TT_STR:
+		{
+			iron_next(state, NULL);
+			obj->cmd = HORN_CMD_STRVAL;
+		} break;
+		default:
+			// TODO: ERROR: Expected primary
+			return NULL;
+	}
+
+	return obj;
+}
+
+static horn_Obj* s_exp(pgm* pgm, utils_State* state){
+	// TODO: expressions
+	return s_primary(pgm, state);
 }
 
 static horn_Obj* s_expr(pgm* pgm, utils_State* state){
@@ -95,6 +119,22 @@ static horn_Obj* s_expr(pgm* pgm, utils_State* state){
 		{
 			return s_metaExpr(pgm, state);
 		} break;
+		case TRS_TT_KW_RETURN:
+		{
+			horn_Obj* ret = horn_newObj(pgm);
+			if(!ret) return NULL; // TODO: ERROR
+			ret->cmd = HORN_CMD_RETURN;
+
+			iron_next(state, NULL);
+			iron_LH(state, &tok);
+
+			if(tok.type != TRS_TT_EOE && tok.type != TRS_TT_RB){
+				ret->as.args = s_exp(pgm, state);
+				if(!ret->as.args) return NULL;
+			}
+
+			return ret;
+		}
 		default:
 			LOGENL(EIDX_UNEXPECTED, trs_TokenTypeToString(tok.type));
 			return NULL;
