@@ -6,22 +6,24 @@
 #	define PGM_PAGE_SIZE (1024*4)
 #endif
 
+#define PGM_SIZE(BTS) (((BTS) / sizeof(pgm_unit)) + (((BTS) % sizeof(pgm_unit) != 0)?1:0))
+
 pgm_Header* pgm_page(size_t size){
 	// We need fit this header into memory
 	if(size < sizeof(pgm_Header))
 		size += sizeof(pgm_Header);
 
 	// We need to presume memory aligment
-	size += size % sizeof(uintptr_t);
+	size += sizeof(pgm_unit) - (size % sizeof(pgm_unit));
 
-	pgm_Header* page = malloc(size + sizeof(pgm_Header));
+	pgm_Header* page = malloc(size);
 	if(!page)
 		return NULL;
 	
-	page->size = (sizeof(pgm_Header) + sizeof(pgm_Header) % sizeof(uintptr_t)) / sizeof(uintptr_t);
-	page->cap = size / sizeof(uintptr_t);
+	page->size = PGM_SIZE(sizeof(pgm_Header));
+	page->cap = size / sizeof(pgm_unit);
 	page->next = NULL;
-	page->data = (uintptr_t*)page;
+	page->data = (pgm_unit*)page;
 	return page;
 }
 
@@ -29,7 +31,7 @@ void pgm_clean(pgm* p){
 	pgm_Header* head = p->begin;
 
 	while(head){
-		head->size = sizeof(pgm_Header) + (sizeof(pgm_Header) % sizeof(uintptr_t));
+		head->size = PGM_SIZE(sizeof(pgm_Header));
 		head = head->next;
 	}
 }
@@ -40,7 +42,7 @@ void* pgm_alloc(pgm* p, size_t size){
 	while(head){
 		if(head->cap - head->size >= size){
 			void* data = head->data + head->size;
-			head->size += (size + size % sizeof(uintptr_t)) / sizeof(uintptr_t);
+			head->size += PGM_SIZE(size);
 			return data;
 		}
 
@@ -63,7 +65,7 @@ void* pgm_alloc(pgm* p, size_t size){
 	}
 
 	void* data = next->data + next->size;
-	next->size += (size + size % sizeof(uintptr_t)) / sizeof(uintptr_t);
+	next->size += PGM_SIZE(size);
 	return data;
 }
 

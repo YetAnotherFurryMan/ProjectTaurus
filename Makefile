@@ -3,11 +3,11 @@ BUILD ?= build
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 getsrc=$(patsubst $(BUILD)/obj/%.o,src/%,$1)
 
-dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/ap $(BUILD)/obj/vec $(BUILD)/obj/assoc $(BUILD)/obj/pgm $(BUILD)/obj/error $(BUILD)/obj/horn $(BUILD)/obj/trs.cg.nasm_x86 $(BUILD)/obj/trs.cg.lisp $(BUILD)/obj/trsiron.trs $(BUILD)/obj/horn_tool $(BUILD)/obj/iron_tool $(BUILD)/obj/trsc
+dirs := $(BUILD)/obj $(BUILD)/bin $(BUILD)/lib $(BUILD)/test $(BUILD)/obj/ap $(BUILD)/obj/vec $(BUILD)/obj/assoc $(BUILD)/obj/pgm $(BUILD)/obj/error $(BUILD)/obj/horn $(BUILD)/obj/trs.cg.nasm_x86 $(BUILD)/obj/trs.cg.lisp $(BUILD)/obj/trsiron.trs $(BUILD)/obj/trsbee.c $(BUILD)/obj/horn_tool $(BUILD)/obj/iron_tool $(BUILD)/obj/bee_tool $(BUILD)/obj/trsc
 
 .PHONY: clean all test
 
-all: $(dirs) $(BUILD)/lib/libap.a $(BUILD)/lib/ap.so $(BUILD)/lib/libvec.a $(BUILD)/lib/vec.so $(BUILD)/lib/libassoc.a $(BUILD)/lib/assoc.so $(BUILD)/lib/libpgm.a $(BUILD)/lib/pgm.so $(BUILD)/lib/liberror.a $(BUILD)/lib/error.so $(BUILD)/lib/libhorn.a $(BUILD)/lib/horn.so $(BUILD)/lib/libtrs.cg.nasm_x86.a $(BUILD)/lib/trs.cg.nasm_x86.so $(BUILD)/lib/libtrs.cg.lisp.a $(BUILD)/lib/trs.cg.lisp.so $(BUILD)/lib/libtrsiron.trs.a $(BUILD)/lib/trsiron.trs.so $(BUILD)/bin/horn_tool $(BUILD)/bin/iron_tool $(BUILD)/bin/trsc
+all: $(dirs) $(BUILD)/lib/libap.a $(BUILD)/lib/ap.so $(BUILD)/lib/libvec.a $(BUILD)/lib/vec.so $(BUILD)/lib/libassoc.a $(BUILD)/lib/assoc.so $(BUILD)/lib/libpgm.a $(BUILD)/lib/pgm.so $(BUILD)/lib/liberror.a $(BUILD)/lib/error.so $(BUILD)/lib/libhorn.a $(BUILD)/lib/horn.so $(BUILD)/lib/libtrs.cg.nasm_x86.a $(BUILD)/lib/trs.cg.nasm_x86.so $(BUILD)/lib/libtrs.cg.lisp.a $(BUILD)/lib/trs.cg.lisp.so $(BUILD)/lib/libtrsiron.trs.a $(BUILD)/lib/trsiron.trs.so $(BUILD)/lib/libtrsbee.c.a $(BUILD)/lib/trsbee.c.so $(BUILD)/bin/horn_tool $(BUILD)/bin/iron_tool $(BUILD)/bin/bee_tool $(BUILD)/bin/trsc
 
 clean:
 	$(RM) -r $(BUILD)
@@ -90,6 +90,14 @@ $(BUILD)/lib/libtrsiron.trs.a: $(bin)
 $(BUILD)/lib/trsiron.trs.so: $(bin)
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,trsiron.trs.so --shared $(if $(DEBUG),-ggdb,)
 
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trsbee.c, *.c))
+libbin += $(bin)
+$(BUILD)/lib/libtrsbee.c.a: $(bin)
+	$(AR) qc $@ $^
+
+$(BUILD)/lib/trsbee.c.so: $(bin)
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-soname,trsbee.c.so --shared $(if $(DEBUG),-ggdb,)
+
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/horn_tool, *.c))
 exebin += $(bin)
 $(BUILD)/bin/horn_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(BUILD)/lib/libassoc.a $(BUILD)/lib/libpgm.a
@@ -98,6 +106,11 @@ $(BUILD)/bin/horn_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/iron_tool, *.c))
 exebin += $(bin)
 $(BUILD)/bin/iron_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(BUILD)/lib/libassoc.a $(BUILD)/lib/libpgm.a
+	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,) -Wl,--export-dynamic -ldl
+
+bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/bee_tool, *.c))
+exebin += $(bin)
+$(BUILD)/bin/bee_tool: $(bin) $(BUILD)/lib/libhorn.a $(BUILD)/lib/liberror.a $(BUILD)/lib/libassoc.a $(BUILD)/lib/libpgm.a
 	$(CXX) -o $@ $^ -std=gnu++17 -Wall -Wextra -Wpedantic -Wl,-rpath,../lib -L$(BUILD) $(if $(DEBUG),-ggdb,) -Wl,--export-dynamic -ldl
 
 bin = $(patsubst src/%,$(BUILD)/obj/%.o,$(call rwildcard,src/trsc, *.c))

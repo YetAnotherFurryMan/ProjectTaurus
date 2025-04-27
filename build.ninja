@@ -91,6 +91,13 @@ build $bin/lib/libtrsiron.trs.a: lib $bin/obj/trsiron.trs/iron.c.o $bin/obj/trsi
 build $bin/lib/trsiron.trs.so: link $bin/obj/trsiron.trs/iron.c.o $bin/obj/trsiron.trs/lex.c.o
   flags = --shared
 
+build $bin/obj/trsbee.c/bee.c.o: cc src/trsbee.c/bee.c
+  flags = -fPIC
+build $bin/lib/libtrsbee.c.a: lib $bin/obj/trsbee.c/bee.c.o
+
+build $bin/lib/trsbee.c.so: link $bin/obj/trsbee.c/bee.c.o
+  flags = --shared
+
 build $bin/obj/horn_tool/main.c.o: cc src/horn_tool/main.c
   flags = -fPIE
 build $bin/bin/horn_tool: link $bin/obj/horn_tool/main.c.o $bin/lib/libhorn.a $bin/lib/liberror.a $bin/lib/libassoc.a $bin/lib/libpgm.a
@@ -99,6 +106,11 @@ build $bin/bin/horn_tool: link $bin/obj/horn_tool/main.c.o $bin/lib/libhorn.a $b
 build $bin/obj/iron_tool/main.c.o: cc src/iron_tool/main.c
   flags = -fPIE  
 build $bin/bin/iron_tool: link $bin/obj/iron_tool/main.c.o $bin/lib/libhorn.a $bin/lib/liberror.a $bin/lib/libassoc.a $bin/lib/libpgm.a
+  flags = -Wl,--export-dynamic -ldl
+
+build $bin/obj/bee_tool/main.c.o: cc src/bee_tool/main.c
+  flags = -fPIE  
+build $bin/bin/bee_tool: link $bin/obj/bee_tool/main.c.o $bin/lib/libhorn.a $bin/lib/liberror.a $bin/lib/libassoc.a $bin/lib/libpgm.a
   flags = -Wl,--export-dynamic -ldl
 
 build $bin/obj/trsc/main.c.o: cc src/trsc/main.c

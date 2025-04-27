@@ -118,6 +118,7 @@ Mod mods[] = {
 	{ModType::LIB, "trs.cg.nasm_x86", { Lang::C }, {}},
 	{ModType::LIB, "trs.cg.lisp", { Lang::C }, {}},
 	{ModType::LIB, "trsiron.trs", { Lang::C }, {}},
+	{ModType::LIB, "trsbee.c", { Lang::C }, {}},
 	{ModType::EXE, "horn_tool", { Lang::C }, {
 		Dep::idep("trs", "horn"),
 		Dep::idep("trs", "error"),
@@ -125,6 +126,14 @@ Mod mods[] = {
 		Dep::idep("toollib", "pgm"),
 	}},
 	{ModType::EXE, "iron_tool", { Lang::C }, {
+		Dep::edep("", "-Wl,--export-dynamic"),
+		Dep::edep("", "-ldl"),
+		Dep::idep("trs", "horn"),
+		Dep::idep("trs", "error"),
+		Dep::idep("toollib", "assoc"),
+		Dep::idep("toollib", "pgm"),
+	}},
+	{ModType::EXE, "bee_tool", { Lang::C }, {
 		Dep::edep("", "-Wl,--export-dynamic"),
 		Dep::edep("", "-ldl"),
 		Dep::idep("trs", "horn"),

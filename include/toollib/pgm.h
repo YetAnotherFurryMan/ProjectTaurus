@@ -6,6 +6,7 @@
 
 typedef struct pgm pgm;
 typedef struct pgm_Header pgm_Header;
+typedef uintptr_t pgm_unit;
 
 struct pgm{
 	pgm_Header* begin;
@@ -16,7 +17,7 @@ struct pgm_Header{
 	size_t size;
 	size_t cap;
 	pgm_Header* next;
-	uintptr_t* data;
+	pgm_unit* data;
 };
 
 pgm_Header* pgm_page(size_t size);
