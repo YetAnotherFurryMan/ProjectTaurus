@@ -105,6 +105,32 @@ static bool s_expr(FILE* out, horn_Obj* expr, size_t depth){
 					fputs("\n", out);
 			} 
 		} break;
+		case HORN_CMD_PUTCHAR:
+		{
+			horn_Obj* args = expr->as.args;
+			while(args){
+				for(size_t i = 0; i < depth; i++)
+					fputs("\t", out);
+				switch(args->cmd){
+					case HORN_CMD_INTVAL:
+					{
+						fprintf(out, "putchar(%s);", args->as.text);
+					} break;
+					case HORN_CMD_STRVAL:
+					{
+						// TODO: ERROR
+						return true;
+					} break;
+					default:
+						// TODO: Typeof expr and put it here
+						return true;
+				}
+				args = args->next;
+
+				if(args)
+					fputs("\n", out);
+			} 
+		} break;
 		case HORN_CMD_RETURN:
 		{
 			for(size_t i = 0; i < depth; i++)

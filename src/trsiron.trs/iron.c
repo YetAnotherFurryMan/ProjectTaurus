@@ -54,6 +54,8 @@ static horn_Obj* s_metaExpr(pgm* pgm, utils_State* state){
 	
 	if(strncmp("print", tok.begin, 5) == 0)
 		meta->cmd = HORN_CMD_PRINT;
+	else if(strncmp("putchar", tok.begin, 7) == 0)
+		meta->cmd = HORN_CMD_PUTCHAR;
 	else {
 		// TODO: ERROR
 		return NULL;
@@ -63,10 +65,29 @@ static horn_Obj* s_metaExpr(pgm* pgm, utils_State* state){
 	if(tok.type == TRS_TT_LP){
 		iron_next(state, NULL);
 
-		// TODO: Parse args list
 		iron_LH(state, &tok);
 		if(tok.type != TRS_TT_RP){
-			meta->as.args = s_exp(pgm, state);
+			horn_Obj dummy = {0};
+			horn_Obj* args = &dummy;
+			
+			args->next = s_exp(pgm, state);
+			args = args->next;
+
+			iron_LH(state, &tok);
+			while(tok.type != TRS_TT_RP){
+				if(s_expect(state, &tok, TRS_TT_COMMA))
+					return NULL;
+
+				args->next = s_exp(pgm, state);
+				args = args->next;
+
+				if(!args)
+					return NULL;
+	
+				iron_LH(state, &tok);
+			}
+
+			meta->as.args = dummy.next;
 		}
 
 		if(s_expect(state, &tok, TRS_TT_RP))

@@ -48,7 +48,8 @@ static bool s_emit(FILE* out, horn_Obj* obj){
 		XCASE(VARIABLE, variable)
 		XCASE(FUNCTION, function)
 		XCASE(PROCEDURE, procedure)
-		XCASE(PRINT, print)  
+		XCASE(PRINT, print)
+		XCASE(PUTCHAR, putchar)
 		default:
 			LOGENL(EIDX_UNEXPECTED, horn_CmdToString(obj->cmd));
 			return true;

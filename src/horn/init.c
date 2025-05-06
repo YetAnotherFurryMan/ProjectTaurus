@@ -47,6 +47,7 @@ bool horn_init(horn_Instance* inst){
 	*assoc_set_horn_Cmd(&inst->kw_map, "function") = HORN_CMD_FUNCTION;
 	*assoc_set_horn_Cmd(&inst->kw_map, "procedure") = HORN_CMD_PROCEDURE;
 	*assoc_set_horn_Cmd(&inst->kw_map, "print") = HORN_CMD_PRINT;
+	*assoc_set_horn_Cmd(&inst->kw_map, "putchar") = HORN_CMD_PUTCHAR;
 
 	return false;
 }

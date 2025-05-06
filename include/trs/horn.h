@@ -61,7 +61,8 @@
 	X(VARIABLE)         \
 	X(FUNCTION)         \
 	X(PROCEDURE)        \
-	X(PRINT)
+	X(PRINT)            \
+	X(PUTCHAR)
 
 typedef enum{
 #define X(Y) HORN_TT_##Y,
