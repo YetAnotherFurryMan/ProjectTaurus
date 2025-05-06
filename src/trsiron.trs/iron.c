@@ -15,24 +15,36 @@ static inline bool s_expect(utils_State* state, utils_Token* tok, size_t type){
 	return false;
 }
 
+static inline horn_Obj* s_newType(pgm* pgm, char* id){
+	horn_Obj* gettype = horn_newObj(pgm);
+	if(!gettype) return NULL; // TODO: ERROR
+	gettype->cmd = HORN_CMD_GETTYPE;
+
+	horn_Obj* type = horn_newObj(pgm);
+	if(!type) return NULL; // TODO: ERROR
+	type->cmd = HORN_CMD_ID;
+	type->as.text = id;
+	gettype->as.args = type;
+
+	return gettype;
+}
+
 static horn_Obj* s_type(pgm* pgm, utils_State* state){
 	utils_Token tok = {0};
 
 	iron_LH(state, &tok);
-	if(tok.type == TRS_TT_KW_I32){
+	if(tok.type == TRS_TT_KW_I8){
 		iron_next(state, &tok);
-
-		horn_Obj* gettype = horn_newObj(pgm);
-		if(!gettype) return NULL; // TODO: ERROR
-		gettype->cmd = HORN_CMD_GETTYPE;
-
-		horn_Obj* i32 = horn_newObj(pgm);
-		if(!i32) return NULL; // TODO: ERROR
-		i32->cmd = HORN_CMD_ID;
-		i32->as.text = "i32";
-		gettype->as.args = i32;
-
-		return gettype;
+		return s_newType(pgm, "i8");
+	} else if(tok.type == TRS_TT_KW_I16){
+		iron_next(state, &tok);
+		return s_newType(pgm, "i16");
+	} else if(tok.type == TRS_TT_KW_I32){
+		iron_next(state, &tok);
+		return s_newType(pgm, "i32");
+	} else if(tok.type == TRS_TT_KW_I64){
+		iron_next(state, &tok);
+		return s_newType(pgm, "i64");
 	} else{
 		// TODO: More types and error
 		return NULL;

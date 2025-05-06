@@ -28,7 +28,10 @@
 	X(OP_BINARY_OR)          \
 	X(KW_FN)                 \
 	X(KW_RETURN)             \
+	X(KW_I8)                 \
+	X(KW_I16)                \
 	X(KW_I32)                \
+	X(KW_I64)                \
 	X(EOE)                   \
 	X(COLON)                 \
 	X(AT)                    \

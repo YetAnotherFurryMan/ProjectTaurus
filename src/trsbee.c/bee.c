@@ -8,9 +8,15 @@ static bool s_gettype(FILE* out, horn_Obj* obj){
 		return true;
 	}
 
-	if(strcmp("i32", obj->as.text) == 0){
+	if(strcmp("i8", obj->as.text) == 0){
+		fputs("int8_t", out);
+	} else if(strcmp("i16", obj->as.text) == 0){
+		fputs("int16_t", out);
+	} else if(strcmp("i32", obj->as.text) == 0){
 		fputs("int32_t", out);
-	} else{
+	} else if(strcmp("i64", obj->as.text) == 0){
+		fputs("int64_t", out);
+	} else {
 		// TODO: ERROR
 		return true;
 	}
